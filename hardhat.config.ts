@@ -9,7 +9,6 @@ const mnemonic = {
   testnet: `${process.env.TESTNET_MNEMONIC}`.replace(/_/g, ' '),
   mainnet: `${process.env.MAINNET_MNEMONIC}`.replace(/_/g, ' '),
 };
-console.log(mnemonic);
 const optimizerDisabled = process.env.OPTIMIZER_DISABLED
 
 const config: HardhatUserConfig = {
