@@ -21,7 +21,20 @@ describe('ChargedParticles', async function () {
   it.only('should work properly', async function () {
     // Mint an NFT
     await NFTMock.mint(deployer, 1).then(tx => tx.wait());
-    expect(await NFTMock.balanceOf(deployer)).to.be.equal(1);
+    await NFTMock.mint(deployer, 2).then(tx => tx.wait());
+    expect(await NFTMock.balanceOf(deployer)).to.be.equal(2);
+
+    await NFTMock.approve(await ChargedParticles.getAddress(), 2);
+
+    const NFTMockAddress = await NFTMock.getAddress();
+    await ChargedParticles.covalentBond(
+      NFTMockAddress,
+      1,
+      '6551',
+      NFTMockAddress,
+      2,
+      1
+    );
 
   });
 });

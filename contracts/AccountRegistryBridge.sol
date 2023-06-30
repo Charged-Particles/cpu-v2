@@ -4,8 +4,8 @@ pragma solidity ^0.8.13;
 
 import "./interfaces/IRegistry.sol";
 contract AccountRegistryBridge {
-    address public constant REGISTRY = 0x2D25602551487C3f3354dD80D76D54383A243358;
-    address public constant IMPLMENTATION = 0xDb46d1Dc155634FbC732f92E853b10B288AD5a1d;
+    address public constant REGISTRY = 	0x02101dfB77FDE026414827Fdc604ddAF224F0921;
+    address public constant IMPLMENTATION = 0x2D25602551487C3f3354dD80D76D54383A243358;
 
     function createAccount(address contractAddress, uint256 tokenId)
         external
