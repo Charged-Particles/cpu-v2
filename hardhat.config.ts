@@ -1,3 +1,4 @@
+require('dotenv').config()
 import { HardhatUserConfig } from "hardhat/config";
 import '@nomicfoundation/hardhat-ethers';
 import 'hardhat-deploy';
@@ -8,7 +9,7 @@ const mnemonic = {
   testnet: `${process.env.TESTNET_MNEMONIC}`.replace(/_/g, ' '),
   mainnet: `${process.env.MAINNET_MNEMONIC}`.replace(/_/g, ' '),
 };
-
+console.log(mnemonic);
 const optimizerDisabled = process.env.OPTIMIZER_DISABLED
 
 const config: HardhatUserConfig = {
@@ -59,10 +60,9 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 137,
-      gasPrice: 100e9,
       forking: {
         url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        blockNumber: 30784049
+        blockNumber: 42543137 
       },
       accounts: {
         mnemonic: mnemonic.testnet,

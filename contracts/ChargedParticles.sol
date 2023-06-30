@@ -4,6 +4,8 @@ pragma solidity ^0.8.13;
 
 import "./interfaces/IChargedParticles.sol";
 import "./AccountRegistryBridge.sol";
+
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 contract ChargedParticles is AccountRegistryBridge {
     function energizeParticle(
         address contractAddress,
@@ -13,7 +15,7 @@ contract ChargedParticles is AccountRegistryBridge {
         uint256 assetAmount,
         address referrer
     ) external returns (uint256 yieldTokensAmount) {
-
+        
     }
 
     function dischargeParticle(
@@ -77,7 +79,8 @@ contract ChargedParticles is AccountRegistryBridge {
         uint256 nftTokenId,
         uint256 nftTokenAmount
     ) external returns (bool success) {
-
+        address tokenBoundAccount = this.account(contractAddress, tokenId); 
+        IERC721(nftTokenAddress).safeTransferFrom(msg.sender, tokenBoundAccount, nftTokenId);
     }
 
     function breakCovalentBond(
