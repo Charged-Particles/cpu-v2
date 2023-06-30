@@ -18,7 +18,7 @@ describe('ChargedParticles', async function () {
     NFTMock = await ethers.getContract('NFTMock');
   });
 
-  it.only('should work properly', async function () {
+  it.only('Should bond a NFT into a TBA', async function () {
     // Mint an NFT
     await NFTMock.mint(deployer, 1).then(tx => tx.wait());
     await NFTMock.mint(deployer, 2).then(tx => tx.wait());
@@ -27,14 +27,20 @@ describe('ChargedParticles', async function () {
     await NFTMock.approve(await ChargedParticles.getAddress(), 2);
 
     const NFTMockAddress = await NFTMock.getAddress();
+    const BasketNFT = 1;
+    const NestedNFT = 2;
+
     await ChargedParticles.covalentBond(
       NFTMockAddress,
-      1,
+      BasketNFT,
       '6551',
       NFTMockAddress,
-      2,
+      NestedNFT,
       1
     );
 
+    const newNestedNFTOwner = await NFTMock.ownerOf(NestedNFT);
+    const tokenBoundAccountForBasketNFT = await ChargedParticles.account(NFTMockAddress, BasketNFT);
+    expect(newNestedNFTOwner).to.be.equal(tokenBoundAccountForBasketNFT);
   });
 });
