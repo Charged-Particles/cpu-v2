@@ -24,11 +24,11 @@ describe('ChargedParticles', async function () {
     await NFTMock.mint(deployer, 2).then(tx => tx.wait());
     expect(await NFTMock.balanceOf(deployer)).to.be.equal(2);
 
-    await NFTMock.approve(await ChargedParticles.getAddress(), 2);
-
     const NFTMockAddress = await NFTMock.getAddress();
     const BasketNFT = 1;
     const NestedNFT = 2;
+
+    await NFTMock.approve(await ChargedParticles.getAddress(), NestedNFT);
 
     await ChargedParticles.covalentBond(
       NFTMockAddress,
