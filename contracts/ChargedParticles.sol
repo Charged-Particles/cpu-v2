@@ -92,7 +92,8 @@ contract ChargedParticles is AccountRegistryBridge {
         uint256 nftTokenId,
         uint256 nftTokenAmount
     ) external returns (bool success) {
-
+        address tokenBoundAccount = this.account(contractAddress, tokenId); 
+        IERC721(nftTokenAddress).safeTransferFrom(tokenBoundAccount, receiver, nftTokenId);
     }
 
 }
