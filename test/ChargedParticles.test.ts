@@ -1,10 +1,11 @@
 import { expect } from "chai";
 import { Contract } from "ethers";
-import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
+import { ethers, getNamedAccounts, deployments } from 'hardhat';
+import { NFTMock, ChargedParticles } from "../typechain-types";
 
 
 describe('ChargedParticles', async function () {
-  let deployer: string, ChargedParticles: Contract, NFTMock: Contract;
+  let deployer: string, chargedParticles: ChargedParticles, nftMock: NFTMock;
 
   before(async function () {
     const { deployer: deployerAccount } = await getNamedAccounts();
@@ -14,33 +15,33 @@ describe('ChargedParticles', async function () {
   beforeEach(async function () {
     await deployments.fixture([ 'ChargedParticles', 'NFTMock' ]);
 
-    ChargedParticles = await ethers.getContract('ChargedParticles');
-    NFTMock = await ethers.getContract('NFTMock');
+    chargedParticles = await ethers.getContract('ChargedParticles');
+    nftMock = await ethers.getContract('NFTMock');
   });
 
   it.only('Should bond a NFT into a TBA', async function () {
     // Mint an NFT
-    await NFTMock.mint(deployer, 1).then(tx => tx.wait());
-    await NFTMock.mint(deployer, 2).then(tx => tx.wait());
-    expect(await NFTMock.balanceOf(deployer)).to.be.equal(2);
+    await nftMock.mint(deployer, 1).then(tx => tx.wait());
+    await nftMock.mint(deployer, 2).then(tx => tx.wait());
+    expect(await nftMock.balanceOf(deployer)).to.be.equal(2);
 
-    const NFTMockAddress = await NFTMock.getAddress();
+    const nftMockAddress = await nftMock.getAddress();
     const BasketNFT = 1;
     const NestedNFT = 2;
 
-    await NFTMock.approve(await ChargedParticles.getAddress(), NestedNFT);
+    await nftMock.approve(await chargedParticles.getAddress(), NestedNFT);
 
-    await ChargedParticles.covalentBond(
-      NFTMockAddress,
+    await chargedParticles.covalentBond(
+      nftMockAddress,
       BasketNFT,
       '6551',
-      NFTMockAddress,
+      nftMockAddress,
       NestedNFT,
       1
     );
 
-    const newNestedNFTOwner = await NFTMock.ownerOf(NestedNFT);
-    const tokenBoundAccountForBasketNFT = await ChargedParticles.account(NFTMockAddress, BasketNFT);
+    const newNestedNFTOwner = await nftMock.ownerOf(NestedNFT);
+    const tokenBoundAccountForBasketNFT = await chargedParticles.account(nftMockAddress, BasketNFT);
     expect(newNestedNFTOwner).to.be.equal(tokenBoundAccountForBasketNFT);
   });
 });

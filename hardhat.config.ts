@@ -1,9 +1,11 @@
 require('dotenv').config()
 import { HardhatUserConfig } from "hardhat/config";
-import '@nomicfoundation/hardhat-ethers';
+import '@typechain/hardhat';
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
+import '@nomicfoundation/hardhat-ethers';
 import "@nomicfoundation/hardhat-toolbox";
+import '@nomicfoundation/hardhat-chai-matchers'
 
 const mnemonic = {
   testnet: `${process.env.TESTNET_MNEMONIC}`.replace(/_/g, ' '),
