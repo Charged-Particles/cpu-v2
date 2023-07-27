@@ -20,7 +20,7 @@ error OwnershipCycle();
 /**
  * @title A smart contract account owned by a single ERC721 token
  */
-contract Account is
+contract MinimalisticAccount is
     IERC165,
     IERC6551Account,
     IERC721Receiver,

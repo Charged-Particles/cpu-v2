@@ -116,13 +116,4 @@ interface IChargedParticles {
     uint256 nftTokenId,
     uint256 nftTokenAmount
   ) external returns (bool success);
-
-  /***********************************|
-  |          Particle Events          |
-  |__________________________________*/
-
-  event Initialized(address indexed initiator);
-  event ControllerSet(address indexed controllerAddress, string controllerId);
-  event DepositFeeSet(uint256 depositFee);
-  event ProtocolFeesCollected(address indexed assetToken, uint256 depositAmount, uint256 feesCollected);
 }
