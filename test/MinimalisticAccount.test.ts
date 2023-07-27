@@ -68,4 +68,6 @@ describe('MinimalisticAccount', async function () {
     expect(minimalisticDataFromTBA[1]).to.be.equal(nftMockAddress);
   });
 
+  
+
 });
