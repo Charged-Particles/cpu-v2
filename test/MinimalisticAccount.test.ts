@@ -20,8 +20,14 @@ describe('MinimalisticAccount', async function () {
     nftMock = await ethers.getContract('NFTMock');
   });
 
-  it.only('Deploys MinimalisticAccount', async function () {
+  it('Deploys MinimalisticAccount', async function () {
     const minimalisticAccountAddress = await minimalisticAccount.getAddress();
     expect(minimalisticAccountAddress).to.not.be.empty
   });
+
+  it('Deploys account for NFT', async function () {
+    await nftMock.mint(deployer, 1).then(tx => tx.wait());
+    expect(await nftMock.balanceOf(deployer)).to.be.equal(1);
+  });
+
 });
