@@ -28,6 +28,7 @@ describe('MinimalisticAccount', async function () {
 
   it('Deploys account for NFT', async function () {
     const tokenId = 1;
+    const mockNFTAddress = await nftMock.getAddress();
 
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
     expect(await nftMock.balanceOf(deployer)).to.be.equal(1);
@@ -41,7 +42,7 @@ describe('MinimalisticAccount', async function () {
     const newAccountAddress = await registryContract.account(
       minimalisticAccountAddress,
       network.config.chainId ?? 137,
-      await nftMock.getAddress(),
+      mockNFTAddress,
       tokenId,
       0 
     );
@@ -58,7 +59,11 @@ describe('MinimalisticAccount', async function () {
 
     expect(newAccountReceipt).to.haveOwnProperty('hash');
 
+    const minimalisticAccountContract = minimalisticAccount.attach(newAccountAddress) as MinimalisticAccount;
+    const minimalisticDataFromTBA = await minimalisticAccountContract.token();
 
+    expect(minimalisticDataFromTBA).to.be.lengthOf(3);
+    expect(minimalisticDataFromTBA[1]).to.be.equal(mockNFTAddress);
   });
 
 });
