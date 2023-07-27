@@ -6,6 +6,7 @@ import { NFTMock, MinimalisticAccount } from "../typechain-types";
 describe('MinimalisticAccount', async function () {
   const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
   let minimalisticAccount: MinimalisticAccount, nftMock: NFTMock;
+  let nftMockAddress: string
   let deployer: string, receiver: string;
 
   before(async function () {
@@ -19,6 +20,8 @@ describe('MinimalisticAccount', async function () {
 
     minimalisticAccount = await ethers.getContract('MinimalisticAccount');
     nftMock = await ethers.getContract('NFTMock');
+
+    nftMockAddress = await nftMock.getAddress();
   });
 
   it('Deploys MinimalisticAccount', async function () {
@@ -28,7 +31,6 @@ describe('MinimalisticAccount', async function () {
 
   it('Deploys account for NFT', async function () {
     const tokenId = 1;
-    const mockNFTAddress = await nftMock.getAddress();
 
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
     expect(await nftMock.balanceOf(deployer)).to.be.equal(1);
@@ -42,7 +44,7 @@ describe('MinimalisticAccount', async function () {
     const newAccountAddress = await registryContract.account(
       minimalisticAccountAddress,
       network.config.chainId ?? 137,
-      mockNFTAddress,
+      nftMockAddress,
       tokenId,
       0 
     );
@@ -63,7 +65,7 @@ describe('MinimalisticAccount', async function () {
     const minimalisticDataFromTBA = await minimalisticAccountContract.token();
 
     expect(minimalisticDataFromTBA).to.be.lengthOf(3);
-    expect(minimalisticDataFromTBA[1]).to.be.equal(mockNFTAddress);
+    expect(minimalisticDataFromTBA[1]).to.be.equal(nftMockAddress);
   });
 
 });
