@@ -1,9 +1,10 @@
 import { expect } from "chai";
-import { ethers, getNamedAccounts, deployments } from 'hardhat';
+import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
 import { NFTMock, MinimalisticAccount } from "../typechain-types";
 
 
 describe('MinimalisticAccount', async function () {
+  const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
   let minimalisticAccount: MinimalisticAccount, nftMock: NFTMock;
   let deployer: string, receiver: string;
 
@@ -26,8 +27,38 @@ describe('MinimalisticAccount', async function () {
   });
 
   it('Deploys account for NFT', async function () {
-    await nftMock.mint(deployer, 1).then(tx => tx.wait());
+    const tokenId = 1;
+
+    await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
     expect(await nftMock.balanceOf(deployer)).to.be.equal(1);
+
+    const minimalisticAccountAddress = await minimalisticAccount.getAddress();
+    const registryContract = await ethers.getContractAt(
+      'IRegistry',
+      REGISTRY
+    );
+
+    const newAccountAddress = await registryContract.account(
+      minimalisticAccountAddress,
+      network.config.chainId ?? 137,
+      await nftMock.getAddress(),
+      tokenId,
+      0 
+    );
+    expect(newAccountAddress).to.not.be.empty;
+
+    const newAccountReceipt = await registryContract.createAccount(
+      minimalisticAccountAddress,
+      network.config.chainId ?? 137,
+      await nftMock.getAddress(),
+      tokenId,
+      0,
+      '0x'
+    ).then(tx => tx.wait());
+
+    expect(newAccountReceipt).to.haveOwnProperty('hash');
+
+
   });
 
 });
