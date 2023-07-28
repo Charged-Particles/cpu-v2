@@ -17,4 +17,13 @@ contract ChargedParticlesAccount is MinimalisticAccount {
             nftTokenId
         );
     }
+
+    function breakCovalentBond(
+        address receiver,
+        address nftTokenAddress,
+        uint256 nftTokenId,
+        uint256 nftTokenAmount
+    ) external {
+        IERC721(nftTokenAddress).safeTransferFrom(address(this), receiver, nftTokenId);
+    }
 }

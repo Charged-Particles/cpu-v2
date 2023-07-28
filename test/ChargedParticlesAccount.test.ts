@@ -72,7 +72,7 @@ describe('ChargedParticlesAccount', async function () {
     expect(chargedParticlesDataFromTBA[1]).to.be.equal(nftMockAddress);
   });
 
-  it('Bonds a NFT into account', async() => {
+  it('Bonds and breaks a NFT', async() => {
     const tokenId = 1;
     const depositedTokenId = 2;
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
@@ -111,5 +111,14 @@ describe('ChargedParticlesAccount', async function () {
 
     // Check owner
     expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(newAccountAddress);
+
+    await account.breakCovalentBond(
+      receiver,
+      nftMockAddress,
+      depositedTokenId,
+      1
+    ).then(tx => tx.wait());
+
+    expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
   });
 });
