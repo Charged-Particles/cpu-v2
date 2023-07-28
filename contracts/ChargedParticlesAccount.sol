@@ -5,16 +5,18 @@ import "./MinimalisticAccount.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 contract ChargedParticlesAccount is MinimalisticAccount {
-  function covalentBond(
-    address contractAddress,
-    uint256 tokenId,
-    string calldata basketManagerId,
-    address nftTokenAddress,
-    uint256 nftTokenId,
-    uint256 nftTokenAmount
-  ) external returns (bool success) {
-    // Check permission
+    function covalentBond(
+        address nftTokenAddress,
+        uint256 nftTokenId,
+        uint256 nftTokenAmount
+    ) external {
+        // Check permission (?)
 
-    // Transfer to self
+        // Transfer to self
+        IERC721(nftTokenAddress).safeTransferFrom(
+            msg.sender,
+            address(this),
+            nftTokenId
+        );
     }
 }

@@ -7,7 +7,7 @@ describe('MinimalisticAccount', async function () {
   const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
   
   // Contracts
-  let minimalisticAccount: MinimalisticAccount, nftMock: NFTMock;
+  let chargedParticlesAccount: MinimalisticAccount, nftMock: NFTMock;
   // Addresses
   let nftMockAddress: string
   // Signers
@@ -20,16 +20,16 @@ describe('MinimalisticAccount', async function () {
   });
 
   beforeEach(async function () {
-    await deployments.fixture([ 'MinimalisticAccount', 'NFTMock' ]);
+    await deployments.fixture([ 'ChargedParticlesAccount', 'NFTMock' ]);
 
-    minimalisticAccount = await ethers.getContract('MinimalisticAccount');
+    chargedParticlesAccount = await ethers.getContract('ChargedParticlesAccount');
     nftMock = await ethers.getContract('NFTMock');
 
     nftMockAddress = await nftMock.getAddress();
   });
 
   it('Deploys MinimalisticAccount', async function () {
-    const minimalisticAccountAddress = await minimalisticAccount.getAddress();
+    const minimalisticAccountAddress = await chargedParticlesAccount.getAddress();
     expect(minimalisticAccountAddress).to.not.be.empty
   });
 
@@ -39,7 +39,7 @@ describe('MinimalisticAccount', async function () {
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
     expect(await nftMock.balanceOf(deployer)).to.be.equal(1);
 
-    const minimalisticAccountAddress = await minimalisticAccount.getAddress();
+    const minimalisticAccountAddress = await chargedParticlesAccount.getAddress();
     const registryContract = await ethers.getContractAt(
       'IRegistry',
       REGISTRY
@@ -65,13 +65,10 @@ describe('MinimalisticAccount', async function () {
 
     expect(newAccountReceipt).to.haveOwnProperty('hash');
 
-    const minimalisticAccountContract = minimalisticAccount.attach(newAccountAddress) as MinimalisticAccount;
+    const minimalisticAccountContract = chargedParticlesAccount.attach(newAccountAddress) as MinimalisticAccount;
     const minimalisticDataFromTBA = await minimalisticAccountContract.token();
 
     expect(minimalisticDataFromTBA).to.be.lengthOf(3);
     expect(minimalisticDataFromTBA[1]).to.be.equal(nftMockAddress);
   });
-
-
-
 });
