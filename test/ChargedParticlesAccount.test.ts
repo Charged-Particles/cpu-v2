@@ -29,8 +29,8 @@ describe('MinimalisticAccount', async function () {
   });
 
   it('Deploys MinimalisticAccount', async function () {
-    const minimalisticAccountAddress = await chargedParticlesAccount.getAddress();
-    expect(minimalisticAccountAddress).to.not.be.empty
+    const chargedParticlesAccountAddress = await chargedParticlesAccount.getAddress();
+    expect(chargedParticlesAccountAddress).to.not.be.empty
   });
 
   it('Deploys account for NFT', async function () {
@@ -39,14 +39,14 @@ describe('MinimalisticAccount', async function () {
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
     expect(await nftMock.balanceOf(deployer)).to.be.equal(1);
 
-    const minimalisticAccountAddress = await chargedParticlesAccount.getAddress();
+    const chargedParticlesAccountAddress = await chargedParticlesAccount.getAddress();
     const registryContract = await ethers.getContractAt(
       'IRegistry',
       REGISTRY
     );
 
     const newAccountAddress = await registryContract.account(
-      minimalisticAccountAddress,
+      chargedParticlesAccountAddress,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
@@ -55,7 +55,7 @@ describe('MinimalisticAccount', async function () {
     expect(newAccountAddress).to.not.be.empty;
 
     const newAccountReceipt = await registryContract.createAccount(
-      minimalisticAccountAddress,
+      chargedParticlesAccountAddress,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
@@ -65,10 +65,10 @@ describe('MinimalisticAccount', async function () {
 
     expect(newAccountReceipt).to.haveOwnProperty('hash');
 
-    const minimalisticAccountContract = chargedParticlesAccount.attach(newAccountAddress) as MinimalisticAccount;
-    const minimalisticDataFromTBA = await minimalisticAccountContract.token();
+    const chargedParticlesAccountContract = chargedParticlesAccount.attach(newAccountAddress) as MinimalisticAccount;
+    const chargedParticlesDataFromTBA = await chargedParticlesAccountContract.token();
 
-    expect(minimalisticDataFromTBA).to.be.lengthOf(3);
-    expect(minimalisticDataFromTBA[1]).to.be.equal(nftMockAddress);
+    expect(chargedParticlesDataFromTBA).to.be.lengthOf(3);
+    expect(chargedParticlesDataFromTBA[1]).to.be.equal(nftMockAddress);
   });
 });
