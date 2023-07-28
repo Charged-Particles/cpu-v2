@@ -10,8 +10,6 @@ contract ChargedParticlesAccount is MinimalisticAccount {
         uint256 nftTokenId,
         uint256 nftTokenAmount
     ) external {
-        // Check permission (?)
-
         // Transfer to self
         IERC721(nftTokenAddress).safeTransferFrom(
             msg.sender,

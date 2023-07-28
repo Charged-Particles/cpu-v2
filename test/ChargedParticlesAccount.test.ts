@@ -74,7 +74,9 @@ describe('ChargedParticlesAccount', async function () {
 
   it('Bonds a NFT into account', async() => {
     const tokenId = 1;
+    const depositedTokenId = 2;
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
+    await nftMock.mint(deployer, depositedTokenId).then(tx => tx.wait());
 
     // Create an account
     const newAccountAddress = await registryContract.account(
@@ -85,8 +87,29 @@ describe('ChargedParticlesAccount', async function () {
       0 
     );
 
-    // Bound
+    await registryContract.createAccount(
+      chargedParticlesAccountAddress,
+      network.config.chainId ?? 137,
+      nftMockAddress,
+      tokenId,
+      0,
+      '0x'
+    ).then(tx => tx.wait());
+
+    // Give permission
+    await nftMock.approve(newAccountAddress, depositedTokenId).then(tx => tx.wait());
+    expect(await nftMock.getApproved(depositedTokenId)).to.be.eq(newAccountAddress);
+    
+    // Bond
+    const account = await ethers.getContractAt('ChargedParticlesAccount', newAccountAddress);
+
+    await account.covalentBond(
+      nftMockAddress,
+      depositedTokenId,
+      1 // amount
+    ).then(tx => tx.wait());
 
     // Check owner
+    expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(newAccountAddress);
   });
 });
