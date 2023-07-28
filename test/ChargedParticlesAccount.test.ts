@@ -1,15 +1,16 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
-import { NFTMock, MinimalisticAccount } from "../typechain-types";
+import { NFTMock, MinimalisticAccount, IRegistry } from "../typechain-types";
 
 
-describe('MinimalisticAccount', async function () {
+describe('ChargedParticlesAccount', async function () {
   const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
   
   // Contracts
-  let chargedParticlesAccount: MinimalisticAccount, nftMock: NFTMock;
+  let chargedParticlesAccount: MinimalisticAccount, nftMock: NFTMock, registryContract: IRegistry;
+
   // Addresses
-  let nftMockAddress: string
+  let nftMockAddress: string, chargedParticlesAccountAddress: string;
   // Signers
   let deployer: string, receiver: string;
 
@@ -24,11 +25,16 @@ describe('MinimalisticAccount', async function () {
 
     chargedParticlesAccount = await ethers.getContract('ChargedParticlesAccount');
     nftMock = await ethers.getContract('NFTMock');
+    registryContract = await ethers.getContractAt(
+      'IRegistry',
+      REGISTRY
+    );
 
     nftMockAddress = await nftMock.getAddress();
+    chargedParticlesAccountAddress = await chargedParticlesAccount.getAddress();
   });
 
-  it('Deploys MinimalisticAccount', async function () {
+  it('Deploys ChargedParticlesAccount', async function () {
     const chargedParticlesAccountAddress = await chargedParticlesAccount.getAddress();
     expect(chargedParticlesAccountAddress).to.not.be.empty
   });
@@ -38,12 +44,6 @@ describe('MinimalisticAccount', async function () {
 
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
     expect(await nftMock.balanceOf(deployer)).to.be.equal(1);
-
-    const chargedParticlesAccountAddress = await chargedParticlesAccount.getAddress();
-    const registryContract = await ethers.getContractAt(
-      'IRegistry',
-      REGISTRY
-    );
 
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
@@ -70,5 +70,23 @@ describe('MinimalisticAccount', async function () {
 
     expect(chargedParticlesDataFromTBA).to.be.lengthOf(3);
     expect(chargedParticlesDataFromTBA[1]).to.be.equal(nftMockAddress);
+  });
+
+  it('Bonds a NFT into account', async() => {
+    const tokenId = 1;
+    await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
+
+    // Create an account
+    const newAccountAddress = await registryContract.account(
+      chargedParticlesAccountAddress,
+      network.config.chainId ?? 137,
+      nftMockAddress,
+      tokenId,
+      0 
+    );
+
+    // Bound
+
+    // Check owner
   });
 });
