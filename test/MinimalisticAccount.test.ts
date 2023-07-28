@@ -5,8 +5,12 @@ import { NFTMock, MinimalisticAccount } from "../typechain-types";
 
 describe('MinimalisticAccount', async function () {
   const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
+  
+  // Contracts
   let minimalisticAccount: MinimalisticAccount, nftMock: NFTMock;
+  // Addresses
   let nftMockAddress: string
+  // Signers
   let deployer: string, receiver: string;
 
   before(async function () {
@@ -53,7 +57,7 @@ describe('MinimalisticAccount', async function () {
     const newAccountReceipt = await registryContract.createAccount(
       minimalisticAccountAddress,
       network.config.chainId ?? 137,
-      await nftMock.getAddress(),
+      nftMockAddress,
       tokenId,
       0,
       '0x'
@@ -68,6 +72,6 @@ describe('MinimalisticAccount', async function () {
     expect(minimalisticDataFromTBA[1]).to.be.equal(nftMockAddress);
   });
 
-  
+
 
 });

@@ -3,6 +3,8 @@
 pragma solidity ^0.8.13;
 
 import "./interfaces/IRegistry.sol";
+import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+
 contract AccountRegistryBridge {
     address public constant REGISTRY = 	0x02101dfB77FDE026414827Fdc604ddAF224F0921;
     address public constant IMPLEMENTATION = 0x2D25602551487C3f3354dD80D76D54383A243358;
