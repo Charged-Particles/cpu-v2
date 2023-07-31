@@ -99,20 +99,30 @@ describe('Execute calls', async function () {
     await nftMock.approve(newAccountAddress, depositedTokenId).then(tx => tx.wait());
     expect(await nftMock.getApproved(depositedTokenId)).to.be.eq(newAccountAddress);
     
-    
     await nftMock.transferFrom(deployer, newAccountAddress, depositedTokenId).then(tx => tx.wait());
     
     // Check owner
     expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(newAccountAddress);
         
     const account = await ethers.getContractAt('ChargedParticlesAccount', newAccountAddress);
-    // await account.breakCovalentBond(
-    //   receiver,
-    //   nftMockAddress,
-    //   depositedTokenId,
-    //   1
-    // ).then(tx => tx.wait());
 
-    // expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
+    const breakCovalentBond = (from: string, to:string, tokenId:number) => {
+      const ABI = ["function safeTransferFrom(address from, address to, uint256 tokenId)"];
+      const iface = new ethers.Interface(ABI);
+      const cdata = iface.encodeFunctionData("safeTransferFrom", [from, to, tokenId]); 
+
+      return cdata;
+    };
+
+    const breakCovalentBondCallData = breakCovalentBond(newAccountAddress, receiver, depositedTokenId); 
+
+    await account.executeCall(
+      nftMockAddress,
+      0,
+      breakCovalentBondCallData
+    ).then(tx => tx.wait());
+
+    expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
   });
+
 });
