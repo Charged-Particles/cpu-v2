@@ -1,18 +1,18 @@
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {DeployFunction} from 'hardhat-deploy/types';
 
-const NFTMockMock: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const RewardProgram: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const {deployments, getNamedAccounts} = hre;
 	const {deploy} = deployments;
 
 	const { deployer } = await getNamedAccounts();
 
-	await deploy('NFTMock', {
+	await deploy('RewardProgram', {
 		from: deployer,
-		args: ['Game of NTF', 'GONFT'],
+		args: [],
 		log: true,
 	});
 };
-export default NFTMockMock;
+export default RewardProgram;
 
-NFTMockMock.tags = ['NFTMock'];
+RewardProgram.tags = ['RewardProgram'];
