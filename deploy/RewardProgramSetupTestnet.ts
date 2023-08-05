@@ -14,11 +14,11 @@ interface AddressBook {
 const addressBook: AddressBook = {
   1: {
     'chargedManager': '0x7b07Ec627d2426b89C44a6cC75Dc57c27a52174d',
-    'chargedParticles': '0x2691B4f4251408bA4b8bf9530B6961b9D0C1231F'
+    'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41'
   },
   31337: {
     'chargedManager': '0x7b07Ec627d2426b89C44a6cC75Dc57c27a52174d',
-    'chargedParticles': '0x2691B4f4251408bA4b8bf9530B6961b9D0C1231F'
+    'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41'
   },
   80001: {
     'chargedManager': '0xE8c6462ceEeeC3f8c318e29Af143f623de979D69',
@@ -27,10 +27,9 @@ const addressBook: AddressBook = {
 }
 
 const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-	const {deployments, getNamedAccounts, network} = hre;
-	const {deploy} = deployments;
+	const { network, getNamedAccounts } = hre;
 
-	const { deployer } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId ?? 80001;
 
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
@@ -43,6 +42,20 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const leptonAddress = await lepton.getAddress();
   const universeAddress = await universe.getAddress();
 
+  const chargedParticlesOwner = await chargedParticles.owner();
+
+  await hre.network.provider.request({
+    method: "hardhat_impersonateAccount",
+    params: [ chargedParticlesOwner ],
+  });
+
+  const chargedParticlesOwnerSigner = await ethers.getSigner(chargedParticlesOwner);
+  const deployerSigner = await ethers.getSigner(deployer);
+
+  // fund charged owner
+  console.log(await ethers.provider.getBalance(deployer), chargedParticlesOwner);
+  await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
+
   // setup reward program
   await rewardProgram.setRewardToken(ionxAddress).then(tx => tx.wait());
   await rewardProgram.setRewardNft(leptonAddress).then(tx => tx.wait());
@@ -54,10 +67,8 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   await universe.setRewardProgram(await rewardProgram.getAddress(), ionxAddress, leptonAddress);
   await universe.setChargedParticles(addressBook[chainId].chargedParticles);
 
-  // // setup charged particles
-  await chargedParticles.setController(universeAddress, 'universe');
-
-
+  // setup charged particles
+  await chargedParticles.connect(chargedParticlesOwnerSigner).setController(universeAddress, 'universe');
 };
 export default RewardProgramSetupTestnet;
 

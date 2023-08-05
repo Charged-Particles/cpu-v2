@@ -12,7 +12,8 @@ const UniverseRP: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 		args: [],
 		log: true,
     proxy: {
-      proxyContract: 'OpenZeppelinTransparentProxy'
+      proxyContract: 'OpenZeppelinTransparentProxy',
+      methodName: 'initialize'
     },
 	});
 };
