@@ -32,7 +32,7 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 
   // const chargedParticlesOwnerSigner = await ethers.getSigner(chargedParticlesOwner);
   const deployerSigner = await ethers.getSigner(deployer);
-  const chargedParticlesOwnerSigner = await getChargedParticlesOwner(hre) ;
+  const chargedParticlesOwnerSigner = await getChargedParticlesOwner();
 
   // fund charged owner
   await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });

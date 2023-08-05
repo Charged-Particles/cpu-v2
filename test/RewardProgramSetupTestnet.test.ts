@@ -1,8 +1,9 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
+import { getChargedParticlesOwner } from "../utils/getSigners";
 
 describe('RewardProgramSetupTestnet deployments', async () => {
-  let deployer, user;
+  let deployer, user, chargedOwner;
 
   beforeEach(async () => {
     await deployments.fixture(['RPSetupTest']);
@@ -10,10 +11,15 @@ describe('RewardProgramSetupTestnet deployments', async () => {
 
   before(async () => {
     const { deployer: deployerAccount, user1 } = await getNamedAccounts();
+    chargedOwner = getChargedParticlesOwner();
     deployer = deployerAccount;
     user = user1;
   });
 
-  it ('', async () => {
+  it ('Energizes ', async () => {
+      
+  });
+
+  it ('Bonds', async () => {
   });
 });
