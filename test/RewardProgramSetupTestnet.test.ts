@@ -60,6 +60,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     expect(await lepton.balanceOf(deployer)).to.be.eq(2);
 
     const amountDeposit = ethers.parseEther('1');
+    await lepton.approve(chargedParticlesAddress, 2).then(tx => tx.wait());
 
     await ionx.approve(chargedParticlesAddress, amountDeposit).then(tx => tx.wait());
 
@@ -72,6 +73,15 @@ describe('RewardProgramSetupTestnet deployments', async () => {
       '0x0000000000000000000000000000000000000000'
     )).to.emit(rewardProgram, 'AssetDeposit')
       .withArgs(leptonAddress, 1, 'generic.B', amountDeposit);
+
+    await expect(chargedParticles.connect(await ethers.getSigner(deployer)).covalentBond(
+      leptonAddress,
+      1,
+      'generic.B',
+      leptonAddress,
+      2,
+      1
+    )).to.emit(rewardProgram, 'NftDeposit');
     
   });
   
