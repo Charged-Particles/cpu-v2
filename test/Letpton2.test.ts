@@ -30,4 +30,13 @@ describe('Lepton2 deployment', async () => {
     expect(bonus).to.be.eq(leptonConfig.types[0].bonus);
     expect(tokenURI).to.be.eq(leptonConfig.types[0].tokenUri);
   });
+
+  it ('Mints a batch', async () => {
+    const price = await lepton.getNextPrice();
+    await lepton.batchMintLepton(20, { value: price * 20n })
+
+    expect(await lepton.balanceOf(deployer)).to.be.eq(20);
+    await lepton.batchMintLepton(20, { value: price * 20n })
+    expect(await lepton.balanceOf(deployer)).to.be.eq(40);
+  });
 });
