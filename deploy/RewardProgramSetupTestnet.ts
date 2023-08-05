@@ -5,12 +5,15 @@ import { ethers } from 'hardhat';
 
 import { addressBook } from '../utils/globals';
 import { getChargedParticlesOwner } from '../utils/getSigners';
+import { Signer } from 'ethers';
 
 
 const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network, getNamedAccounts } = hre;
 
   const { deployer } = await getNamedAccounts();
+
+  const deployerSigner = await ethers.getSigner(deployer);
   const chainId = network.config.chainId ?? 80001;
 
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
@@ -23,14 +26,15 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const leptonAddress = await lepton.getAddress();
   const universeAddress = await universe.getAddress();
   const rewardProgramAddress = await rewardProgram.getAddress();
-
   const chargedParticlesOwner = await chargedParticles.owner();
 
-  const deployerSigner = await ethers.getSigner(deployer);
-  const chargedParticlesOwnerSigner = await getChargedParticlesOwner();
-
-  // fund charged owner
-  await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
+  let chargedParticlesOwnerSigner: Signer;
+  if (chainId === 80001) {
+    chargedParticlesOwnerSigner = deployerSigner;
+  } else {
+    chargedParticlesOwnerSigner = await getChargedParticlesOwner();
+    await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
+  }
 
   // setup reward program
   await rewardProgram.setRewardToken(ionxAddress).then(tx => tx.wait());
@@ -49,6 +53,7 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   // setup charged particles
   await chargedParticles.connect(chargedParticlesOwnerSigner).setController(universeAddress, 'universe');
 };
+
 export default RewardProgramSetupTestnet;
 
 RewardProgramSetupTestnet.tags = ['RPSetupTest'];
