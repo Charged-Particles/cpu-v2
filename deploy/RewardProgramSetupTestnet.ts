@@ -22,15 +22,10 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const ionxAddress = await ionx.getAddress();
   const leptonAddress = await lepton.getAddress();
   const universeAddress = await universe.getAddress();
+  const rewardProgramAddress = await rewardProgram.getAddress();
 
   const chargedParticlesOwner = await chargedParticles.owner();
 
-  // await hre.network.provider.request({
-  //   method: "hardhat_impersonateAccount",
-  //   params: [ chargedParticlesOwner ],
-  // });
-
-  // const chargedParticlesOwnerSigner = await ethers.getSigner(chargedParticlesOwner);
   const deployerSigner = await ethers.getSigner(deployer);
   const chargedParticlesOwnerSigner = await getChargedParticlesOwner();
 
@@ -43,6 +38,9 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   await rewardProgram.setUniverse(universeAddress).then(tx => tx.wait());
   await rewardProgram.setChargedManagers(addressBook[chainId].chargedManager).then(tx => tx.wait());
   await rewardProgram.setBaseMultiplier(ionxAddress , '10000');
+
+  await ionx.approve(rewardProgramAddress, ethers.parseEther('100')).then(tx => tx.wait());
+  await rewardProgram.fundProgram(ethers.parseEther('100')).then(tx => tx.wait());
 
   // setup universe
   await universe.setRewardProgram(await rewardProgram.getAddress(), ionxAddress, leptonAddress);
