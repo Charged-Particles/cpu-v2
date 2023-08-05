@@ -1,9 +1,10 @@
+import { ethers, network } from 'hardhat';
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {DeployFunction} from 'hardhat-deploy/types';
 import { parseEther as toWei } from 'ethers';
+import { Lepton2 } from '../typechain-types';
 
-
-const lepton = {
+const leptonConfig = {
   maxMintPerTx: 25n,
   types: [
     {
@@ -56,6 +57,13 @@ const lepton = {
     },
   ]
 }
+interface LeptonType {
+  tokenUri: string;
+  price: { [key: number]: bigint };
+  supply: { [key: number]: bigint };
+  multiplier: bigint;
+  bonus: bigint;
+}
 
 const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const {deployments, getNamedAccounts} = hre;
@@ -69,9 +77,27 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 		log: true,
 	});
 
-  // mint
+  const lepton2: Lepton2 = await ethers.getContract('Lepton2');
+  await lepton2.setMaxMintPerTx(leptonConfig.maxMintPerTx).then(tx => tx.wait());
 
-  // unpause
+  // mint
+  let chainId = network.config.chainId ?? 1;
+  if (chainId === 5) { chainId = 42; }
+  else if (chainId === 80001) { chainId = 42; }
+  else if (chainId === 137) { chainId = 1; }
+
+  // let lepton2Type;
+  for (const leptonKey in leptonConfig.types) {
+    const lepton: LeptonType = leptonConfig.types[leptonKey];
+
+    await lepton2.addLeptonType(
+      lepton.tokenUri,
+      lepton.price[chainId],
+      lepton.supply[chainId],
+      lepton.multiplier,
+      lepton.bonus,
+    )
+  }
 };
 export default Lepton2;
 
