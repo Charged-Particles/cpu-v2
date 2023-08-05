@@ -22,7 +22,7 @@ const addressBook: AddressBook = {
   },
   80001: {
     'chargedManager': '0xE8c6462ceEeeC3f8c318e29Af143f623de979D69',
-    'chargedParticles': '0x660De54CEA09838d11Df0812E2754eD8D08CD2f7'
+    'chargedParticles': '0x51f845af34c60499a1056FCDf47BcBC681A0fA39'
   }
 }
 
@@ -53,7 +53,6 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const deployerSigner = await ethers.getSigner(deployer);
 
   // fund charged owner
-  console.log(await ethers.provider.getBalance(deployer), chargedParticlesOwner);
   await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
 
   // setup reward program
