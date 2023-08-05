@@ -1,12 +1,12 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
 import { getChargedParticlesOwner } from "../utils/getSigners";
-import { ChargedParticles, ChargedSettings, Ionx, Lepton2 } from "../typechain-types";
+import { ChargedParticles, ChargedSettings, Ionx, Lepton2, RewardProgram } from "../typechain-types";
 import { addressBook } from "../utils/globals";
 import { Signer } from "ethers";
 
 describe('RewardProgramSetupTestnet deployments', async () => {
-  let chargedParticles: ChargedParticles, chargedSettings: ChargedSettings;
+  let chargedParticles: ChargedParticles, chargedSettings: ChargedSettings, rewardProgram: RewardProgram;
   let lepton: Lepton2, ionx: Ionx;
 
   let deployer: string, user: string, chargedOwner: Signer;
@@ -26,6 +26,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     chainId = network.config.chainId ?? 1;
     lepton = await ethers.getContract('Lepton2');
     ionx = await ethers.getContract('Ionx');
+    rewardProgram = await ethers.getContract('RewardProgram');
     chargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles, chargedOwner);
     chargedSettings = await ethers.getContractAt('ChargedSettings', addressBook[chainId].chargedSettings, chargedOwner);
 
@@ -62,14 +63,15 @@ describe('RewardProgramSetupTestnet deployments', async () => {
 
     await ionx.approve(chargedParticlesAddress, amountDeposit).then(tx => tx.wait());
 
-    await chargedParticles.connect(await ethers.getSigner(deployer)).energizeParticle(
+    await expect(chargedParticles.connect(await ethers.getSigner(deployer)).energizeParticle(
       leptonAddress,
       1,
       'generic.B',
       ionxAddress,
       amountDeposit,
       '0x0000000000000000000000000000000000000000'
-    );
+    )).to.emit(rewardProgram, 'AssetDeposit')
+      .withArgs(leptonAddress, 1, 'generic.B', amountDeposit);
     
   });
   
