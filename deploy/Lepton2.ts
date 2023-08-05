@@ -4,7 +4,15 @@ import {DeployFunction} from 'hardhat-deploy/types';
 import { parseEther as toWei } from 'ethers';
 import { Lepton2 } from '../typechain-types';
 
-const leptonConfig = {
+interface LeptonType {
+  tokenUri: string;
+  price: { [key: number]: bigint };
+  supply: { [key: number]: bigint };
+  multiplier: bigint;
+  bonus: bigint;
+}
+
+export const leptonConfig = {
   maxMintPerTx: 25n,
   types: [
     {
@@ -57,13 +65,6 @@ const leptonConfig = {
     },
   ]
 }
-interface LeptonType {
-  tokenUri: string;
-  price: { [key: number]: bigint };
-  supply: { [key: number]: bigint };
-  multiplier: bigint;
-  bonus: bigint;
-}
 
 const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const {deployments, getNamedAccounts} = hre;
@@ -86,7 +87,6 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   else if (chainId === 80001) { chainId = 42; }
   else if (chainId === 137) { chainId = 1; }
 
-  // let lepton2Type;
   for (const leptonKey in leptonConfig.types) {
     const lepton: LeptonType = leptonConfig.types[leptonKey];
 
@@ -98,6 +98,8 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
       lepton.bonus,
     )
   }
+
+  await lepton2.setPausedState(false).then(tx => tx.wait());
 };
 export default Lepton2;
 
