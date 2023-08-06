@@ -95,7 +95,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-        url: 'https://rpc-mumbai.maticvigil.com',
+        url: 'https://polygon-mumbai.g.alchemy.com/v2/Imng9Ni9rvwiagGqjWTSPdWbDATIgn3O',
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
