@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-pragma solidity 0.6.12;
+pragma solidity >=0.6.0;
 pragma experimental ABIEncoderV2;
 
 interface IRewardProgram {
@@ -36,39 +36,26 @@ interface IRewardProgram {
   event AssetDeposit(address indexed contractAddress, uint256 tokenId, string walletManagerId, uint256 principalAmount);
   event AssetRelease(address indexed contractAddress, uint256 tokenId, uint256 interestAmount);
 
-  event NftDeposit(address indexed contractAddress, uint256 tokenId, address indexed nftTokenAddress, uint256 nftTokenId);
-  event NftRelease(address indexed contractAddress, uint256 tokenId, address indexed nftTokenAddress, uint256 nftTokenId);
-
   /* data types */
   struct ProgramRewardData {
+    address stakingToken;
     address rewardToken;
-    address multiplierNft;
+    uint256 baseMultiplier; // Basis Points
   }
 
   struct AssetStake {
     uint256 start;
     uint256 claimableRewards;
     string walletManagerId;
-    address stakingToken;
-  }
-
-  struct NftStake {
-    uint256 multiplier; // in Basis Points
-    uint256 depositBlockNumber;
-    uint256 releaseBlockNumber;
   }
 
   /* user functions */
   function getProgramData() external view returns (ProgramRewardData memory programData);
+  function getAssetStake(uint256 uuid) external view returns (AssetStake memory);
   function getFundBalance() external view returns (uint256);
   function getClaimableRewards(address contractAddress, uint256 tokenId) external view returns (uint256);
-  // function claimRewards(address contractAddress, uint256 tokenId, address receiver) public returns (uint256 totalReward);
 
-  function registerExistingDeposits(address contractAddress, uint256 tokenId, string calldata walletManagerId, address stakingToken) external;
-
-  function registerAssetDeposit(address contractAddress, uint256 tokenId, string calldata walletManagerId, address stakingToken, uint256 principalAmount) external;
+  function registerExistingDeposits(address contractAddress, uint256 tokenId, string calldata walletManagerId) external;
+  function registerAssetDeposit(address contractAddress, uint256 tokenId, string calldata walletManagerId, uint256 principalAmount) external;
   function registerAssetRelease(address contractAddress, uint256 tokenId, uint256 interestAmount) external returns (uint256 rewards);
-
-  function registerNftDeposit(address contractAddress, uint256 tokenId, address nftTokenAddress, uint256 nftTokenId, uint256 nftTokenAmount) external;
-  function registerNftRelease(address contractAddress, uint256 tokenId, address nftTokenAddress, uint256 nftTokenId, uint256 nftTokenAmount) external;
 }

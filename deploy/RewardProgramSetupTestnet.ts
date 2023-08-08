@@ -38,17 +38,18 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 
   // setup reward program
   await rewardProgram.setRewardToken(ionxAddress).then(tx => tx.wait());
-  await rewardProgram.setRewardNft(leptonAddress).then(tx => tx.wait());
+  await rewardProgram.setStakingToken(ionxAddress).then(tx => tx.wait());
+  await rewardProgram.setBaseMultiplier('10000'); // 100%
   await rewardProgram.setUniverse(universeAddress).then(tx => tx.wait());
   await rewardProgram.setChargedManagers(addressBook[chainId].chargedManager).then(tx => tx.wait());
-  await rewardProgram.setBaseMultiplier(ionxAddress , '10000');
 
   await ionx.approve(rewardProgramAddress, ethers.parseEther('100')).then(tx => tx.wait());
   await rewardProgram.fundProgram(ethers.parseEther('100')).then(tx => tx.wait());
 
   // setup universe
-  await universe.setRewardProgram(await rewardProgram.getAddress(), ionxAddress, leptonAddress);
   await universe.setChargedParticles(addressBook[chainId].chargedParticles);
+  await universe.setMultiplierNft(leptonAddress).then(tx => tx.wait());
+  await universe.setRewardProgram(await rewardProgram.getAddress(), ionxAddress);
 
   // setup charged particles
   await chargedParticles.connect(chargedParticlesOwnerSigner).setController(universeAddress, 'universe');

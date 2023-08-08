@@ -1,16 +1,17 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
 import { getChargedParticlesOwner } from "../utils/getSigners";
-import { ChargedParticles, ChargedSettings, Ionx, Lepton2, RewardProgram } from "../typechain-types";
+import { UniverseRP, ChargedParticles, ChargedSettings, Ionx, Lepton2, RewardProgram, TokenInfoProxy } from "../typechain-types";
 import { addressBook } from "../utils/globals";
 import { Signer } from "ethers";
 
 describe('RewardProgramSetupTestnet deployments', async () => {
-  let chargedParticles: ChargedParticles, chargedSettings: ChargedSettings, rewardProgram: RewardProgram;
-  let lepton: Lepton2, ionx: Ionx;
+  let chargedParticles: ChargedParticles, chargedSettings: ChargedSettings, rewardProgram: RewardProgram, tokenInfoProxy: TokenInfoProxy;
+  let lepton: Lepton2, ionx: Ionx, universe: UniverseRP
+  let iface, fragment;
 
   let deployer: string, user: string, chargedOwner: Signer;
-  let leptonAddress: string, chargedParticlesAddress: string, ionxAddress: string;
+  let leptonAddress: string, chargedParticlesAddress: string, ionxAddress: string, universeAddress: string;
   let chainId;
 
   before(async () => {
@@ -27,14 +28,23 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     lepton = await ethers.getContract('Lepton2');
     ionx = await ethers.getContract('Ionx');
     rewardProgram = await ethers.getContract('RewardProgram');
+    universe = await ethers.getContract('UniverseRP');
     chargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles, chargedOwner);
     chargedSettings = await ethers.getContractAt('ChargedSettings', addressBook[chainId].chargedSettings, chargedOwner);
+    tokenInfoProxy = await ethers.getContractAt('TokenInfoProxy', addressBook[chainId].tokenInfoProxy, chargedOwner);
 
+    universeAddress = await universe.getAddress();
     leptonAddress = await lepton.getAddress();
     ionxAddress = await ionx.getAddress();
     chargedParticlesAddress = await chargedParticles.getAddress();
 
     chargedSettings.enableNftContracts([ leptonAddress ]).then(tx => tx.wait());
+
+    iface = new ethers.Interface([ 'function ownerOf(uint256)' ]);
+    fragment = iface.getFunction('ownerOf');
+    if (fragment !== null) {
+      tokenInfoProxy.setContractFnCreatorOf(leptonAddress, fragment.selector);
+    }
   });
 
   it ('Bonds', async () => {
@@ -81,8 +91,8 @@ describe('RewardProgramSetupTestnet deployments', async () => {
       leptonAddress,
       2,
       1
-    )).to.emit(rewardProgram, 'NftDeposit');
-    
+    )).to.emit(universe, 'NftDeposit');
+
   });
-  
+
 });

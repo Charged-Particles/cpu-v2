@@ -22,6 +22,7 @@
 // SOFTWARE.
 
 pragma solidity 0.6.12;
+pragma experimental ABIEncoderV2;
 
 import "@openzeppelin/contracts-upgradeable/proxy/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -29,10 +30,12 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/IERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/math/SafeMathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 
-import "./interfaces/IUniverse.sol";
+import "./interfaces/IUniverseRP.sol";
 import "./interfaces/IChargedParticles.sol";
 import "./interfaces/ILepton.sol";
+import "./interfaces/IRewardNft.sol";
 import "./lib/TokenInfo.sol";
 import "./lib/BlackholePrevention.sol";
 import "./interfaces/IRewardProgram.sol";
@@ -42,18 +45,27 @@ import "./interfaces/IRewardProgram.sol";
  * @notice Charged Particles Universe Contract with Rewards Program
  * @dev Upgradeable Contract
  */
-contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePrevention {
+contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, BlackholePrevention {
   using SafeMathUpgradeable for uint256;
   using TokenInfo for address;
   using SafeERC20Upgradeable for IERC20Upgradeable;
+  using EnumerableSet for EnumerableSet.UintSet;
 
+  uint256 constant private LEPTON_MULTIPLIER_SCALE = 1e2;
   uint256 constant internal PERCENTAGE_SCALE = 1e4;  // 10000  (100%)
 
   // The ChargedParticles Contract Address
-  address public chargedParticles;
+  address public _chargedParticles;
+
+  // The Lepton NFT Contract Address
+  address public _multiplierNft;
 
   // Asset Token => Reward Program
-  mapping (address => address) internal assetRewardPrograms;
+  mapping (address => address) internal _assetRewardPrograms;
+  mapping (uint256 => EnumerableSet.UintSet) internal _multiplierNftsSet;
+
+  // Token UUID => NFT Staking Data
+  mapping (uint256 => NftStake) private _nftStake;
 
 
   /***********************************|
@@ -64,28 +76,13 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     __Ownable_init();
   }
 
-
-  function getRewardProgram(address asset) public view returns (address) {
+  function getRewardProgram(address asset) external view override returns (address) {
     return _getRewardProgram(asset);
   }
 
-  function registerExistingDeposits(
-    address contractAddress,
-    uint256 tokenId,
-    string calldata walletManagerId,
-    address assetToken
-  ) external {
-    address rewardProgram = getRewardProgram(assetToken);
-    if (rewardProgram != address(0)) {
-      IRewardProgram(rewardProgram).registerExistingDeposits(
-        contractAddress,
-        tokenId,
-        walletManagerId,
-        assetToken
-      );
-    }
+  function getNftStake(uint256 uuid) external view override returns (NftStake memory) {
+    return _nftStake[uuid];
   }
-
 
   /***********************************|
   |      Only Charged Particles       |
@@ -105,13 +102,12 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     override
     onlyChargedParticles
   {
-    address rewardProgram = getRewardProgram(assetToken);
+    address rewardProgram = _getRewardProgram(assetToken);
     if (rewardProgram != address(0)) {
       IRewardProgram(rewardProgram).registerAssetDeposit(
         contractAddress,
         tokenId,
         walletManagerId,
-        assetToken,
         assetAmount
       );
     }
@@ -130,7 +126,7 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     override
     onlyChargedParticles
   {
-    address rewardProgram = getRewardProgram(assetToken);
+    address rewardProgram = _getRewardProgram(assetToken);
     if (rewardProgram != address(0)) {
       uint256 totalInterest = receiverEnergy.add(creatorEnergy);
       IRewardProgram(rewardProgram).registerAssetRelease(contractAddress, tokenId, totalInterest);
@@ -150,7 +146,7 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     override
     onlyChargedParticles
   {
-    address rewardProgram = getRewardProgram(assetToken);
+    address rewardProgram = _getRewardProgram(assetToken);
     if (rewardProgram != address(0)) {
       IRewardProgram(rewardProgram).registerAssetRelease(contractAddress, tokenId, receiverEnergy);
     }
@@ -170,7 +166,7 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     override
     onlyChargedParticles
   {
-    address rewardProgram = getRewardProgram(assetToken);
+    address rewardProgram = _getRewardProgram(assetToken);
     if (rewardProgram != address(0)) {
       // "receiverEnergy" includes the "principalAmount"
       uint256 totalInterest = receiverEnergy.sub(principalAmount).add(creatorEnergy);
@@ -191,10 +187,7 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     override
     onlyChargedParticles
   {
-    address rewardProgram = getRewardProgram(nftTokenAddress);
-    if (rewardProgram != address(0)) {
-      IRewardProgram(rewardProgram).registerNftDeposit(contractAddress, tokenId, nftTokenAddress, nftTokenId, nftTokenAmount);
-    }
+    _registerNftDeposit(contractAddress, tokenId, nftTokenAddress, nftTokenId, nftTokenAmount);
   }
 
   function onCovalentBreak(
@@ -210,10 +203,7 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     override
     onlyChargedParticles
   {
-    address rewardProgram = getRewardProgram(nftTokenAddress);
-    if (rewardProgram != address(0)) {
-      IRewardProgram(rewardProgram).registerNftRelease(contractAddress, tokenId, nftTokenAddress, nftTokenId, nftTokenAmount);
-    }
+    _registerNftRelease(contractAddress, tokenId, nftTokenAddress, nftTokenId, nftTokenAmount);
   }
 
   function onProtonSale(
@@ -232,6 +222,7 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     // no-op
   }
 
+
   /***********************************|
   |          Only Admin/DAO           |
   |__________________________________*/
@@ -240,40 +231,45 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
     address controller
   )
     external
-    virtual
     onlyOwner
     onlyValidContractAddress(controller)
   {
-    chargedParticles = controller;
+    _chargedParticles = controller;
     emit ChargedParticlesSet(controller);
+  }
+
+  function setMultiplierNft(address nftTokenAddress)
+    external
+    onlyOwner
+    onlyValidContractAddress(nftTokenAddress)
+  {
+    _multiplierNft = nftTokenAddress;
   }
 
   function setRewardProgram(
     address rewardProgam,
-    address assetToken,
-    address nftMultiplier
+    address assetToken
   )
     external
     onlyOwner
     onlyValidContractAddress(rewardProgam)
   {
     require(assetToken != address(0x0), "UNI:E-403");
-    assetRewardPrograms[assetToken] = rewardProgam;
-    assetRewardPrograms[nftMultiplier] = rewardProgam;
-    emit RewardProgramSet(assetToken, nftMultiplier, rewardProgam);
+    _assetRewardPrograms[assetToken] = rewardProgam;
+    // _assetRewardPrograms[nftMultiplier] = rewardProgam;
+    emit RewardProgramSet(assetToken, rewardProgam);
   }
 
-  function removeRewardProgram(
-    address assetToken,
-    address nftMultiplier
-  )
-    external
-    onlyOwner
-  {
-    delete assetRewardPrograms[assetToken];
-    delete assetRewardPrograms[nftMultiplier];
-    emit RewardProgramRemoved(assetToken, nftMultiplier);
+  function removeRewardProgram(address assetToken) external onlyOwner {
+    delete _assetRewardPrograms[assetToken];
+    emit RewardProgramRemoved(assetToken);
   }
+
+
+  /***********************************|
+  |          Only Admin/DAO           |
+  |      (blackhole prevention)       |
+  |__________________________________*/
 
   function withdrawEther(address payable receiver, uint256 amount) external virtual onlyOwner {
     _withdrawEther(receiver, amount);
@@ -297,7 +293,96 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
   |__________________________________*/
 
   function _getRewardProgram(address assetToken) internal view returns (address) {
-    return assetRewardPrograms[assetToken];
+    return _assetRewardPrograms[assetToken];
+  }
+
+  function _registerNftDeposit(address contractAddress, uint256 tokenId, address depositNftAddress, uint256 depositNftTokenId, uint256 /* nftTokenAmount */)
+    internal
+  {
+    // We only care about the Multiplier NFT
+    if (_multiplierNft != depositNftAddress) { return; }
+
+    uint256 parentNftUuid = contractAddress.getTokenUUID(tokenId);
+    uint256 multiplier = _getNftMultiplier(depositNftAddress, depositNftTokenId);
+
+    if (multiplier > 0 && !_multiplierNftsSet[parentNftUuid].contains(multiplier)) {
+      // Add to Multipliers Set
+      _multiplierNftsSet[parentNftUuid].add(multiplier);
+
+      // Update NFT Stake
+      uint256 combinedMultiplier = _calculateTotalMultiplier(parentNftUuid);
+      if (_nftStake[parentNftUuid].depositBlockNumber == 0) {
+        _nftStake[parentNftUuid] = NftStake(combinedMultiplier, block.number, 0);
+      } else {
+        uint256 blockDiff = block.number - _nftStake[parentNftUuid].depositBlockNumber;
+        _nftStake[parentNftUuid].multiplier = combinedMultiplier;
+        _nftStake[parentNftUuid].depositBlockNumber = _nftStake[parentNftUuid].depositBlockNumber.add(blockDiff.div(2));
+      }
+    }
+
+    emit NftDeposit(contractAddress, tokenId, depositNftAddress, depositNftTokenId);
+  }
+
+  function _registerNftRelease(
+    address contractAddress,
+    uint256 tokenId,
+    address releaseNftAddress,
+    uint256 releaseNftTokenId,
+    uint256 /* nftTokenAmount */
+  )
+    internal
+  {
+    // We only care about the Multiplier NFT
+    if (_multiplierNft != releaseNftAddress) { return; }
+
+    uint256 parentNftUuid = contractAddress.getTokenUUID(tokenId);
+    NftStake storage nftStake = _nftStake[parentNftUuid];
+
+    // Remove from Multipliers Set
+    uint256 multiplier = _getNftMultiplier(releaseNftAddress, releaseNftTokenId);
+    _multiplierNftsSet[parentNftUuid].remove(multiplier);
+
+    // Determine New Multiplier or Mark as Released
+    if (_multiplierNftsSet[parentNftUuid].length() > 0) {
+      nftStake.multiplier = _calculateTotalMultiplier(parentNftUuid);
+    } else {
+      nftStake.releaseBlockNumber = block.number;
+    }
+
+    emit NftRelease(contractAddress, tokenId, releaseNftAddress, releaseNftTokenId);
+  }
+
+  function _calculateTotalMultiplier(uint256 parentNftUuid) internal view returns (uint256) {
+    uint256 len = _multiplierNftsSet[parentNftUuid].length();
+    uint256 multiplier = 0;
+    uint256 i = 0;
+
+    // If holding all 6, Max Multiplier of 10X
+    if (len == 6) {
+      return LEPTON_MULTIPLIER_SCALE.mul(10);
+    }
+
+    // If holding multiple; Multiplier = Half of the Sum of all
+    if (len > 1) {
+      for (; i < len; i++) {
+        multiplier = multiplier.add(_multiplierNftsSet[parentNftUuid].at(i));
+      }
+      return multiplier.div(2); // Half of the Sum
+    }
+
+    // Holding single or none
+    return multiplier;
+  }
+
+  function _getNftMultiplier(address contractAddress, uint256 tokenId) internal returns (uint256) {
+    bytes4 fnSig = IRewardNft.getMultiplier.selector;
+    (bool success, bytes memory returnData) = contractAddress.call(abi.encodeWithSelector(fnSig, tokenId));
+
+    if (success) {
+      return abi.decode(returnData, (uint256));
+    } else {
+      return 0;
+    }
   }
 
 
@@ -313,7 +398,7 @@ contract UniverseRP is IUniverse, Initializable, OwnableUpgradeable, BlackholePr
 
   /// @dev Throws if called by any account other than the Charged Particles contract
   modifier onlyChargedParticles() {
-    require(chargedParticles == msg.sender, "UNI:E-108");
+    require(_chargedParticles == msg.sender, "UNI:E-108");
     _;
   }
 }
