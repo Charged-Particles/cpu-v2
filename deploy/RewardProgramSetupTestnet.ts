@@ -15,7 +15,7 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const chainId = network.config.chainId ?? 80001;
 
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
-  const rewardProgram: RewardProgram = await ethers.getContract('RewardProgramIONX');
+  const rewardProgram: RewardProgram = await ethers.getContract('RewardProgramDAI');
   const universe: UniverseRP = await ethers.getContract('UniverseRP');
   const lepton: Lepton2 = await ethers.getContract('Lepton2');
   const ionx: Ionx = await ethers.getContract('Ionx');
@@ -27,11 +27,12 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const chargedParticlesOwner = await chargedParticles.owner();
 
   let chargedParticlesOwnerSigner: Signer;
-  if (chainId === 80001) {
-    chargedParticlesOwnerSigner = deployerSigner;
-  } else {
+
+  if (chainId !== 80001) {
     chargedParticlesOwnerSigner = await getChargedParticlesOwner();
     await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
+  } else {
+    chargedParticlesOwnerSigner = deployerSigner;
   }
 
   // fund reward program
@@ -50,4 +51,4 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 export default RewardProgramSetupTestnet;
 
 RewardProgramSetupTestnet.tags = ['RPSetupTest'];
-RewardProgramSetupTestnet.dependencies = ['Ionx', 'Lepton2', 'RewardProgramFactory'];
+RewardProgramSetupTestnet.dependencies = ['Lepton2', 'RewardProgramFactory'];
