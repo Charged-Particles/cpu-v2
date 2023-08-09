@@ -35,7 +35,7 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
   );
 
   // Get reward program address
-  let rewardProgramAddress = null;
+  let rewardProgramAddress: string;
   const rc: ContractTransactionReceipt | null = await tx.wait();
   if (rc !== null) {
     const evt: EventLog | Log = rc.logs[0];
