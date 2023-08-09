@@ -22,7 +22,7 @@ export const addressBook: AddressBook = {
     'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41',
     'chargedSettings' : '0x07DdB208d52947320d07E0E4611a80Fb7eFD001D',
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
-    'dai': '',
+    'dai': '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f',
   },
   80001: {
     'chargedManager': '0xE8c6462ceEeeC3f8c318e29Af143f623de979D69',

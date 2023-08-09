@@ -1,13 +1,13 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
 import { getChargedParticlesOwner } from "../utils/getSigners";
-import { UniverseRP, ChargedParticles, ChargedSettings, Ionx, Lepton2, RewardProgram, TokenInfoProxy } from "../typechain-types";
+import { UniverseRP, ChargedParticles, ChargedSettings, Ionx, Lepton2, RewardProgram, TokenInfoProxy, IERC20Detailed } from "../typechain-types";
 import { addressBook } from "../utils/globals";
 import { Signer } from "ethers";
 
 describe('RewardProgramSetupTestnet deployments', async () => {
   let chargedParticles: ChargedParticles, chargedSettings: ChargedSettings, rewardProgram: RewardProgram, tokenInfoProxy: TokenInfoProxy;
-  let lepton: Lepton2, ionx: Ionx, universe: UniverseRP
+  let lepton: Lepton2, ionx: Ionx, universe: UniverseRP, dai: IERC20Detailed;
   let iface, fragment;
 
   let deployer: string, user: string, chargedOwner: Signer;
@@ -27,6 +27,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     chainId = network.config.chainId ?? 1;
     lepton = await ethers.getContract('Lepton2');
     ionx = await ethers.getContract('Ionx');
+    dai = await ethers.getContractAt('IERC20Detailed', addressBook[chainId].dai);
     rewardProgram = await ethers.getContract('RewardProgramDAI');
     universe = await ethers.getContract('UniverseRP');
     chargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles, chargedOwner);
@@ -68,17 +69,17 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     await lepton.mintLepton({ value: ethers.parseEther('0.3') }).then(tx => tx.wait());
     await lepton.mintLepton({ value: ethers.parseEther('0.3') }).then(tx => tx.wait());
     expect(await lepton.balanceOf(deployer)).to.be.eq(2);
-
-    const amountDeposit = ethers.parseEther('1');
     await lepton.approve(chargedParticlesAddress, 2).then(tx => tx.wait());
 
-    await ionx.approve(chargedParticlesAddress, amountDeposit).then(tx => tx.wait());
+    const amountDeposit = ethers.parseEther('.1');
+
+    await dai.approve(chargedParticlesAddress, amountDeposit).then(tx => tx.wait());
 
     await expect(chargedParticles.connect(await ethers.getSigner(deployer)).energizeParticle(
       leptonAddress,
       1,
       'generic.B',
-      ionxAddress,
+      await dai.getAddress(),
       amountDeposit,
       '0x0000000000000000000000000000000000000000'
     )).to.emit(rewardProgram, 'AssetDeposit')
