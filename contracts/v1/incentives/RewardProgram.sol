@@ -208,7 +208,7 @@ contract RewardProgram is
   |         Reward Calculation        |
   |__________________________________*/
 
-  function _calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) internal view returns (uint256 totalReward) {
+  function calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) public view returns (uint256 totalReward) {
     uint256 baseReward = _calculateBaseReward(interestAmount);
     uint256 leptonMultipliedReward = _calculateMultipliedReward(parentNftUuid, baseReward);
     totalReward = _convertDecimals(leptonMultipliedReward);
