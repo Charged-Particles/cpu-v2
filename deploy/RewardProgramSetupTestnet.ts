@@ -37,8 +37,8 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   }
 
   // fund reward program
-  await ionx.approve(rewardProgramAddress, ethers.parseEther('100')).then(tx => tx.wait());
-  await rewardProgram.fundProgram(ethers.parseEther('100')).then(tx => tx.wait());
+  await ionx.approve(rewardProgramAddress, ethers.parseEther('10')).then(tx => tx.wait());
+  await rewardProgram.fundProgram(ethers.parseEther('10')).then(tx => tx.wait());
 
   // setup universe
   await universe.setChargedParticles(addressBook[chainId].chargedParticles);
@@ -52,4 +52,4 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 export default RewardProgramSetupTestnet;
 
 RewardProgramSetupTestnet.tags = ['RPSetupTest'];
-RewardProgramSetupTestnet.dependencies = ['Lepton2', 'RewardProgramFactory'];
+RewardProgramSetupTestnet.dependencies = ['RewardProgramFactory'];

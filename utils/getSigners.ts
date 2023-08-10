@@ -8,11 +8,16 @@ export const getChargedParticlesOwner = async () => {
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
   const chargedParticlesOwner = await chargedParticles.owner();
 
-  await network.provider.request({
-    method: "hardhat_impersonateAccount",
-    params: [chargedParticlesOwner],
-  });
-
-  const chargedParticlesOwnerSigner = await ethers.getSigner(chargedParticlesOwner);
-  return chargedParticlesOwnerSigner;
+  if (chainId !== 80001) {
+    await network.provider.request({
+      method: "hardhat_impersonateAccount",
+      params: [chargedParticlesOwner],
+    });
+  
+    const chargedParticlesOwnerSigner = await ethers.getSigner(chargedParticlesOwner);
+    return chargedParticlesOwnerSigner;
+  } else {
+    const chargedParticlesOwnerSigner = await ethers.getSigner(chargedParticlesOwner);
+    return chargedParticlesOwnerSigner;
+  }
 };

@@ -93,7 +93,5 @@ describe('RewardProgramSetupTestnet deployments', async () => {
       2,
       1
     )).to.emit(universe, 'NftDeposit');
-
   });
-
 });

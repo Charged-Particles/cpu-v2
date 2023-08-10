@@ -52,5 +52,5 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 };
 export default RewardProgramFactory;
 
-RewardProgramFactory.dependencies = ['Ionx', 'UniverseRP'];
+RewardProgramFactory.dependencies = ['UniverseRP'];
 RewardProgramFactory.tags = ['RewardProgramFactory'];
