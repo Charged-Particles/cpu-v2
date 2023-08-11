@@ -187,7 +187,7 @@ contract RewardProgram is
     AssetStake storage assetStake = _assetStake[parentNftUuid];
 
     // Update Claimable Rewards
-    uint256 newRewards = calculateRewardsEarned(parentNftUuid, interestAmount);
+    uint256 newRewards = _calculateRewardsEarned(parentNftUuid, interestAmount);
     assetStake.claimableRewards = assetStake.claimableRewards.add(newRewards);
 
     // Reset Stake if Principal Balance falls to Zero
@@ -208,7 +208,7 @@ contract RewardProgram is
   |         Reward Calculation        |
   |__________________________________*/
 
-  function calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) public view returns (uint256 totalReward) {
+  function _calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) internal view returns (uint256 totalReward) {
     uint256 baseReward = _calculateBaseReward(interestAmount);
     uint256 leptonMultipliedReward = _calculateMultipliedReward(parentNftUuid, baseReward);
     totalReward = _convertDecimals(leptonMultipliedReward);
