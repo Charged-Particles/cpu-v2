@@ -17,7 +17,7 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 
   const ionxAddress = await ionx.getAddress();
   const universeAddress = await universe.getAddress();
-  const daiAddress = addressBook[chainId].dai;
+  const daiAddress = addressBook[chainId].usdc;
 
 	await deploy('RewardProgramFactory', {
 		from: deployer,
@@ -43,7 +43,7 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
     rewardProgramAddress = evt.args[0];
 
     // save to deployments
-    await deployments.save('RewardProgramDAI', {
+    await deployments.save('RewardProgramUSDc', {
       abi: RewardProgramJson.abi,
       address: rewardProgramAddress,
       transactionHash: tx.hash,
@@ -52,5 +52,5 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 };
 export default RewardProgramFactory;
 
-RewardProgramFactory.dependencies = ['UniverseRP' ];
-RewardProgramFactory.tags = ['RewardProgramFactory'];
+RewardProgramFactory.dependencies = ['UniverseRP'];
+RewardProgramFactory.tags = ['RewardProgramFactoryUSDc'];

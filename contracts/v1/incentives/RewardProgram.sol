@@ -214,9 +214,8 @@ contract RewardProgram is
     totalReward = _convertDecimals(leptonMultipliedReward);
   }
 
-  function calculateRewardsEarned(address tokenAddress, uint256 tokenId, uint256 interestAmount) public view returns (uint256 totalReward) {
-    uint256 parentNftUuid = tokenAddress.getTokenUUID(tokenId);
-    _calculateRewardsEarned(tokenAddress, interestAmount);
+  function calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) public view returns (uint256 totalReward) {
+    _calculateRewardsEarned(parentNftUuid, interestAmount);
   }
 
   function _calculateBaseReward(uint256 amount) internal view returns(uint256 baseReward) {

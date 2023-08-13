@@ -6,6 +6,7 @@ interface AddressBook {
     chargedSettings: string;
     tokenInfoProxy: string;
     dai: string;
+    usdc: string;
   };
 }
 
@@ -16,6 +17,7 @@ export const addressBook: AddressBook = {
     'chargedSettings' : '0x07DdB208d52947320d07E0E4611a80Fb7eFD001D',
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
     'dai': '',
+    'usdc': '',
   },
   31337: {
     'chargedManager': '0x7b07Ec627d2426b89C44a6cC75Dc57c27a52174d',
@@ -23,6 +25,7 @@ export const addressBook: AddressBook = {
     'chargedSettings' : '0x07DdB208d52947320d07E0E4611a80Fb7eFD001D',
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
     'dai': '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f',
+    'usdc': '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
   },
   80001: {
     'chargedManager': '0xE8c6462ceEeeC3f8c318e29Af143f623de979D69',
@@ -30,5 +33,6 @@ export const addressBook: AddressBook = {
     'chargedSettings' : '0x60428D3e580907C74Ee8690E4E192317864aAE1d',
     'tokenInfoProxy': '0xda8d21714ea5784d5b6990c170485effb9104883',
     'dai': '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f',
+    'usdc': '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
   }
 }

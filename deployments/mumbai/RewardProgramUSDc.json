@@ -1,5 +1,5 @@
 {
-  "address": "0xb53522f8AE4C4958f71cAB8Ac0067128E03d7cDD",
+  "address": "0x069154bF0120a7411512d2A32d95D69Fb0853d2D",
   "abi": [
     {
       "inputs": [],
@@ -248,30 +248,6 @@
       ],
       "name": "WithdrawStuckEther",
       "type": "event"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "parentNftUuid",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "interestAmount",
-          "type": "uint256"
-        }
-      ],
-      "name": "calculateRewardsEarned",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "totalReward",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
     },
     {
       "inputs": [
@@ -809,6 +785,6 @@
       "type": "function"
     }
   ],
-  "transactionHash": "0x1819b4e14ec32fdadf23ce28668df3e92096bf1c569254daafe9faf9e531229a",
-  "numDeployments": 4
+  "transactionHash": "0x28b44a21cf3705bfac8f372969e2187bcaf0343fb8f87da80cfbd7461851b973",
+  "numDeployments": 1
 }
