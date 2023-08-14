@@ -24,7 +24,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   beforeEach(async () => {
     await deployments.fixture(['RPSetupTest']);
 
-    chainId = network.config.chainId ?? 1;
+    chainId = network.config.chainId ?? 80001;
     lepton = await ethers.getContract('Lepton2');
     ionx = await ethers.getContract('Ionx');
     dai = await ethers.getContractAt('IERC20Detailed', addressBook[chainId].dai);
