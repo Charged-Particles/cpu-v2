@@ -1,5 +1,5 @@
 {
-  "address": "0xb53522f8AE4C4958f71cAB8Ac0067128E03d7cDD",
+  "address": "0x9d0030db503009893a04258B3D4C4Bd15A32bA73",
   "abi": [
     {
       "inputs": [],
@@ -266,7 +266,7 @@
       "outputs": [
         {
           "internalType": "uint256",
-          "name": "totalReward",
+          "name": "",
           "type": "uint256"
         }
       ],
@@ -809,6 +809,6 @@
       "type": "function"
     }
   ],
-  "transactionHash": "0x1819b4e14ec32fdadf23ce28668df3e92096bf1c569254daafe9faf9e531229a",
-  "numDeployments": 4
+  "transactionHash": "0xd258e494d4f88416f13763e3bf208878b97d8e118e48efabe24736daee76ac1a",
+  "numDeployments": 5
 }
