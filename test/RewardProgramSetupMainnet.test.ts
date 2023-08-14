@@ -22,14 +22,15 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   });
 
   beforeEach(async () => {
-    await deployments.fixture(['RPSetupTest']);
+    await deployments.fixture(['RPSetupMain']);
 
     chainId = network.config.chainId ?? 1;
     dai = await ethers.getContractAt('IERC20Detailed', addressBook[chainId].dai);
+    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
+    lepton = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
     universe = await ethers.getContract('UniverseRP');
     rewardProgram = await ethers.getContract('RewardProgramDAI');
-    lepton = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
-    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
+
     chargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles, chargedOwner);
     chargedSettings = await ethers.getContractAt('ChargedSettings', addressBook[chainId].chargedSettings, chargedOwner);
     tokenInfoProxy = await ethers.getContractAt('TokenInfoProxy', addressBook[chainId].tokenInfoProxy, chargedOwner);

@@ -5,7 +5,7 @@ import { ethers } from 'hardhat';
 
 import { addressBook } from '../utils/globals';
 
-const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const RewardProgramSetupMainnet: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network, getNamedAccounts } = hre;
   const { deployer } = await getNamedAccounts();
   const deployerSigner = await ethers.getSigner(deployer);
@@ -36,7 +36,7 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   await chargedParticles.connect(deployerSigner).setController(universeAddress, 'universe');
 };
 
-export default RewardProgramSetupTestnet;
+export default RewardProgramSetupMainnet;
 
-RewardProgramSetupTestnet.tags = ['RPSetupMain'];
-RewardProgramSetupTestnet.dependencies = ['RewardProgramFactoryDAI'];
+RewardProgramSetupMainnet.tags = ['RPSetupMain'];
+RewardProgramSetupMainnet.dependencies = ['RewardProgramFactoryDAI'];
