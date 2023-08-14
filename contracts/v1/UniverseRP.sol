@@ -256,7 +256,6 @@ contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, Blackhole
   {
     require(assetToken != address(0x0), "UNI:E-403");
     _assetRewardPrograms[assetToken] = rewardProgam;
-    // _assetRewardPrograms[nftMultiplier] = rewardProgam;
     emit RewardProgramSet(assetToken, rewardProgam);
   }
 

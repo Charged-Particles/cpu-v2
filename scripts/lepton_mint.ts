@@ -10,9 +10,15 @@ async function main() {
   // const mintTx = await lepton.batchMintLepton(10, { value: price * 10n }).then(tx => tx.wait());
 
 
-  await lepton.transferFrom(deployer, testAccount, 10).then(tx => tx.wait());
-
-
+  await lepton.transferFrom(deployer, testAccount, 11).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 12).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 13).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 14).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 15).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 16).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 17).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 18).then(tx => tx.wait());
+  await lepton.transferFrom(deployer, testAccount, 19).then(tx => tx.wait());
 }
 
 main().catch((error) => {  console.error(error);
