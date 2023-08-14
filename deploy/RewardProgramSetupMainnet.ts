@@ -9,7 +9,7 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 	const { network, getNamedAccounts } = hre;
   const { deployer } = await getNamedAccounts();
   const deployerSigner = await ethers.getSigner(deployer);
-  const chainId = network.config.chainId ?? 80001;
+  const chainId = network.config.chainId ?? 1;
 
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
   const lepton: Lepton2 = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
