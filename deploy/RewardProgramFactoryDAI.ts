@@ -53,4 +53,4 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 export default RewardProgramFactory;
 
 RewardProgramFactory.dependencies = ['UniverseRP'];
-RewardProgramFactory.tags = ['RewardProgramFactory'];
+RewardProgramFactory.tags = ['RewardProgramFactoryDAI'];

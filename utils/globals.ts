@@ -5,6 +5,8 @@ interface AddressBook {
     chargedParticles: string;
     chargedSettings: string;
     tokenInfoProxy: string;
+    ionx: string;
+    lepton: string;
     dai: string;
     usdc: string;
   };
@@ -16,6 +18,8 @@ export const addressBook: AddressBook = {
     'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41',
     'chargedSettings' : '0x07DdB208d52947320d07E0E4611a80Fb7eFD001D',
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
+    'ionx': '',
+    'lepton': '',
     'dai': '',
     'usdc': '',
   },
@@ -24,6 +28,8 @@ export const addressBook: AddressBook = {
     'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41',
     'chargedSettings' : '0x07DdB208d52947320d07E0E4611a80Fb7eFD001D',
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
+    'lepton': '',
+    'ionx': '',
     'dai': '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f',
     'usdc': '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
   },
@@ -32,6 +38,8 @@ export const addressBook: AddressBook = {
     'chargedParticles': '0x51f845af34c60499a1056FCDf47BcBC681A0fA39',
     'chargedSettings' : '0x60428D3e580907C74Ee8690E4E192317864aAE1d',
     'tokenInfoProxy': '0xda8d21714ea5784d5b6990c170485effb9104883',
+    'lepton': '',
+    'ionx': '',
     'dai': '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f',
     'usdc': '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
   }
