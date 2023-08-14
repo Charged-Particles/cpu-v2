@@ -1,12 +1,12 @@
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {DeployFunction} from 'hardhat-deploy/types';
-import { Ionx, RewardProgramFactory, UniverseRP } from '../typechain-types';
+import { Ionx, RewardProgram, RewardProgramFactory, UniverseRP } from '../typechain-types';
 import { ContractTransactionReceipt, EventLog, Log } from 'ethers';
 import { ethers } from 'hardhat';
 import { addressBook } from '../utils/globals';
 import * as RewardProgramJson from '../build/contracts/contracts/v1/incentives/RewardProgram.sol/RewardProgram.json';
 
-const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const RewardProgramFactoryUSDc: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const {network, deployments, getNamedAccounts} = hre;
 	const {deploy} = deployments;
 	const { deployer } = await getNamedAccounts();
@@ -17,18 +17,12 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 
   const ionxAddress = await ionx.getAddress();
   const universeAddress = await universe.getAddress();
-  const daiAddress = addressBook[chainId].usdc;
-
-	await deploy('RewardProgramFactory', {
-		from: deployer,
-		args: [],
-		log: true,
-	});
+  const usdcAddress = addressBook[chainId].usdc;
 
   // Deploy reward program from factory
   const rewardProgramFactory: RewardProgramFactory = await ethers.getContract('RewardProgramFactory');
   const tx = await rewardProgramFactory.createRewardProgram(
-    daiAddress,
+    usdcAddress,
     ionxAddress,
     '10000',
     addressBook[chainId].chargedManager,
@@ -48,9 +42,18 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
       address: rewardProgramAddress,
       transactionHash: tx.hash,
     });
-  }
-};
-export default RewardProgramFactory;
 
-RewardProgramFactory.dependencies = ['UniverseRP'];
-RewardProgramFactory.tags = ['RewardProgramFactoryUSDc'];
+    // Found reward program
+    const rewardProgram: RewardProgram = await ethers.getContract('RewardProgramUSDc');
+    await ionx.approve(rewardProgramAddress, ethers.parseEther('10')).then(tx => tx.wait());
+    await rewardProgram.fundProgram(ethers.parseEther('10')).then(tx => tx.wait());
+  
+    // Register reward program in universe
+    await universe.setRewardProgram(rewardProgramAddress, usdcAddress);
+  }
+
+};
+export default RewardProgramFactoryUSDc;
+
+RewardProgramFactoryUSDc.dependencies = [];
+RewardProgramFactoryUSDc.tags = ['RewardProgramFactoryUSDc'];
