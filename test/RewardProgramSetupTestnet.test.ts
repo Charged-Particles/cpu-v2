@@ -93,5 +93,10 @@ describe('RewardProgramSetupTestnet deployments', async () => {
       2,
       1
     )).to.emit(universe, 'NftDeposit');
+
+    // return solidityKeccak256([ 'address', 'uint256' ], [ contractAddress, tokenId ]);
+    const uuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
+    const gatherGrowthSimulated = await rewardProgram.calculateRewardsEarned(uuid, 100n);
+    expect(gatherGrowthSimulated).to.be.greaterThan(0);
   });
 });

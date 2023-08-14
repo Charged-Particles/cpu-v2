@@ -32,7 +32,7 @@ import "../lib/BlackholePrevention.sol";
 contract RewardProgramFactory is BlackholePrevention, Ownable {
   event RewardProgramCreated(address indexed rewardProgram);
 
-  address internal _template;
+  address public _template;
 
   constructor () public {
     _template = address(new RewardProgram());
