@@ -94,8 +94,14 @@ describe('RewardProgramSetupTestnet deployments', async () => {
       1
     )).to.emit(universe, 'NftDeposit');
 
-    const uuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
-    const gatherGrowthSimulated = await rewardProgram.calculateRewardsEarned(uuid, 100n);
+    const basketUuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
+    const gatherGrowthSimulated = await rewardProgram.calculateRewardsEarned(basketUuid, 100n);
     expect(gatherGrowthSimulated).to.be.greaterThan(0);
+
+    // check multiplier in nft stake
+    const nestedUuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
+    const nftStake = await universe.getNftStake(nestedUuid);
+    console.log(nftStake);
+    expect(nftStake[0]).to.be.greaterThan(0);
   });
 });
