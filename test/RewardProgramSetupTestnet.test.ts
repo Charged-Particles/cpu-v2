@@ -101,7 +101,6 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     // check multiplier in nft stake
     const nestedUuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
     const nftStake = await universe.getNftStake(nestedUuid);
-    console.log(nftStake);
     expect(nftStake[0]).to.be.greaterThan(0);
   });
 });
