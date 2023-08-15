@@ -52,5 +52,9 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 export default RewardProgramSetupTestnet;
 
 RewardProgramSetupTestnet.tags = ['RPSetupTest'];
-// RewardProgramSetupTestnet.dependencies = ['RewardProgramFactoryDAI'];
-RewardProgramSetupTestnet.dependencies = ['Lepton2', 'Ionx', 'RewardProgramFactoryDAI'];
+
+//Dependency for deployment
+RewardProgramSetupTestnet.dependencies = ['RewardProgramFactoryDAI'];
+
+// Dependencies for running test
+// RewardProgramSetupTestnet.dependencies = ['Lepton2', 'Ionx', 'RewardProgramFactoryDAI'];
