@@ -11,11 +11,16 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 	const {deploy} = deployments;
 	const { deployer } = await getNamedAccounts();
   const chainId = network.config.chainId ?? 80001;
+  let ionx: Ionx;
 
+  if (chainId === 1) {
+    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx)
+  } else {
+    ionx = await ethers.getContract('Ionx')
+  }
   const universe: UniverseRP = await ethers.getContract('UniverseRP');
-  const ionx: Ionx = await ethers.getContract('Ionx');
-
   const ionxAddress = await ionx.getAddress();
+
   const universeAddress = await universe.getAddress();
   const daiAddress = addressBook[chainId].dai;
 
