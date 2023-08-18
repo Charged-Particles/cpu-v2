@@ -2,7 +2,7 @@ import { ethers, getNamedAccounts } from "hardhat";
 import { Ionx } from "../typechain-types";
 
 async function main() {
-  const testAccount = '0x6d46b37708dA7Ed4E5C4509495768Fecd3D17C01';
+  const testAccount = '0x48F54e595bf039CF30fa5F768c0b57EAC6508a06';
   const ionx: Ionx = await ethers.getContract('Ionx');
 
   const transaction = await ionx.transfer(testAccount, ethers.parseEther('1000000')).then(tx => tx.wait());
