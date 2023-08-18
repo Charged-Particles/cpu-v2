@@ -109,6 +109,10 @@ contract RewardProgram is
     return _getFundBalance();
   }
 
+  function calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) public view override returns (uint256) {
+    return _calculateRewardsEarned(parentNftUuid, interestAmount);
+  }
+
   function getClaimableRewards(address contractAddress, uint256 tokenId) external view override returns (uint256) {
     uint256 parentNftUuid = contractAddress.getTokenUUID(tokenId);
     return _assetStake[parentNftUuid].claimableRewards;
@@ -212,10 +216,6 @@ contract RewardProgram is
     uint256 baseReward = _calculateBaseReward(interestAmount);
     uint256 leptonMultipliedReward = _calculateMultipliedReward(parentNftUuid, baseReward);
     totalReward = _convertDecimals(leptonMultipliedReward);
-  }
-
-  function calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) public view returns (uint256) {
-    return _calculateRewardsEarned(parentNftUuid, interestAmount);
   }
 
   function _calculateBaseReward(uint256 amount) internal view returns(uint256 baseReward) {

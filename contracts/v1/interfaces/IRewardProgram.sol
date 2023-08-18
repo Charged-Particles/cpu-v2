@@ -55,6 +55,7 @@ interface IRewardProgram {
   function getProgramData() external view returns (ProgramRewardData memory programData);
   function getAssetStake(uint256 uuid) external view returns (AssetStake memory);
   function getFundBalance() external view returns (uint256);
+  function calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) external view returns (uint256);
   function getClaimableRewards(address contractAddress, uint256 tokenId) external view returns (uint256);
 
   function registerExistingDeposits(address contractAddress, uint256 tokenId, string calldata walletManagerId) external;

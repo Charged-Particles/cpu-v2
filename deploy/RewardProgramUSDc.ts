@@ -17,12 +17,18 @@ const RewardProgramFactoryUSDc: DeployFunction = async (hre: HardhatRuntimeEnvir
 
   const ionxAddress = await ionx.getAddress();
   const universeAddress = await universe.getAddress();
-  const usdcAddress = addressBook[chainId].usdc;
+  const stakingTokenAddress = addressBook[chainId].usdc;
+
+	// await deploy('RewardProgramFactory', {
+	// 	from: deployer,
+	// 	args: [],
+	// 	log: true,
+	// });
 
   // Deploy reward program from factory
   const rewardProgramFactory: RewardProgramFactory = await ethers.getContract('RewardProgramFactory');
   const tx = await rewardProgramFactory.createRewardProgram(
-    usdcAddress,
+    stakingTokenAddress,
     ionxAddress,
     '10000',
     addressBook[chainId].chargedManager,
@@ -47,9 +53,9 @@ const RewardProgramFactoryUSDc: DeployFunction = async (hre: HardhatRuntimeEnvir
     const rewardProgram: RewardProgram = await ethers.getContract('RewardProgramUSDc');
     await ionx.approve(rewardProgramAddress, ethers.parseEther('10')).then(tx => tx.wait());
     await rewardProgram.fundProgram(ethers.parseEther('10')).then(tx => tx.wait());
-  
+
     // Register reward program in universe
-    await universe.setRewardProgram(rewardProgramAddress, usdcAddress);
+    await universe.setRewardProgram(rewardProgramAddress, stakingTokenAddress);
   }
 
 };

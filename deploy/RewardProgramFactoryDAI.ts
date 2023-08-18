@@ -22,7 +22,7 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
   const ionxAddress = await ionx.getAddress();
 
   const universeAddress = await universe.getAddress();
-  const daiAddress = addressBook[chainId].dai;
+  const stakingTokenAddress = addressBook[chainId].dai;
 
 	await deploy('RewardProgramFactory', {
 		from: deployer,
@@ -33,7 +33,7 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
   // Deploy reward program from factory
   const rewardProgramFactory: RewardProgramFactory = await ethers.getContract('RewardProgramFactory');
   const tx = await rewardProgramFactory.createRewardProgram(
-    daiAddress,
+    stakingTokenAddress,
     ionxAddress,
     '10000',
     addressBook[chainId].chargedManager,
