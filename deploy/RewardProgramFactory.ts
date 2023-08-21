@@ -1,21 +1,18 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
+import { RewardProgramFactory } from '../typechain-types';
 
-const UniverseRP: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { deployments, getNamedAccounts } = hre;
 	const { deploy } = deployments;
 	const { deployer } = await getNamedAccounts();
 
-	await deploy('UniverseRP', {
+	await deploy('RewardProgramFactory', {
 		from: deployer,
 		args: [],
 		log: true,
-    proxy: {
-      proxyContract: 'OpenZeppelinTransparentProxy',
-      methodName: 'initialize',
-    },
 	});
 };
-export default UniverseRP;
+export default RewardProgramFactory;
 
-UniverseRP.tags = ['UniverseRP'];
+RewardProgramFactory.tags = ['RewardProgramFactory'];

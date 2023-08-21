@@ -1,6 +1,6 @@
-import { ChargedParticles, Ionx, Lepton2, RewardProgram, RewardProgramFactory, UniverseRP } from '../typechain-types';
-import {HardhatRuntimeEnvironment} from 'hardhat/types';
-import {DeployFunction} from 'hardhat-deploy/types';
+import { ChargedParticles, Ionx, Lepton2, RewardProgram, UniverseRP } from '../typechain-types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
 import { ethers } from 'hardhat';
 
 import { addressBook } from '../utils/globals';
@@ -15,20 +15,15 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const chainId = network.config.chainId ?? 80001;
 
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
-  const rewardProgram: RewardProgram = await ethers.getContract('RewardProgramDAI');
   const universe: UniverseRP = await ethers.getContract('UniverseRP');
   const lepton: Lepton2 = await ethers.getContract('Lepton2');
   const ionx: Ionx = await ethers.getContract('Ionx');
 
-  const ionxAddress = await ionx.getAddress();
   const leptonAddress = await lepton.getAddress();
   const universeAddress = await universe.getAddress();
-  const rewardProgramAddress = await rewardProgram.getAddress();
   const chargedParticlesOwner = await chargedParticles.owner();
-  const daiAddress = addressBook[chainId].dai;
 
   let chargedParticlesOwnerSigner: Signer;
-
   if (chainId !== 80001) {
     chargedParticlesOwnerSigner = await getChargedParticlesOwner();
     await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
@@ -36,25 +31,35 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
     chargedParticlesOwnerSigner = deployerSigner;
   }
 
-  // fund reward program
-  await ionx.approve(rewardProgramAddress, ethers.parseEther('10')).then(tx => tx.wait());
-  await rewardProgram.fundProgram(ethers.parseEther('10')).then(tx => tx.wait());
-
   // setup universe
+  console.log(`  - Preparing UniverseRP...`);
   await universe.setChargedParticles(addressBook[chainId].chargedParticles);
   await universe.setMultiplierNft(leptonAddress).then(tx => tx.wait());
-  await universe.setRewardProgram(rewardProgramAddress, daiAddress);
 
   // setup charged particles
+  console.log(`  - Registering UniverseRP in Charged Particles...`);
   await chargedParticles.connect(chargedParticlesOwnerSigner).setController(universeAddress, 'universe');
+
+  // Register & Fund Reward Programs for each Staking Token
+  for (let i = 0; i < addressBook[chainId].stakingTokens.length; i++) {
+    const stakingToken = addressBook[chainId].stakingTokens[i];
+
+    // fund reward program
+    console.log(`  - Funding RewardProgram for ${stakingToken.id} with ${stakingToken.funding} IONX...`);
+    const rewardProgram: RewardProgram = await ethers.getContract(`RewardProgram${stakingToken.id}`);
+    const rewardProgramAddress = await rewardProgram.getAddress();
+    await ionx.approve(rewardProgramAddress, ethers.parseEther(stakingToken.funding)).then(tx => tx.wait());
+    await rewardProgram.fundProgram(ethers.parseEther(stakingToken.funding)).then(tx => tx.wait());
+
+    // register reward program in universe
+    console.log(`  -- Registering RewardProgram in the Universe...`);
+    await universe.setRewardProgram(rewardProgramAddress, stakingToken.address);
+
+    console.log(`  -- RewardProgram for ${stakingToken.id} is registered!`);
+  }
 };
 
 export default RewardProgramSetupTestnet;
 
+RewardProgramSetupTestnet.dependencies = ['Lepton2', 'Ionx', 'RewardPrograms'];
 RewardProgramSetupTestnet.tags = ['RPSetupTest'];
-
-//Dependency for deployment
-RewardProgramSetupTestnet.dependencies = ['RewardProgramFactoryDAI'];
-
-// Dependencies for running test
-// RewardProgramSetupTestnet.dependencies = ['Lepton2', 'Ionx', 'RewardProgramFactoryDAI'];

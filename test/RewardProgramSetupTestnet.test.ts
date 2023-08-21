@@ -27,8 +27,6 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     chainId = network.config.chainId ?? 80001;
     lepton = await ethers.getContract('Lepton2');
     ionx = await ethers.getContract('Ionx');
-    dai = await ethers.getContractAt('IERC20Detailed', addressBook[chainId].dai);
-    rewardProgram = await ethers.getContract('RewardProgramDAI');
     universe = await ethers.getContract('UniverseRP');
     chargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles, chargedOwner);
     chargedSettings = await ethers.getContractAt('ChargedSettings', addressBook[chainId].chargedSettings, chargedOwner);
@@ -66,6 +64,10 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   });
 
   it ('Energizes ', async () => {
+    chainId = network.config.chainId ?? 80001;
+    dai = await ethers.getContractAt('IERC20Detailed', addressBook[chainId].stakingTokens[0].address);
+    rewardProgram = await ethers.getContract('RewardProgramDAI');
+
     await lepton.mintLepton({ value: ethers.parseEther('0.3') }).then(tx => tx.wait());
     await lepton.mintLepton({ value: ethers.parseEther('0.3') }).then(tx => tx.wait());
     expect(await lepton.balanceOf(deployer)).to.be.eq(2);
