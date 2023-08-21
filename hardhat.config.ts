@@ -17,6 +17,9 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       { 
+        version: '0.4.7'
+      },
+      { 
         version: '0.6.12'
       },
       { 
@@ -65,8 +68,8 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 80001,
       forking: {
-        url: "https://polygon-mumbai.g.alchemy.com/v2/Imng9Ni9rvwiagGqjWTSPdWbDATIgn3O",
-        blockNumber: 38678307
+        url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_MUMBAI_API_KEY,
+        blockNumber: 38812688
         // url: "https://eth-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
         // blockNumber: 17845951 
       },

@@ -49,6 +49,8 @@ interface IRewardProgram {
     string walletManagerId;
   }
 
+  function initialize(address stakingToken, address rewardToken, uint256 baseMultiplier, address chargedManagers, address universe, address owner) external;
+
   /* user functions */
   function getProgramData() external view returns (ProgramRewardData memory programData);
   function getAssetStake(uint256 uuid) external view returns (AssetStake memory);

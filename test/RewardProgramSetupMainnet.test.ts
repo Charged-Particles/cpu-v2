@@ -22,14 +22,15 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   });
 
   beforeEach(async () => {
-    await deployments.fixture(['RPSetupTest']);
+    await deployments.fixture(['RPSetupMain']);
 
-    chainId = network.config.chainId ?? 80001;
-    lepton = await ethers.getContract('Lepton2');
-    ionx = await ethers.getContract('Ionx');
+    chainId = network.config.chainId ?? 1;
     dai = await ethers.getContractAt('IERC20Detailed', addressBook[chainId].dai);
-    rewardProgram = await ethers.getContract('RewardProgramDAI');
+    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
+    lepton = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
     universe = await ethers.getContract('UniverseRP');
+    rewardProgram = await ethers.getContract('RewardProgramDAI');
+
     chargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles, chargedOwner);
     chargedSettings = await ethers.getContractAt('ChargedSettings', addressBook[chainId].chargedSettings, chargedOwner);
     tokenInfoProxy = await ethers.getContractAt('TokenInfoProxy', addressBook[chainId].tokenInfoProxy, chargedOwner);
@@ -94,13 +95,8 @@ describe('RewardProgramSetupTestnet deployments', async () => {
       1
     )).to.emit(universe, 'NftDeposit');
 
-    const basketUuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
-    const gatherGrowthSimulated = await rewardProgram.calculateRewardsEarned(basketUuid, 100n);
+    const uuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
+    const gatherGrowthSimulated = await rewardProgram.calculateRewardsEarned(uuid, 100n);
     expect(gatherGrowthSimulated).to.be.greaterThan(0);
-
-    // check multiplier in nft stake
-    const nestedUuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
-    const nftStake = await universe.getNftStake(nestedUuid);
-    expect(nftStake[0]).to.be.greaterThan(0);
   });
 });

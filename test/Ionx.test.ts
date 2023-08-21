@@ -14,6 +14,7 @@ describe('Ionx deployment', async () => {
   before(async () => {
     const { deployer: deployerAccount, user1 } = await getNamedAccounts();
     deployer = deployerAccount;
+    console.log(deployer);
   });
 
   it ('Deployer is rich $$', async () => {

@@ -40,7 +40,6 @@ import "./lib/TokenInfo.sol";
 import "./lib/BlackholePrevention.sol";
 import "./interfaces/IRewardProgram.sol";
 
-
 /**
  * @notice Charged Particles Universe Contract with Rewards Program
  * @dev Upgradeable Contract
@@ -256,7 +255,6 @@ contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, Blackhole
   {
     require(assetToken != address(0x0), "UNI:E-403");
     _assetRewardPrograms[assetToken] = rewardProgam;
-    // _assetRewardPrograms[nftMultiplier] = rewardProgam;
     emit RewardProgramSet(assetToken, rewardProgam);
   }
 
@@ -354,8 +352,8 @@ contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, Blackhole
 
   function _calculateTotalMultiplier(uint256 parentNftUuid) internal view returns (uint256) {
     uint256 len = _multiplierNftsSet[parentNftUuid].length();
-    uint256 multiplier = 0;
     uint256 i = 0;
+    uint256 multiplier = _multiplierNftsSet[parentNftUuid].at(i);
 
     // If holding all 6, Max Multiplier of 10X
     if (len == 6) {

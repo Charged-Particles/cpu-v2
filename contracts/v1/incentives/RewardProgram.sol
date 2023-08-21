@@ -26,7 +26,6 @@ pragma experimental ABIEncoderV2;
 
 import "../interfaces/IRewardProgram.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/introspection/IERC165.sol";
 import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
@@ -46,7 +45,6 @@ import "../interfaces/IERC20Detailed.sol";
 contract RewardProgram is
   IRewardProgram,
   BlackholePrevention,
-  Ownable,
   IERC165,
   ReentrancyGuard,
   IERC721Receiver,
@@ -60,6 +58,7 @@ contract RewardProgram is
   uint256 constant private PERCENTAGE_SCALE = 1e4; // 10000 (100%)
   uint256 constant private LEPTON_MULTIPLIER_SCALE = 1e2;
 
+  address private _owner;
   IUniverseRP private _universe;
   IChargedManagers private _chargedManagers;
   ProgramRewardData private _programData;
@@ -70,27 +69,29 @@ contract RewardProgram is
   |          Initialization           |
   |__________________________________*/
 
-//
-//  TODO: Deploy Clones from Factory and pass required settings into Constructor
-//
-
-  // constructor(
-  //   address stakingToken,
-  //   address rewardToken,
-  //   uint256 baseMultiplier,
-  //   address chargedManagers,
-  //   address universe
-  // ) public {
-  //   // Prepare Reward Program
-  //   _programData.stakingToken = stakingToken;
-  //   _programData.rewardToken = rewardToken;
-  //   _programData.baseMultiplier = baseMultiplier; // Basis Points
-
-  //   // Connect to Charged Particles
-  //   _chargedManagers = IChargedManagers(chargedManagers);
-  //   _universe = IUniverseRP(universe);
-  // }
   constructor() public {}
+
+  function initialize(
+    address stakingToken,
+    address rewardToken,
+    uint256 baseMultiplier,
+    address chargedManagers,
+    address universe,
+    address owner
+  ) external override {
+    require(_owner == address(0x0), "Already initialized");
+    _owner = owner;
+
+    // Prepare Reward Program
+    _programData.stakingToken = stakingToken;
+    _programData.rewardToken = rewardToken;
+    _programData.baseMultiplier = baseMultiplier; // Basis Points
+
+    // Connect to Charged Particles
+    _chargedManagers = IChargedManagers(chargedManagers);
+    _universe = IUniverseRP(universe);
+  }
+
 
   /***********************************|
   |         Public Functions          |
@@ -140,6 +141,10 @@ contract RewardProgram is
     ) {
       return true;
     }
+  }
+
+  function owner() public view returns (address) {
+    return _owner;
   }
 
 
@@ -207,6 +212,10 @@ contract RewardProgram is
     uint256 baseReward = _calculateBaseReward(interestAmount);
     uint256 leptonMultipliedReward = _calculateMultipliedReward(parentNftUuid, baseReward);
     totalReward = _convertDecimals(leptonMultipliedReward);
+  }
+
+  function calculateRewardsEarned(uint256 parentNftUuid, uint256 interestAmount) public view returns (uint256) {
+    return _calculateRewardsEarned(parentNftUuid, interestAmount);
   }
 
   function _calculateBaseReward(uint256 amount) internal view returns(uint256 baseReward) {
@@ -364,6 +373,12 @@ contract RewardProgram is
 
   function _getFundBalance() internal view returns (uint256) {
     return IERC20Detailed(_programData.rewardToken).balanceOf(address(this));
+  }
+
+
+  modifier onlyOwner() {
+    require(_owner == msg.sender, "Caller is not the owner");
+    _;
   }
 
   modifier onlyUniverse() {

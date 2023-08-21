@@ -4,37 +4,24 @@ import {DeployFunction} from 'hardhat-deploy/types';
 import { ethers } from 'hardhat';
 
 import { addressBook } from '../utils/globals';
-import { getChargedParticlesOwner } from '../utils/getSigners';
-import { Signer } from 'ethers';
 
-
-const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const RewardProgramSetupMainnet: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network, getNamedAccounts } = hre;
   const { deployer } = await getNamedAccounts();
   const deployerSigner = await ethers.getSigner(deployer);
-  const chainId = network.config.chainId ?? 80001;
+  const chainId = network.config.chainId ?? 1;
 
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
+  const lepton: Lepton2 = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
+  const ionx: Ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
+
   const rewardProgram: RewardProgram = await ethers.getContract('RewardProgramDAI');
   const universe: UniverseRP = await ethers.getContract('UniverseRP');
-  const lepton: Lepton2 = await ethers.getContract('Lepton2');
-  const ionx: Ionx = await ethers.getContract('Ionx');
 
-  const ionxAddress = await ionx.getAddress();
   const leptonAddress = await lepton.getAddress();
   const universeAddress = await universe.getAddress();
   const rewardProgramAddress = await rewardProgram.getAddress();
-  const chargedParticlesOwner = await chargedParticles.owner();
   const daiAddress = addressBook[chainId].dai;
-
-  let chargedParticlesOwnerSigner: Signer;
-
-  if (chainId !== 80001) {
-    chargedParticlesOwnerSigner = await getChargedParticlesOwner();
-    await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
-  } else {
-    chargedParticlesOwnerSigner = deployerSigner;
-  }
 
   // fund reward program
   await ionx.approve(rewardProgramAddress, ethers.parseEther('10')).then(tx => tx.wait());
@@ -46,15 +33,10 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   await universe.setRewardProgram(rewardProgramAddress, daiAddress);
 
   // setup charged particles
-  await chargedParticles.connect(chargedParticlesOwnerSigner).setController(universeAddress, 'universe');
+  await chargedParticles.connect(deployerSigner).setController(universeAddress, 'universe');
 };
 
-export default RewardProgramSetupTestnet;
+export default RewardProgramSetupMainnet;
 
-RewardProgramSetupTestnet.tags = ['RPSetupTest'];
-
-//Dependency for deployment
-RewardProgramSetupTestnet.dependencies = ['RewardProgramFactoryDAI'];
-
-// Dependencies for running test
-// RewardProgramSetupTestnet.dependencies = ['Lepton2', 'Ionx', 'RewardProgramFactoryDAI'];
+RewardProgramSetupMainnet.tags = ['RPSetupMain'];
+RewardProgramSetupMainnet.dependencies = ['RewardProgramFactoryDAI'];
