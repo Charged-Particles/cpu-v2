@@ -1,6 +1,6 @@
 import { ethers, network } from 'hardhat';
-import {HardhatRuntimeEnvironment} from 'hardhat/types';
-import {DeployFunction} from 'hardhat-deploy/types';
+import { HardhatRuntimeEnvironment } from 'hardhat/types';
+import { DeployFunction } from 'hardhat-deploy/types';
 import { parseEther as toWei } from 'ethers';
 import { Lepton2 } from '../typechain-types';
 
@@ -67,9 +67,8 @@ export const leptonConfig = {
 }
 
 const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-	const {deployments, getNamedAccounts} = hre;
-	const {deploy} = deployments;
-
+	const { deployments, getNamedAccounts } = hre;
+	const { deploy } = deployments;
 	const { deployer } = await getNamedAccounts();
 
 	await deploy('Lepton2', {

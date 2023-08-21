@@ -1,4 +1,11 @@
 
+interface StakingToken {
+  id: string;
+  address: string;
+  multiplier: string;
+  funding: string;
+}
+
 interface AddressBook {
   [chainId: number]: {
     chargedManager: string;
@@ -7,8 +14,7 @@ interface AddressBook {
     tokenInfoProxy: string;
     ionx: string;
     lepton: string;
-    dai: string;
-    usdc: string;
+    stakingTokens: Array<StakingToken>;
   };
 }
 
@@ -20,8 +26,10 @@ export const addressBook: AddressBook = {
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
     'ionx': '0x02D3A27Ac3f55d5D91Fb0f52759842696a864217',
     'lepton': '0x76a5df1c6F53A4B80c8c8177edf52FBbC368E825',
-    'dai': '',
-    'usdc': '',
+    'stakingTokens': [
+      { id: 'DAI',  address: '', multiplier: '10000', funding: '10' },
+      { id: 'USDC', address: '', multiplier: '10000', funding: '10' },
+    ],
   },
   31337: {
     'chargedManager': '0x7b07Ec627d2426b89C44a6cC75Dc57c27a52174d',
@@ -30,8 +38,10 @@ export const addressBook: AddressBook = {
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
     'lepton': '',
     'ionx': '',
-    'dai': '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f',
-    'usdc': '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
+    'stakingTokens': [
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '50000' },
+      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '50000' },
+    ],
   },
   80001: {
     'chargedManager': '0xE8c6462ceEeeC3f8c318e29Af143f623de979D69',
@@ -40,7 +50,9 @@ export const addressBook: AddressBook = {
     'tokenInfoProxy': '0xda8d21714ea5784d5b6990c170485effb9104883',
     'lepton': '',
     'ionx': '',
-    'dai': '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f',
-    'usdc': '0x0fa8781a83e46826621b3bc094ea2a0212e71b23',
+    'stakingTokens': [
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '50000' },
+      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '50000' },
+    ],
   }
 }

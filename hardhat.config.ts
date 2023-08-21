@@ -1,10 +1,10 @@
 require('dotenv').config()
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from 'hardhat/config';
 import '@typechain/hardhat';
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 import '@nomicfoundation/hardhat-ethers';
-import "@nomicfoundation/hardhat-toolbox";
+import '@nomicfoundation/hardhat-toolbox';
 import '@nomicfoundation/hardhat-chai-matchers'
 
 const mnemonic = {
@@ -16,20 +16,32 @@ const optimizerDisabled = process.env.OPTIMIZER_DISABLED
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
-      { 
-        version: '0.4.7'
-      },
-      { 
-        version: '0.6.12'
-      },
-      { 
-        version: '0.8.13'
+      {
+        version: '0.4.7',
       },
       {
-        version: "0.7.6",
+        version: '0.6.12',
+        settings: {
+          optimizer: {
+            enabled: !optimizerDisabled,
+            runs: 200
+          }
+        },
       },
       {
-        version: "0.8.17",
+        version: '0.8.13',
+        settings: {
+          optimizer: {
+            enabled: !optimizerDisabled,
+            runs: 200
+          }
+        },
+      },
+      {
+        version: '0.7.6',
+      },
+      {
+        version: '0.8.17',
         settings: {
           optimizer: {
             enabled: !optimizerDisabled,
@@ -57,9 +69,9 @@ const config: HardhatUserConfig = {
     },
   },
   paths: {
-      sources: "./contracts",
-      tests: "./test",
-      cache: "./cache",
+      sources: './contracts',
+      tests: './test',
+      cache: './cache',
       artifacts: './build/contracts',
       deploy: './deploy',
       deployments: './deployments'
@@ -68,10 +80,10 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 80001,
       forking: {
-        url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_MUMBAI_API_KEY,
+        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
         blockNumber: 38812688
-        // url: "https://eth-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        // blockNumber: 17845951 
+        // url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
+        // blockNumber: 38812688
       },
       accounts: {
         mnemonic: mnemonic.testnet,
@@ -80,7 +92,7 @@ const config: HardhatUserConfig = {
       },
     },
     goerli: {
-        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -89,7 +101,7 @@ const config: HardhatUserConfig = {
         }
     },
     mainnet: {
-        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.mainnet,
@@ -98,7 +110,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-        url: 'https://polygon-mumbai.g.alchemy.com/v2/Imng9Ni9rvwiagGqjWTSPdWbDATIgn3O',
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -108,7 +120,7 @@ const config: HardhatUserConfig = {
         chainId: 80001
     },
     polygon: {
-        url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.mainnet,
