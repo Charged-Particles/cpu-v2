@@ -3,20 +3,39 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "https://github.com/Charged-Particles/cpu-v2.git",
-  "author": "scammi <scammi@gmail.com>",
-  "license": "MIT",
+  "scripts": {
+    "reinstall": "rm -rf node_modules && rm -f yarn.lock && yarn clean && yarn",
+    "clean": "rm -rf build cache coverage coverage.json test-results.xml",
+    "clean-deployed": "rm -rf abis && rm -f .openzeppelin/unknown-31337.json && rm -f .openzeppelin/kovan.json",
+    "clean-test": "rm -rf abis .openzeppelin/${npm_config_network:-'unknown-31337'}.json deployments/${npm_config_network:-hardhat}/*.json test-results.xml",
+    "verify": "yarn hint && yarn test",
+    "compile": "hardhat --show-stack-traces --max-memory 8192 compile",
+    "test": "yarn clean-test && hardhat test --show-stack-traces && yarn clean-test",
+    "test-only": "yarn clean-test && hardhat test --show-stack-traces",
+    "watch-test": "hardhat watch test",
+    "hint": "solhint \"contracts/**/*.sol\"",
+    "coverage": "yarn clean-test && hardhat --show-stack-traces coverage --temp coverage_build && yarn clean-test",
+    "gas": "REPORT_GAS=true hardhat test",
+    "deploy": "yarn clean-test && hardhat deploy",
+    "deploy-only": "hardhat deploy --tags",
+    "etherscan-verify": "hardhat deploy --tags verify --network",
+    "gen-docs": "solidity-docgen -i contracts -o docs"
+  },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.3",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
     "@nomicfoundation/hardhat-toolbox": "^3.0.0",
     "@nomicfoundation/hardhat-verify": "^1.0.0",
+    "@opengsn/gsn": "2.0.1",
+    "@openzeppelin/hardhat-upgrades": "^2.1.0",
     "@typechain/ethers-v6": "^0.4.3",
     "@typechain/hardhat": "^8.0.3",
     "@types/chai": "^4.2.0",
     "@types/mocha": ">=9.1.0",
     "@types/node": ">=12.0.0",
     "chai": "^4.2.0",
+    "erc20permit": "0.0.4",
     "ethers": "^6.6.2",
     "hardhat": "^2.14.0",
     "hardhat-deploy": "^0.11.34",
@@ -28,7 +47,8 @@
     "typescript": ">=4.5.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^4.9.2",
+    "@openzeppelin/contracts": "^3.2.0",
+    "@openzeppelin/contracts-upgradeable": "^3.3.0",
     "dotenv": "^16.3.1"
   }
 }

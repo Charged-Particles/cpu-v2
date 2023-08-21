@@ -17,6 +17,12 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       { 
+        version: '0.4.7'
+      },
+      { 
+        version: '0.6.12'
+      },
+      { 
         version: '0.8.13'
       },
       {
@@ -60,10 +66,12 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      chainId: 137,
+      chainId: 80001,
       forking: {
-        url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        blockNumber: 42543137 
+        url: "https://polygon-mumbai.g.alchemy.com/v2/" + process.env.ALCHEMY_MUMBAI_API_KEY,
+        blockNumber: 38812688
+        // url: "https://eth-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
+        // blockNumber: 17845951 
       },
       accounts: {
         mnemonic: mnemonic.testnet,
@@ -90,7 +98,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-        url: 'https://rpc-mumbai.maticvigil.com',
+        url: 'https://polygon-mumbai.g.alchemy.com/v2/Imng9Ni9rvwiagGqjWTSPdWbDATIgn3O',
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
