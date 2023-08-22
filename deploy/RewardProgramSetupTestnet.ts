@@ -1,7 +1,7 @@
 import { ChargedParticles, Ionx, Lepton2, RewardProgram, UniverseRP } from '../typechain-types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { ethers } from 'hardhat';
+import { ethers, network } from 'hardhat';
 
 import { addressBook } from '../utils/globals';
 import { getChargedParticlesOwner } from '../utils/getSigners';
@@ -9,7 +9,7 @@ import { Signer } from 'ethers';
 
 
 const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-	const { network, getNamedAccounts } = hre;
+	const { getNamedAccounts } = hre;
   const { deployer } = await getNamedAccounts();
   const deployerSigner = await ethers.getSigner(deployer);
   const chainId = network.config.chainId ?? 80001;
@@ -23,8 +23,10 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   const universeAddress = await universe.getAddress();
   const chargedParticlesOwner = await chargedParticles.owner();
 
+  const isHardhat = network?.config?.forking?.enabled ?? false;
+
   let chargedParticlesOwnerSigner: Signer;
-  if (chainId !== 80001) {
+  if (isHardhat) {
     chargedParticlesOwnerSigner = await getChargedParticlesOwner();
     await deployerSigner.sendTransaction({ to: chargedParticlesOwner, value: ethers.parseEther('1') });
   } else {
@@ -35,10 +37,6 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   console.log(`  - Preparing UniverseRP...`);
   await universe.setChargedParticles(addressBook[chainId].chargedParticles);
   await universe.setMultiplierNft(leptonAddress).then(tx => tx.wait());
-
-  // setup charged particles
-  console.log(`  - Registering UniverseRP in Charged Particles...`);
-  await chargedParticles.connect(chargedParticlesOwnerSigner).setController(universeAddress, 'universe');
 
   // Register & Fund Reward Programs for each Staking Token
   for (let i = 0; i < addressBook[chainId].stakingTokens.length; i++) {
@@ -57,6 +55,10 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 
     console.log(`  -- RewardProgram for ${stakingToken.id} is registered!`);
   }
+
+  // setup charged particles
+  console.log(`  - Registering UniverseRP in Charged Particles...`);
+  await chargedParticles.connect(chargedParticlesOwnerSigner).setController(universeAddress, 'universe');
 };
 
 export default RewardProgramSetupTestnet;

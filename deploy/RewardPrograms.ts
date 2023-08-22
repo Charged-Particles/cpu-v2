@@ -4,15 +4,16 @@ import { Ionx, RewardProgramFactory, UniverseRP } from '../typechain-types';
 import { ContractTransactionReceipt, EventLog, Log } from 'ethers';
 import { ethers } from 'hardhat';
 import { addressBook } from '../utils/globals';
+import { isTestnet } from '../utils/isTestnet';
 import * as RewardProgramJson from '../build/contracts/contracts/v1/incentives/RewardProgram.sol/RewardProgram.json';
 
 const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network, deployments } = hre;
-  const chainId = network.config.chainId ?? 80001;
+  const chainId = network.config.chainId ?? 1;
 
   // Load IONX
   let ionx: Ionx;
-  if (chainId === 1) {
+  if (!isTestnet()) {
     ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx)
   } else {
     ionx = await ethers.getContract('Ionx')
@@ -62,5 +63,5 @@ const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 };
 export default RewardPrograms;
 
-RewardPrograms.dependencies = ['Ionx', 'UniverseRP', 'RewardProgramFactory'];
+RewardPrograms.dependencies = ['UniverseRP', 'RewardProgramFactory'];
 RewardPrograms.tags = ['RewardPrograms'];

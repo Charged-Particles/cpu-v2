@@ -24,10 +24,6 @@ const RewardProgramSetupMainnet: DeployFunction = async (hre: HardhatRuntimeEnvi
   await universe.setChargedParticles(addressBook[chainId].chargedParticles);
   await universe.setMultiplierNft(leptonAddress).then(tx => tx.wait());
 
-  // setup charged particles
-  console.log(`Registering UniverseRP in Charged Particles...`);
-  await chargedParticles.connect(deployerSigner).setController(universeAddress, 'universe');
-
   // Register & Fund Reward Programs for each Staking Token
   for (let i = 0; i < addressBook[chainId].stakingTokens.length; i++) {
     const stakingToken = addressBook[chainId].stakingTokens[i];
@@ -45,6 +41,10 @@ const RewardProgramSetupMainnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 
     console.log(`RewardProgram for ${stakingToken.id} is registered!`);
   }
+
+  // finally: setup charged particles
+  console.log(`Registering UniverseRP in Charged Particles...`);
+  await chargedParticles.connect(deployerSigner).setController(universeAddress, 'universe');
 };
 
 export default RewardProgramSetupMainnet;

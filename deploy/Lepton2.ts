@@ -3,6 +3,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { parseEther as toWei } from 'ethers';
 import { Lepton2 } from '../typechain-types';
+import { isTestnet } from '../utils/isTestnet';
 
 interface LeptonType {
   tokenUri: string;
@@ -82,9 +83,7 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
   // mint
   let chainId = network.config.chainId ?? 1;
-  if (chainId === 5) { chainId = 42; }
-  else if (chainId === 80001) { chainId = 42; }
-  else if (chainId === 137) { chainId = 1; }
+  if (isTestnet()) { chainId = 42; }
 
   for (const leptonKey in leptonConfig.types) {
     const lepton: LeptonType = leptonConfig.types[leptonKey];

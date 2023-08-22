@@ -31,6 +31,19 @@ export const addressBook: AddressBook = {
       { id: 'USDC', address: '', multiplier: '10000', funding: '10' },
     ],
   },
+  137: {
+    'chargedManager': '0x0f42057be75AF6D977a0cE900E732eA4d490B580',
+    'chargedParticles': '0x0288280Df6221E7e9f23c1BB398c820ae0Aa6c10',
+    'chargedSettings' : '0xdc29C7014d104432B15eD2334e654fCBf3d5E528',
+    'tokenInfoProxy': '0x349eEF86Ea34A69D8B880D5Fd5F39a6d2a7DE716',
+    'ionx': '0x3Ba246d19a07F4232D3eAacD669eA2516AaE5A7f',
+    'lepton': '0x4ED360c8725D3A63F564f8484A582D0a7CecEa7a',
+    'stakingTokens': [
+      { id: 'DAI',  address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063', multiplier: '41000', funding: '10000' },
+      { id: 'USDC', address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', multiplier: '42850', funding: '10000' },
+      { id: 'USDT', address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', multiplier: '22750', funding: '10000' },
+    ],
+  },
   31337: {
     'chargedManager': '0x7b07Ec627d2426b89C44a6cC75Dc57c27a52174d',
     'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41',
@@ -39,8 +52,8 @@ export const addressBook: AddressBook = {
     'lepton': '',
     'ionx': '',
     'stakingTokens': [
-      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '50000' },
-      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '50000' },
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '10000' },
+      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '10000' },
     ],
   },
   80001: {
@@ -51,8 +64,8 @@ export const addressBook: AddressBook = {
     'lepton': '',
     'ionx': '',
     'stakingTokens': [
-      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '50000' },
-      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '50000' },
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '10000' },
+      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '10000' },
     ],
   }
 }
