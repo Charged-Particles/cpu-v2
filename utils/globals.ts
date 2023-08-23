@@ -52,8 +52,8 @@ export const addressBook: AddressBook = {
     'lepton': '',
     'ionx': '',
     'stakingTokens': [
-      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '10000' },
-      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '10000' },
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
+      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
     ],
   },
   80001: {
@@ -64,8 +64,8 @@ export const addressBook: AddressBook = {
     'lepton': '',
     'ionx': '',
     'stakingTokens': [
-      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '10000', funding: '10000' },
-      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '10000', funding: '10000' },
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
+      { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
     ],
   }
 }
