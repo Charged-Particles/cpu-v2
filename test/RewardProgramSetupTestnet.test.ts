@@ -286,7 +286,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   it('Rewards with Six Lepton Multipliers', async () => {
     const nfts = await _mintAllLeptons();
 
-    // Confirm Multiplier on Two Lepton Deposits
+    // Confirm Multiplier on Six Lepton Deposits
     const nestedUuid = ethers.solidityPackedKeccak256([ 'address', 'uint256' ], [leptonAddress, 1]);
     await expect(_bondNft(1, nfts.tier1)).to.emit(universe, 'NftDeposit');
     await expect(_bondNft(1, nfts.tier2)).to.emit(universe, 'NftDeposit');
