@@ -10,6 +10,7 @@ import * as RewardProgramJson from '../build/contracts/contracts/v1/incentives/R
 const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network, deployments } = hre;
   const chainId = network.config.chainId ?? 1;
+  const isHardhat = network?.config?.forking?.enabled ?? false;
 
   // Load IONX
   let ionx: Ionx;
@@ -32,7 +33,7 @@ const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
   for (let i = 0; i < addressBook[chainId].stakingTokens.length; i++) {
     const stakingToken = addressBook[chainId].stakingTokens[i];
 
-    console.log(`  - Deploying RewardProgram for ${stakingToken.id}...`);
+    !isHardhat && console.log(`  - Deploying RewardProgram for ${stakingToken.id}...`);
     const tx = await rewardProgramFactory.createRewardProgram(
       stakingToken.address,
       ionxAddress,
@@ -49,14 +50,14 @@ const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
       rewardProgramAddress = evt.args[0];
 
       // save to deployments
-      console.log(`  -- Saving RewardProgram Deployment at address ${rewardProgramAddress}...`);
+      !isHardhat && console.log(`  -- Saving RewardProgram Deployment at address ${rewardProgramAddress}...`);
       await deployments.save(`RewardProgram${stakingToken.id}`, {
         abi: RewardProgramJson.abi,
         address: rewardProgramAddress,
         transactionHash: tx.hash,
       });
 
-      console.log(`  -- RewardProgram for ${stakingToken.id} is deployed!`);
+      !isHardhat && console.log(`  -- RewardProgram for ${stakingToken.id} is deployed!`);
     }
   }
 
