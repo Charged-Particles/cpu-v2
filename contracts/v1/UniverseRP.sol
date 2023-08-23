@@ -352,23 +352,16 @@ contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, Blackhole
 
   function _calculateTotalMultiplier(uint256 parentNftUuid) internal view returns (uint256) {
     uint256 len = _multiplierNftsSet[parentNftUuid].length();
+    uint256 multiplier = 0;
+    uint256 loss = 50;
     uint256 i = 0;
-    uint256 multiplier = _multiplierNftsSet[parentNftUuid].at(i);
 
-    // If holding all 6, Max Multiplier of 10X
-    if (len == 6) {
-      return LEPTON_MULTIPLIER_SCALE.mul(10);
+    for (; i < len; i++) {
+      multiplier = multiplier.add(_multiplierNftsSet[parentNftUuid].at(i));
     }
-
-    // If holding multiple; Multiplier = Half of the Sum of all
     if (len > 1) {
-      for (; i < len; i++) {
-        multiplier = multiplier.add(_multiplierNftsSet[parentNftUuid].at(i));
-      }
-      return multiplier.div(2); // Half of the Sum
+      multiplier = multiplier.sub(loss.mul(len));
     }
-
-    // Holding single or none
     return multiplier;
   }
 
