@@ -68,9 +68,10 @@ export const leptonConfig = {
 }
 
 const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-	const { deployments, getNamedAccounts } = hre;
+	const { deployments, getNamedAccounts, network } = hre;
 	const { deploy } = deployments;
 	const { deployer } = await getNamedAccounts();
+  const isHardhat = network?.config?.forking?.enabled ?? false;
 
 	await deploy('Lepton2', {
 		from: deployer,
@@ -78,16 +79,19 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 		log: true,
 	});
 
+  !isHardhat && console.log(`  - Setting Max-Mint-Per-Transaction...`);
   const lepton2: Lepton2 = await ethers.getContract('Lepton2');
   await lepton2.setMaxMintPerTx(leptonConfig.maxMintPerTx).then(tx => tx.wait());
 
   // mint
   let chainId = network.config.chainId ?? 1;
+  if (chainId === 137) { chainId = 42; }
   if (isTestnet()) { chainId = 42; }
 
   for (const leptonKey in leptonConfig.types) {
     const lepton: LeptonType = leptonConfig.types[leptonKey];
 
+    !isHardhat && console.log(`  - Adding Lepton Tier ${leptonKey}...`);
     await lepton2.addLeptonType(
       lepton.tokenUri,
       lepton.price[chainId],
@@ -97,6 +101,7 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     )
   }
 
+  !isHardhat && console.log(`  - Unpausing Lepton Contract...`);
   await lepton2.setPausedState(false).then(tx => tx.wait());
 };
 export default Lepton2;
