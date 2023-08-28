@@ -130,7 +130,7 @@ const config: HardhatUserConfig = {
         chainId: 80001
     },
     polygon: {
-        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_APIKEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.mainnet,
