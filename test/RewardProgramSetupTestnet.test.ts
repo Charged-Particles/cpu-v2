@@ -105,7 +105,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   });
 
   beforeEach(async () => {
-    await deployments.fixture(['RPSetupTest']);
+    await deployments.fixture(['RPSetupTest', 'RPDeploy']);
 
     chainId = network.config.chainId ?? 80001;
     lepton = await ethers.getContract('Lepton2');

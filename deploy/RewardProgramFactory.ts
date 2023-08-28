@@ -12,6 +12,7 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 		args: [],
 		log: true,
 	});
+  console.log(`  - RewardProgramFactory Deployed...`);
 };
 export default RewardProgramFactory;
 

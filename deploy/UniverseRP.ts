@@ -15,6 +15,7 @@ const UniverseRP: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
       methodName: 'initialize',
     },
 	});
+  console.log(`  - UniverseRP Deployed...`);
 };
 export default UniverseRP;
 
