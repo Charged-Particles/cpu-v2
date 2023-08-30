@@ -19,6 +19,7 @@ interface AddressBook {
 }
 
 export const addressBook: AddressBook = {
+  // Ethereum Mainnet
   1: {
     'chargedManager': '0x7b07Ec627d2426b89C44a6cC75Dc57c27a52174d',
     'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41',
@@ -31,6 +32,8 @@ export const addressBook: AddressBook = {
       { id: 'USDC', address: '', multiplier: '10000', funding: '10' },
     ],
   },
+
+  // Polygon Mainnet
   137: {
     'chargedManager': '0x0f42057be75AF6D977a0cE900E732eA4d490B580',
     'chargedParticles': '0x0288280Df6221E7e9f23c1BB398c820ae0Aa6c10',
@@ -44,6 +47,21 @@ export const addressBook: AddressBook = {
       { id: 'USDT', address: '0xc2132D05D31c914a87C6611C10748AEb04B58e8F', multiplier: '22750', funding: '10000' },
     ],
   },
+
+  // Goerli Testnet
+  5: {
+    'chargedManager': '0x6B4738a15052f57B07dbF9E762d0E58D5DcE5C55',
+    'chargedParticles': '0xA81cd63F345f323b9785048764e906C9C0D9814D',
+    'chargedSettings' : '0xA1F97Fc59fafB2C43600731876710654F60c146E',
+    'tokenInfoProxy': '0x8fa84be9492aEA190d62d5f0fc11618d23a9ead2',
+    'ionx': '0xa817464e5faD7D5928739E1C37Ef845C53ab1eea',
+    'lepton': '0xa99294Caed407273A4b6320CaC68B27C58F46c5d',
+    'stakingTokens': [
+      { id: 'DAI',  address: '0x75Ab5AB1Eef154C0352Fc31D2428Cef80C7F8B33', multiplier: '71500', funding: '10000' },
+    ],
+  },
+
+  // Hardhat Testnet
   31337: {
     'chargedManager': '0x7b07Ec627d2426b89C44a6cC75Dc57c27a52174d',
     'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41',
@@ -56,6 +74,8 @@ export const addressBook: AddressBook = {
       { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
     ],
   },
+
+  // Polygon Mumbai Testnet
   80001: {
     'chargedManager': '0xE8c6462ceEeeC3f8c318e29Af143f623de979D69',
     'chargedParticles': '0x51f845af34c60499a1056FCDf47BcBC681A0fA39',

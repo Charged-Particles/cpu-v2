@@ -3,8 +3,8 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { ethers } from 'hardhat';
 import { isTestnet } from '../utils/isTestnet';
-import { verifyContract } from '../utils/verifyContract';
 import { addressBook } from '../utils/globals';
+import { verifyContract } from '../utils/verifyContract';
 
 const RewardProgramDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network } = hre;
@@ -12,11 +12,12 @@ const RewardProgramDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironmen
 
   // Load IONX
   let ionx: Ionx;
-  if (!isTestnet()) {
-    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx)
+  if (addressBook[chainId].ionx.length > 0) {
+    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
   } else {
-    ionx = await ethers.getContract('Ionx')
+    ionx = await ethers.getContract('Ionx');
   }
+
   // const ionxAddress = await ionx.getAddress();
   const universe: UniverseRP = await ethers.getContract('UniverseRP');
 
@@ -27,7 +28,9 @@ const RewardProgramDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironmen
     const rewardProgramAddress = await rewardProgram.getAddress();
 
     // verify reward program
-    await verifyContract(`RewardProgram${stakingToken.id}`, rewardProgram);
+    if (!isTestnet()) {
+      await verifyContract(`RewardProgram${stakingToken.id}`, rewardProgram);
+    }
 
     // fund reward program
     console.log(`  - Funding RewardProgram for ${stakingToken.id} with ${stakingToken.funding} IONX...`);
