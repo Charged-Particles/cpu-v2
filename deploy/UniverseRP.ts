@@ -1,8 +1,9 @@
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
+import { verifyContract } from '../utils/verifyContract';
 
 const UniverseRP: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-	const { deployments, getNamedAccounts } = hre;
+	const { ethers, deployments, getNamedAccounts } = hre;
 	const { deploy } = deployments;
 	const { deployer } = await getNamedAccounts();
 
@@ -16,6 +17,8 @@ const UniverseRP: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     },
 	});
   console.log(`  - UniverseRP Deployed...`);
+
+  await verifyContract('UniverseRP', await ethers.getContract('UniverseRP'));
 };
 export default UniverseRP;
 
