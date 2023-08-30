@@ -17,9 +17,6 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.4.7',
-      },
-      {
         version: '0.6.12',
         settings: {
           optimizer: {
@@ -131,7 +128,7 @@ const config: HardhatUserConfig = {
     },
     polygon: {
         url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_APIKEY}`,
-        gasPrice: 'auto',
+        gasPrice: 110e9,
         accounts: {
             mnemonic: mnemonic.mainnet,
             count: 8,
