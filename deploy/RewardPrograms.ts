@@ -19,13 +19,12 @@ const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 
   // Load IONX
   let ionx: Ionx;
-  if (!isTestnet()) {
+  if (addressBook[chainId].ionx.length > 0) {
     ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
   } else {
     ionx = await ethers.getContract('Ionx');
   }
   const ionxAddress = await ionx.getAddress();
-
 
   // Deploy Reward Programs for each Staking Token
   for (let i = 0; i < addressBook[chainId].stakingTokens.length; i++) {

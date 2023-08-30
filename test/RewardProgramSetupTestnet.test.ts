@@ -90,7 +90,13 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   };
 
   const atLeast = (min: bigint) => (value: bigint):boolean => {
-    return value >= min;
+    const result = value >= min;
+    if (!result) {
+      setTimeout(() => {
+        console.log(`Expected ${value} to be at least ${min}`);
+      }, 1);
+    }
+    return result;
   };
 
   //
@@ -236,7 +242,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
 
     const expectedAaveInterest = ethers.parseEther('0.12611');
     let expectedIonxReward = (expectedAaveInterest * 2n); //  2:1 ratio
-    expectedIonxReward = (expectedIonxReward * 110n / 1000n); //  + 1.1x multiplier
+    expectedIonxReward = (expectedIonxReward * 110n / 100n); //  + 1.1x multiplier
 
     // Release Assets and Confirm
     const releaseState = _releaseNft(1, 'aave.B');
@@ -271,7 +277,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
 
     const expectedAaveInterest = ethers.parseEther('0.12611');
     let expectedIonxReward = (expectedAaveInterest * 2n); //  2:1 ratio
-    expectedIonxReward = (expectedIonxReward * 140n / 1000n); //  + 1.4x multiplier
+    expectedIonxReward = (expectedIonxReward * 140n / 100n); //  + 1.4x multiplier
 
     // Release Assets and Confirm
     const releaseState = _releaseNft(1, 'aave.B');
@@ -310,7 +316,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
 
     const expectedAaveInterest = ethers.parseEther('0.12611');
     let expectedIonxReward = (expectedAaveInterest * 2n); //  2:1 ratio
-    expectedIonxReward = (expectedIonxReward * 1010n / 1000n); //  + 10.1x multiplier
+    expectedIonxReward = (expectedIonxReward * 1010n / 100n); //  + 10.1x multiplier
 
     // Release Assets and Confirm
     const releaseState = _releaseNft(1, 'aave.B');

@@ -17,9 +17,6 @@ const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       {
-        version: '0.4.7',
-      },
-      {
         version: '0.6.12',
         settings: {
           optimizer: {
@@ -28,27 +25,27 @@ const config: HardhatUserConfig = {
           }
         },
       },
-      {
-        version: '0.8.13',
-        settings: {
-          optimizer: {
-            enabled: !optimizerDisabled,
-            runs: 200
-          }
-        },
-      },
-      {
-        version: '0.7.6',
-      },
-      {
-        version: '0.8.17',
-        settings: {
-          optimizer: {
-            enabled: !optimizerDisabled,
-            runs: 200
-          }
-        },
-      },
+      // {
+      //   version: '0.8.13',
+      //   settings: {
+      //     optimizer: {
+      //       enabled: !optimizerDisabled,
+      //       runs: 200
+      //     }
+      //   },
+      // },
+      // {
+      //   version: '0.7.6',
+      // },
+      // {
+      //   version: '0.8.17',
+      //   settings: {
+      //     optimizer: {
+      //       enabled: !optimizerDisabled,
+      //       runs: 200
+      //     }
+      //   },
+      // },
     ],
   },
   namedAccounts: {
@@ -80,7 +77,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 80001,
       forking: {
-        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
+        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_APIKEY}`,
         blockNumber: 38812688
         // url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
         // blockNumber: 38812688
@@ -92,16 +89,17 @@ const config: HardhatUserConfig = {
       },
     },
     goerli: {
-        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
+        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_GOERLI_APIKEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.testnet,
             initialIndex: 0,
             count: 10,
-        }
+        },
+        chainId: 5
     },
     sepolia: {
-        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_API_KEY}`,
+        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_APIKEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -120,7 +118,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_APIKEY}`,
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -131,7 +129,7 @@ const config: HardhatUserConfig = {
     },
     polygon: {
         url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_APIKEY}`,
-        gasPrice: 'auto',
+        gasPrice: 110e9,
         accounts: {
             mnemonic: mnemonic.mainnet,
             count: 8,
@@ -141,6 +139,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      goerli: process.env.ETHERSCAN_APIKEY ?? '',
       polygon: process.env.POLYGONSCAN_APIKEY ?? '',
       polygonMumbai: process.env.POLYGONSCAN_APIKEY ?? '',
     }

@@ -18,7 +18,14 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
   const universe: UniverseRP = await ethers.getContract('UniverseRP');
-  const lepton: Lepton2 = await ethers.getContract('Lepton2');
+
+  // Load Lepton2
+  let lepton: Lepton2;
+  if (addressBook[chainId].lepton.length > 0) {
+    lepton = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
+  } else {
+    lepton = await ethers.getContract('Lepton2');
+  }
 
   const leptonAddress = await lepton.getAddress();
   const universeAddress = await universe.getAddress();
