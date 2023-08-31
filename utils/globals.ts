@@ -26,10 +26,11 @@ export const addressBook: AddressBook = {
     'chargedSettings' : '0x07DdB208d52947320d07E0E4611a80Fb7eFD001D',
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
     'ionx': '0x02D3A27Ac3f55d5D91Fb0f52759842696a864217',
-    'lepton': '0x76a5df1c6F53A4B80c8c8177edf52FBbC368E825',
+    'lepton': '0x3Cd2410EAa9c2dCE50aF6CCAb72Dc93879a09c1F',
     'stakingTokens': [
-      { id: 'DAI',  address: '', multiplier: '10000', funding: '10' },
-      { id: 'USDC', address: '', multiplier: '10000', funding: '10' },
+      { id: 'DAI',  address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', multiplier: '24500', funding: '10000' },
+      { id: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', multiplier: '21750', funding: '10000' },
+      { id: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', multiplier: '27000', funding: '10000' },
     ],
   },
 

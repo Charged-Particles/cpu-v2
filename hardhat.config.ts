@@ -118,7 +118,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_APIKEY}`,
+      url: `https://polygon-mumbai.g.alchemy.io/v2/${process.env.ALCHEMY_MUMBAI_APIKEY}`,
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -128,7 +128,7 @@ const config: HardhatUserConfig = {
         chainId: 80001
     },
     polygon: {
-        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_APIKEY}`,
+        url: `https://polygon-mainnet.g.alchemy.io/v2/${process.env.ALCHEMY_POLYGON_APIKEY}`,
         gasPrice: 110e9,
         accounts: {
             mnemonic: mnemonic.mainnet,
