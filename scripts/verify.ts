@@ -22,8 +22,8 @@ async function main() {
   await verifyContract('RewardProgramFactory', await ethers.getContract('RewardProgramFactory'));
 
   // Verify RewardPrograms
-  // await verifyContract('RewardProgramUSDC', await ethers.getContract('RewardProgramUSDC'));
-  // await verifyContract('RewardProgramUSDT', await ethers.getContract('RewardProgramUSDT'));
+  await verifyContract('RewardProgramUSDC', await ethers.getContract('RewardProgramUSDC'));
+  await verifyContract('RewardProgramUSDT', await ethers.getContract('RewardProgramUSDT'));
   await verifyContract('RewardProgramDAI', await ethers.getContract('RewardProgramDAI'));
 }
 

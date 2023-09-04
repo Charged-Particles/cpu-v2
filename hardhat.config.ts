@@ -139,6 +139,7 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
+      mainnet: process.env.ETHERSCAN_APIKEY ?? '',
       goerli: process.env.ETHERSCAN_APIKEY ?? '',
       polygon: process.env.POLYGONSCAN_APIKEY ?? '',
       polygonMumbai: process.env.POLYGONSCAN_APIKEY ?? '',
@@ -146,7 +147,7 @@ const config: HardhatUserConfig = {
   },
   gasReporter: {
       currency: 'USD',
-      gasPrice: 1,
+      gasPrice: 32,
       enabled: (process.env.REPORT_GAS) ? true : false
   },
 };
