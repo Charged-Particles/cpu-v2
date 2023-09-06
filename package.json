@@ -20,6 +20,7 @@
     "deploy-rp": "hardhat deploy --tags RPDeploy --network",
     "deploy-only": "hardhat deploy --tags",
     "verify": "hardhat run scripts/verify.ts --network",
+    "unreg": "hardhat run scripts/unregister.ts --network",
     "gen-docs": "solidity-docgen -i contracts -o docs"
   },
   "devDependencies": {
