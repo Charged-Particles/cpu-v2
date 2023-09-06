@@ -28,9 +28,11 @@ export const addressBook: AddressBook = {
     'ionx': '0x02D3A27Ac3f55d5D91Fb0f52759842696a864217',
     'lepton': '0x3Cd2410EAa9c2dCE50aF6CCAb72Dc93879a09c1F',
     'stakingTokens': [
-      { id: 'DAI',  address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', multiplier: '24500', funding: '10000' },
-      { id: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', multiplier: '21750', funding: '10000' },
-      { id: 'USDT', address: '0xdAC17F958D2ee523a2206206994597C13D831ec7', multiplier: '27000', funding: '10000' },
+      // { id: 'DAI',  address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', multiplier: '24500', funding: '10000' }, // Deployed
+      // { id: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', multiplier: '21750', funding: '10000' }, // Deployed
+      // { id: 'LUSD', address: '0x5f98805A4E8be255a32880FDeC7F6728C6568bA0', multiplier: '06300', funding: '10000' }, // Not Deployed
+      // { id: 'FRAX', address: '0x853d955aCEf822Db058eb8505911ED77F175b99e', multiplier: '31000', funding: '10000' }, // Not Deployed
+      { id: 'SUSD', address: '0x57Ab1ec28D129707052df4dF418D58a2D46d5f51', multiplier: '32500', funding: '10000' }, // Deployed
     ],
   },
 
