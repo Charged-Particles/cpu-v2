@@ -44,7 +44,7 @@ import "./interfaces/IRewardProgram.sol";
  * @notice Charged Particles Universe Contract with Rewards Program
  * @dev Upgradeable Contract
  */
-contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, BlackholePrevention {
+contract UniverseRPPolygon is IUniverseRP, Initializable, OwnableUpgradeable, BlackholePrevention {
   using SafeMathUpgradeable for uint256;
   using TokenInfo for address;
   using SafeERC20Upgradeable for IERC20Upgradeable;
