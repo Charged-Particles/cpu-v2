@@ -1,4 +1,4 @@
-import { ChargedParticles, Lepton2, UniverseRP } from '../typechain-types';
+import { ChargedParticles, Lepton2, RewardProgram, UniverseRP } from '../typechain-types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { ethers } from 'hardhat';
@@ -26,7 +26,23 @@ const RewardProgramSetupPolygon: DeployFunction = async (hre: HardhatRuntimeEnvi
   // finally: setup charged particles
   console.log(`Registering UniverseRP in Charged Particles...`);
   await chargedParticles.connect(deployerSigner).setController(universeAddress, 'universe');
+
+  // Set reward program in Universe
+  for (let i = 0; i < addressBook[chainId].stakingTokens.length; i++) {
+    const stakingToken = addressBook[chainId].stakingTokens[i];
+    const rewardProgram: RewardProgram = await ethers.getContract(`RewardProgram${stakingToken.id}`);
+    const rewardProgramAddress = await rewardProgram.getAddress();
+
+    // register reward program in universe
+    console.log(`    -- Registering RewardProgram in the Universe...`);
+    await universe.setRewardProgram(rewardProgramAddress, stakingToken.address);
+
+    console.log(`    -- RewardProgram for ${stakingToken.id} is registered!`);
+
+    await rewardProgram.setUniverse(universeAddress).then(tx => tx.wait());
+  }
 };
+
 
 export default RewardProgramSetupPolygon;
 
