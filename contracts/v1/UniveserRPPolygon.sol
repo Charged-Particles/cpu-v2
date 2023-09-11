@@ -367,17 +367,19 @@ contract UniverseRPPolygon is IUniverseRP, Initializable, OwnableUpgradeable, Bl
 
   function _getNftMultiplier(uint256 tokenId) internal pure returns (uint256) {
     if (tokenId >= 1 && tokenId <= 721) {
-      return 110;
+        return 110;
     } else if (tokenId > 721 && tokenId <= 1122) {
-      return 130;
+        return 130;
     } else if (tokenId > 1122 && tokenId <= 1423) {
-      return 150;
+        return 150;
     } else if (tokenId > 1423 && tokenId <= 1624) {
-      return 180;
+        return 180;
     } else if (tokenId > 1624 && tokenId <= 1712) {
-      return 230;
+        return 230;
     } else if (tokenId > 1712 && tokenId <= 1733) {
-      return 510;
+        return 510;
+    } else {
+        return 1;
     }
   }
 
