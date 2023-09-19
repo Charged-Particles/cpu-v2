@@ -111,9 +111,13 @@ describe('RewardProgramSetupTestnet deployments', async () => {
   });
 
   beforeEach(async () => {
-    await deployments.fixture(['RPSetupTest', 'RPDeploy']);
-
     chainId = network.config.chainId ?? 80001;
+    if (chainId === 137) {
+      await deployments.fixture(['RPSetupPolygon']);
+    } else {
+      await deployments.fixture(['RPSetupTest', 'RPDeploy']);
+    }
+
     lepton = await ethers.getContract('Lepton2');
     ionx = await ethers.getContract('Ionx');
     universe = await ethers.getContract('UniverseRP');
