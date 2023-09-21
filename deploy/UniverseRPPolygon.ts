@@ -4,9 +4,15 @@ import { verifyContract } from '../utils/verifyContract';
 import { isTestnet } from '../utils/isTestnet';
 
 const UniverseRPPolygon: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-	const { ethers, deployments, getNamedAccounts } = hre;
+	const { network, ethers, deployments, getNamedAccounts } = hre;
 	const { deploy } = deployments;
 	const { deployer } = await getNamedAccounts();
+  const chainId = network.config.chainId ?? 1;
+
+  if (chainId !== 137 && chainId !== 80001) {
+    console.log(`  - Wrong Network - Polygon Only`);
+    return;
+  }
 
 	await deploy('UniverseRPPolygon', {
 		from: deployer,

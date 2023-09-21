@@ -11,6 +11,11 @@ const RewardProgramSetupPolygon: DeployFunction = async (hre: HardhatRuntimeEnvi
   const deployerSigner = await ethers.getSigner(deployer);
   const chainId = network.config.chainId ?? 1;
 
+  if (chainId !== 137 && chainId !== 80001) {
+    console.log(`  - Wrong Network - Polygon Only`);
+    return;
+  }
+
   const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', addressBook[chainId].chargedParticles);
   const lepton: Lepton2 = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
   const universe: UniverseRP = await ethers.getContract('UniverseRPPolygon');
@@ -19,12 +24,12 @@ const RewardProgramSetupPolygon: DeployFunction = async (hre: HardhatRuntimeEnvi
   const universeAddress = await universe.getAddress();
 
   // setup universe
-  console.log(`Preparing UniverseRP...`);
+  console.log(`Preparing UniverseRPPolygon...`);
   await universe.setChargedParticles(addressBook[chainId].chargedParticles);
   await universe.setMultiplierNft(leptonAddress).then(tx => tx.wait());
 
   // finally: setup charged particles
-  console.log(`Registering UniverseRP in Charged Particles...`);
+  console.log(`Registering UniverseRPPolygon in Charged Particles...`);
   await chargedParticles.connect(deployerSigner).setController(universeAddress, 'universe');
 
   // Set reward program in Universe
