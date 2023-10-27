@@ -1,13 +1,13 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
-import { NFTMock, MinimalisticAccount, IRegistry } from "../typechain-types";
+import { NFTMock, Account, IRegistry } from "../typechain-types";
 
 
 describe('Execute calls', async function () {
   const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
   
   // Contracts
-  let chargedParticlesAccount: MinimalisticAccount, nftMock: NFTMock, registryContract: IRegistry;
+  let chargedParticlesAccount: Account, nftMock: NFTMock, registryContract: IRegistry;
   // Addresses
   let nftMockAddress: string, chargedParticlesAccountAddress: string;
   // Signers

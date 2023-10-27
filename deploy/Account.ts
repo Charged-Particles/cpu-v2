@@ -7,7 +7,7 @@ const MinimalisticAccountDeploy: DeployFunction = async (hre: HardhatRuntimeEnvi
 
 	const { deployer } = await getNamedAccounts();
 
-	await deploy('MinimalisticAccount', {
+	await deploy('Account', {
 		from: deployer,
 		args: [],
 		log: true,
@@ -15,4 +15,4 @@ const MinimalisticAccountDeploy: DeployFunction = async (hre: HardhatRuntimeEnvi
 };
 export default MinimalisticAccountDeploy;
 
-MinimalisticAccountDeploy.tags = ['MinimalisticAccount'];
+MinimalisticAccountDeploy.tags = ['Account'];

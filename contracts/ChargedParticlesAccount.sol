@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "./MinimalisticAccount.sol";
+import "./Account.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
-contract ChargedParticlesAccount is MinimalisticAccount {
+contract ChargedParticlesAccount is Account {
     function covalentBond(
         address nftTokenAddress,
         uint256 nftTokenId,
