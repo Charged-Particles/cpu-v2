@@ -4,7 +4,7 @@ pragma solidity ^0.8.13;
 /**
  * @title A smart contract account owned by a single ERC721 token
  */
-contract MinimalAccount is
+contract MinimalAccount
 {
 
 }
