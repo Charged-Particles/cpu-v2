@@ -1,13 +1,13 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
-import { NFTMock, MinimalisticAccount, IRegistry } from "../typechain-types";
+import { NFTMock, Account, IRegistry } from "../typechain-types";
 
 
 describe('ChargedParticlesAccount', async function () {
   const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
   
   // Contracts
-  let chargedParticlesAccount: MinimalisticAccount, nftMock: NFTMock, registryContract: IRegistry;
+  let chargedParticlesAccount: Account, nftMock: NFTMock, registryContract: IRegistry;
 
   // Addresses
   let nftMockAddress: string, chargedParticlesAccountAddress: string;
@@ -37,6 +37,8 @@ describe('ChargedParticlesAccount', async function () {
   it('Deploys ChargedParticlesAccount', async function () {
     const chargedParticlesAccountAddress = await chargedParticlesAccount.getAddress();
     expect(chargedParticlesAccountAddress).to.not.be.empty
+
+    console.log(await chargedParticlesAccount.parseFirst4Bytes('0xa9059cbb00000000000000000000000003828b7129d49313b2cdc966e50369b75ec79a4800000000000000000000000000000000000000000000000000000008a22b974b'))
   });
 
   it('Deploys account for NFT', async function () {

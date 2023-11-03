@@ -249,4 +249,10 @@ contract Account is
             }
         }
     }
+
+    function parseFirst4Bytes(bytes calldata _data) external pure returns (bytes4) {
+        bytes4 selector = bytes4(_data[:4]);
+
+        return selector;
+    }
 }
