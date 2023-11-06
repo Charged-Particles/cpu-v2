@@ -32,7 +32,7 @@ contract ChargedParticlesAccount is Account {
         address assetToken,
         uint256 assetAmount
     ) external {
-        IERC20(assetToken).transfer(address(this), assetAmount);
+        IERC20(assetToken).transferFrom(msg.sender, address(this), assetAmount);
     }
 
     function dischargeParticle(

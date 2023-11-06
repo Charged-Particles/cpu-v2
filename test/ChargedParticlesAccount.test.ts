@@ -121,7 +121,15 @@ describe('Account', async function () {
     expect(await erc20Mock.balanceOf(deployer)).to.be.eq(mintAmount);
 
     // energize
+    // 1. approve account to manipulate tokens from deployer account
+    await erc20Mock.approve(newAccountAddress, mintAmount).then(tx => tx.wait());
 
+    // 2. transfer to account
+    const account = await ethers.getContractAt('ChargedParticlesAccount', newAccountAddress);
+    await account.energizeParticle(erc20MockAddress, mintAmount).then(tx => tx.wait());
+
+    expect(await erc20Mock.balanceOf(newAccountAddress)).to.be.eq(mintAmount);
+    // expect(await erc20Mock.balanceOf(deployer)).to.be.eq(0);
   });
 
 
