@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
-import { NFTMock, ChargedParticlesAccount, IRegistry, ERC20 } from "../typechain-types";
+import { NFTMock, ChargedParticlesAccount, IRegistry, ERC20Mock } from "../typechain-types";
 
 
 describe('Account', async function () {
@@ -8,7 +8,7 @@ describe('Account', async function () {
   
   // Contracts
   let chargedParticlesAccount: ChargedParticlesAccount, nftMock: NFTMock, registryContract: IRegistry;
-  let erc20Mock: ERC20;
+  let erc20Mock: ERC20Mock;
 
   // Addresses
   let nftMockAddress: string, chargedParticlesAccountAddress: string, erc20MockAddress: string;
@@ -77,10 +77,11 @@ describe('Account', async function () {
   });
 
   it('Bonds and breaks a NFT', async() => {
+    const tokenId = 1;
     const depositedTokenId = 2;
     await nftMock.mint(deployer, depositedTokenId).then(tx => tx.wait());
 
-    const newAccountAddress = await getRegistryAccount();
+    const newAccountAddress = await deployRegistryAccount(tokenId);
     
     // Give permission
     await nftMock.approve(newAccountAddress, depositedTokenId).then(tx => tx.wait());
@@ -109,7 +110,18 @@ describe('Account', async function () {
   });
 
   it('Energize and discharge', async() => {
-    // 
+    const tokenId = 1;
+    const newAccountAddress = await deployRegistryAccount(tokenId);
+
+    console.log(newAccountAddress);
+
+    const mintAmount = ethers.parseEther('100');
+    await erc20Mock.mint(deployer, mintAmount).then(tx => tx.wait());
+
+    expect(await erc20Mock.balanceOf(deployer)).to.be.eq(mintAmount);
+
+    // energize
+
   });
 
 
@@ -120,8 +132,7 @@ describe('Account', async function () {
     expect(calldataFourBytes).to.be.eq('0xa9059cbb');
   });
 
-  const getRegistryAccount = async() => {
-    const tokenId = 1;
+  const deployRegistryAccount = async(tokenId: number) => {
     await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
 
     // Create an account
