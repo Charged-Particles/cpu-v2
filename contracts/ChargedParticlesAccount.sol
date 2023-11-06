@@ -40,6 +40,6 @@ contract ChargedParticlesAccount is Account {
       address assetToken,
       uint256 assetAmount
   ) external {
-      IERC20(assetToken).transfer(receiver, assetAmount);
+        IERC20(assetToken).transfer(receiver, assetAmount);
   }
 }

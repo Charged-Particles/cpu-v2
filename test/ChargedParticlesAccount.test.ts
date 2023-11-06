@@ -113,8 +113,6 @@ describe('Account', async function () {
     const tokenId = 1;
     const newAccountAddress = await deployRegistryAccount(tokenId);
 
-    console.log(newAccountAddress);
-
     const mintAmount = ethers.parseEther('100');
     await erc20Mock.mint(deployer, mintAmount).then(tx => tx.wait());
 
@@ -129,10 +127,13 @@ describe('Account', async function () {
     await account.energizeParticle(erc20MockAddress, mintAmount).then(tx => tx.wait());
 
     expect(await erc20Mock.balanceOf(newAccountAddress)).to.be.eq(mintAmount);
-    // expect(await erc20Mock.balanceOf(deployer)).to.be.eq(0);
+    expect(await erc20Mock.balanceOf(deployer)).to.be.eq(0);
+
+    await account.dischargeParticle(receiver, erc20MockAddress, mintAmount).then(tx => tx.wait());
+
+    expect(await erc20Mock.balanceOf(newAccountAddress)).to.be.eq(0);
+    expect(await erc20Mock.balanceOf(receiver)).to.be.eq(mintAmount);
   });
-
-
 
   it('Returns the first four bytes', async() => {
     const calldata = "0xa9059cbb00000000000000000000000003828b7129d49313b2cdc966e50369b75ec79a4800000000000000000000000000000000000000000000000000000008a22b974b";
