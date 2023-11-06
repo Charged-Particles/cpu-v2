@@ -1,13 +1,13 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
-import { NFTMock, Account, IRegistry } from "../typechain-types";
+import { NFTMock, ChargedParticlesAccount, IRegistry } from "../typechain-types";
 
 
-describe('ChargedParticlesAccount', async function () {
+describe('Account', async function () {
   const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
   
   // Contracts
-  let chargedParticlesAccount: Account, nftMock: NFTMock, registryContract: IRegistry;
+  let chargedParticlesAccount: ChargedParticlesAccount, nftMock: NFTMock, registryContract: IRegistry;
 
   // Addresses
   let nftMockAddress: string, chargedParticlesAccountAddress: string;
@@ -66,7 +66,7 @@ describe('ChargedParticlesAccount', async function () {
 
     expect(newAccountReceipt).to.haveOwnProperty('hash');
 
-    const chargedParticlesAccountContract = chargedParticlesAccount.attach(newAccountAddress) as MinimalisticAccount;
+    const chargedParticlesAccountContract = chargedParticlesAccount.attach(newAccountAddress) as Account;
     const chargedParticlesDataFromTBA = await chargedParticlesAccountContract.token();
 
     expect(chargedParticlesDataFromTBA).to.be.lengthOf(3);
@@ -127,5 +127,5 @@ describe('ChargedParticlesAccount', async function () {
     const calldata = "0xa9059cbb00000000000000000000000003828b7129d49313b2cdc966e50369b75ec79a4800000000000000000000000000000000000000000000000000000008a22b974b";
     const calldataFourBytes = await chargedParticlesAccount.parseFirst4Bytes(calldata)
     expect(calldataFourBytes).to.be.eq('0xa9059cbb');
-  })
+  });
 });
