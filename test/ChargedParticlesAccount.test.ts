@@ -38,7 +38,6 @@ describe('ChargedParticlesAccount', async function () {
     const chargedParticlesAccountAddress = await chargedParticlesAccount.getAddress();
     expect(chargedParticlesAccountAddress).to.not.be.empty
 
-    console.log(await chargedParticlesAccount.parseFirst4Bytes('0xa9059cbb00000000000000000000000003828b7129d49313b2cdc966e50369b75ec79a4800000000000000000000000000000000000000000000000000000008a22b974b'))
   });
 
   it('Deploys account for NFT', async function () {
@@ -123,4 +122,10 @@ describe('ChargedParticlesAccount', async function () {
 
     expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
   });
+
+  it('Returns the first four bytes', async() => {
+    const calldata = "0xa9059cbb00000000000000000000000003828b7129d49313b2cdc966e50369b75ec79a4800000000000000000000000000000000000000000000000000000008a22b974b";
+    const calldataFourBytes = await chargedParticlesAccount.parseFirst4Bytes(calldata)
+    expect(calldataFourBytes).to.be.eq('0xa9059cbb');
+  })
 });
