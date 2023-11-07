@@ -64,7 +64,7 @@ describe('Execute calls', async function () {
 
     expect(newAccountReceipt).to.haveOwnProperty('hash');
 
-    const chargedParticlesAccountContract = chargedParticlesAccount.attach(newAccountAddress) as MinimalisticAccount;
+    const chargedParticlesAccountContract = chargedParticlesAccount.attach(newAccountAddress) as Account;
     const chargedParticlesDataFromTBA = await chargedParticlesAccountContract.token();
 
     expect(chargedParticlesDataFromTBA).to.be.lengthOf(3);

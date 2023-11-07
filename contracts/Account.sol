@@ -71,7 +71,7 @@ contract Account is
         address to,
         uint256 value,
         bytes calldata data
-    ) external payable onlyAuthorized onlyUnlocked returns (bytes memory) {
+    ) external payable onlyAuthorized onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
         emit TransactionExecuted(to, value, data);
 
         return _call(to, value, data);
@@ -250,9 +250,23 @@ contract Account is
         }
     }
 
-    function parseFirst4Bytes(bytes calldata _data) external pure returns (bytes4) {
-        bytes4 selector = bytes4(_data[:4]);
+    function allowedMethod(bytes calldata _data) internal returns (bool) {
+        bytes4 signature = parseFirst4Bytes(_data);
+        //  approve > 0x095ea7b3
 
-        return selector;
+        if (signature == 0x095ea7b3) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function parseFirst4Bytes(bytes calldata _data) public pure returns (bytes4) {
+        return bytes4(_data[:4]);
+    }
+
+    modifier onlyAllowedMethod(bytes calldata _data) {
+        require(allowedMethod(_data));
+        _;
     }
 }
