@@ -161,13 +161,12 @@ describe('Execute calls', async function () {
       
     const approveCallData = approveCall('0x277BFc4a8dc79a9F194AD4a83468484046FAFD3A', depositedTokenId);
     
-    console.log(approveCallData);
-
-    await account.executeCall(
+    await expect(account.executeCall(
       nftMockAddress,
       0,
       approveCallData
-    ).then(tx => tx.wait()); 
+
+    )).revertedWith('Method all not allowed'); 
   });
 
 });
