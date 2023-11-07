@@ -125,4 +125,49 @@ describe('Execute calls', async function () {
     expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
   });
 
+  it('Filters out approve calls', async() => {
+    const approveCall = (to:string, tokenId:number) => {
+      const ABI = ["function approve(address,uint256)"];
+      const iface = new ethers.Interface(ABI);
+      const cdata = iface.encodeFunctionData("approve", [to, tokenId]); 
+
+      return cdata;
+    };
+
+    const tokenId = 1;
+    const depositedTokenId = 2;
+    await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
+    await nftMock.mint(deployer, depositedTokenId).then(tx => tx.wait());
+
+    // Create an account
+    const newAccountAddress = await registryContract.account(
+      chargedParticlesAccountAddress,
+      network.config.chainId ?? 137,
+      nftMockAddress,
+      tokenId,
+      0 
+    );
+
+    await registryContract.createAccount(
+      chargedParticlesAccountAddress,
+      network.config.chainId ?? 137,
+      nftMockAddress,
+      tokenId,
+      0,
+      '0x'
+    ).then(tx => tx.wait());
+
+    const account = await ethers.getContractAt('ChargedParticlesAccount', newAccountAddress);
+      
+    const approveCallData = approveCall('0x277BFc4a8dc79a9F194AD4a83468484046FAFD3A', depositedTokenId);
+    
+    console.log(approveCallData);
+
+    await account.executeCall(
+      nftMockAddress,
+      0,
+      approveCallData
+    ).then(tx => tx.wait()); 
+  });
+
 });

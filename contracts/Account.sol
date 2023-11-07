@@ -266,7 +266,7 @@ contract Account is
     }
 
     modifier onlyAllowedMethod(bytes calldata _data) {
-        require(allowedMethod(_data));
+        require(allowedMethod(_data), "Method all not allowed");
         _;
     }
 }
