@@ -31,7 +31,8 @@ describe('Execute calls', async function () {
 
   it('Pre-mints NFTs', async() => {
     await expect(NFT.preMint()).to.emit(NFT, 'ConsecutiveTransfer');
-
-    
+    expect(await NFT.ownerOf(1)).to.be.eq(deployer);
+    expect(await NFT.ownerOf(1000)).to.be.eq(deployer);
+    expect(await NFT.ownerOf(99999)).to.be.eq(deployer);
   });
 });
