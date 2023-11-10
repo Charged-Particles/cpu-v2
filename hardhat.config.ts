@@ -6,6 +6,9 @@ import 'hardhat-deploy-ethers';
 import '@nomicfoundation/hardhat-ethers';
 import "@nomicfoundation/hardhat-toolbox";
 import '@nomicfoundation/hardhat-chai-matchers'
+import "@matterlabs/hardhat-zksync-deploy";
+import "@matterlabs/hardhat-zksync-solc";
+import "@matterlabs/hardhat-zksync-verify";
 
 const mnemonic = {
   testnet: `${process.env.TESTNET_MNEMONIC}`.replace(/_/g, ' '),
@@ -107,6 +110,11 @@ const config: HardhatUserConfig = {
             count: 8,
         },
         chainId: 137
+    },
+    zkSync: {
+      url: "https://testnet.era.zksync.dev",
+      ethNetwork: "goerli",
+      zksync: true,
     },
   },
   etherscan: {
