@@ -7,6 +7,11 @@ import '@nomicfoundation/hardhat-ethers';
 import "@nomicfoundation/hardhat-toolbox";
 import '@nomicfoundation/hardhat-chai-matchers'
 
+// zkSync
+import "@matterlabs/hardhat-zksync-deploy";
+import "@matterlabs/hardhat-zksync-solc";
+
+
 const mnemonic = {
   testnet: `${process.env.TESTNET_MNEMONIC}`.replace(/_/g, ' '),
   mainnet: `${process.env.MAINNET_MNEMONIC}`.replace(/_/g, ' '),
@@ -134,6 +139,10 @@ const config: HardhatUserConfig = {
       currency: 'USD',
       gasPrice: 1,
       enabled: (process.env.REPORT_GAS) ? true : false
+  },
+  zksolc: {
+    version: "latest",
+    settings: {},
   },
 };
 
