@@ -28,4 +28,14 @@ describe('Execute calls', async function () {
   it('Deploys NFTAll', async function () {
     expect(NFTAddress).to.not.be.empty
   });
+
+  it('Mints', async () => {
+    const mintReceipt = await NFT.mint().then(tx => tx.wait());
+    const ownerOfDeployer = await NFT.ownerOf(deployer);
+    expect(ownerOfDeployer).to.be.eq(deployer)
+
+    await NFT.connect(await ethers.getSigner(receiver)).mint().then(tx => tx.wait());
+    const ownerOfReceiver = await NFT.ownerOf(receiver);
+    expect(ownerOfReceiver).to.be.eq(receiver);
+  });
 });
