@@ -55,4 +55,8 @@ contract ERC721i is
     // Emit the Consecutive Transfer Event
     emit ConsecutiveTransfer(1, _maxSupply, address(0), _preMintReceiver);
   }
+
+  function preMint() external onlyOwner {
+    _preMint();
+  }
 }
