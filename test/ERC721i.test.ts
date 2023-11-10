@@ -35,4 +35,9 @@ describe('Execute calls', async function () {
     expect(await NFT.ownerOf(1000)).to.be.eq(deployer);
     expect(await NFT.ownerOf(99999)).to.be.eq(deployer);
   });
+
+  it('Checks base uri', async() => {
+    const uriFromContract = await NFT.tokenURI(1);
+    expect(uriFromContract).to.be.eq('test/url/1');
+  });
 });
