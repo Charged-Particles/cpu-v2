@@ -9,7 +9,7 @@ const ERC721i: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
 	await deploy('ERC721i', {
 		from: deployer,
-		args: ['ERC721i', 'i', deployer, 100000],
+		args: ['ERC721i', 'i', 'test/url/', deployer, 100000],
 		log: true,
 	});
 };

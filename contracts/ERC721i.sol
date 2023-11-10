@@ -32,7 +32,7 @@ contract ERC721i is
   /**
     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection,
     * as well as a `minter` and a `maxSupply` for pre-minting the collection.
-    */
+   */
   constructor(
     string memory name,
     string memory symbol,
