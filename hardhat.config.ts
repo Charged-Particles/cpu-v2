@@ -70,6 +70,7 @@ const config: HardhatUserConfig = {
         initialIndex: 0,
         count: 10,
       },
+      zksync: false,
     },
     goerli: {
         url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -78,7 +79,8 @@ const config: HardhatUserConfig = {
             mnemonic: mnemonic.testnet,
             initialIndex: 0,
             count: 10,
-        }
+        },
+        zksync: false,
     },
     mainnet: {
         url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -87,7 +89,8 @@ const config: HardhatUserConfig = {
             mnemonic: mnemonic.mainnet,
             initialIndex: 0,
             count: 10,
-        }
+        },
+        zksync: false,
     },
     mumbai: {
         url: 'https://rpc-mumbai.maticvigil.com',
@@ -97,7 +100,8 @@ const config: HardhatUserConfig = {
             initialIndex: 0,
             count: 10,
         },
-        chainId: 80001
+        chainId: 80001,
+        zksync: false,
     },
     polygon: {
         url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
@@ -106,8 +110,19 @@ const config: HardhatUserConfig = {
             mnemonic: mnemonic.mainnet,
             count: 8,
         },
-        chainId: 137
+        chainId: 137,
+        zksync: false,
     },
+    zkSync: {
+      url: "https://mainnet.era.zksync.io",
+      zksync: true,
+      chainId: 324,
+      accounts: {
+          mnemonic: mnemonic.mainnet,
+          initialIndex: 0,
+          count: 10,
+      },
+    }
   },
   etherscan: {
     apiKey: {
