@@ -3,7 +3,7 @@
 // Co-founder @ Charged Particles - Visit: https://charged.fi
 // Co-founder @ Taggr             - Visit: https://taggr.io
 
-pragma solidity 0.8.20;
+pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./lib/ERC721iEnumerable.sol";
@@ -37,7 +37,7 @@ contract ERC721i is
     uint256 maxSupply
   )
     ERC721(name, symbol)
-    Ownable(msg.sender)
+    Ownable()
   {
     // Set vars defined in ERC721iEnumerable.sol
     _maxSupply = maxSupply;
