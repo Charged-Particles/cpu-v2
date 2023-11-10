@@ -122,6 +122,7 @@ const config: HardhatUserConfig = {
       url: "https://mainnet.era.zksync.io",
       zksync: true,
       chainId: 324,
+      ethNetwork: 'mainnet',
       accounts: {
           mnemonic: mnemonic.mainnet,
           initialIndex: 0,
