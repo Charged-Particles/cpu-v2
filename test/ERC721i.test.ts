@@ -40,4 +40,15 @@ describe('Execute calls', async function () {
     const uriFromContract = await NFT.tokenURI(1);
     expect(uriFromContract).to.be.eq('test/url/1');
   });
+
+  it('It fails to transfer if not pre-minted', async() =>{
+    (await expect(NFT.transferFrom(deployer, receiver, 1)).to.reverted);
+  });
+
+  it('Transfers ownership', async() => {
+    await NFT.preMint().then(tx => tx.wait());
+    await NFT.transferFrom(deployer, receiver, 1).then(tx => tx.wait());
+
+    expect(await NFT.ownerOf(1)).to.be.eq(receiver);
+  })
 });
