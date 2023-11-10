@@ -26,6 +26,9 @@ contract ERC721i is
   /// @dev EIP-2309: https://eips.ethereum.org/EIPS/eip-2309
   event ConsecutiveTransfer(uint256 indexed fromTokenId, uint256 toTokenId, address indexed fromAddress, address indexed toAddress);
 
+  /// @dev ERC721 Base Token URI
+  string internal _baseTokenURI;
+
   /**
     * @dev Initializes the contract by setting a `name` and a `symbol` to the token collection,
     * as well as a `minter` and a `maxSupply` for pre-minting the collection.
@@ -33,12 +36,14 @@ contract ERC721i is
   constructor(
     string memory name,
     string memory symbol,
+    string memory baseUri,
     address minter,
     uint256 maxSupply
   )
     ERC721(name, symbol)
     Ownable()
   {
+    _baseTokenURI = baseUri;
     // Set vars defined in ERC721iEnumerable.sol
     _maxSupply = maxSupply;
     _preMintReceiver = minter;
@@ -58,5 +63,9 @@ contract ERC721i is
 
   function preMint() external onlyOwner {
     _preMint();
+  }
+
+  function _baseURI() internal view virtual override returns (string memory) {
+    return _baseTokenURI;
   }
 }
