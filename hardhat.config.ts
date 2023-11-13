@@ -128,6 +128,17 @@ const config: HardhatUserConfig = {
           initialIndex: 0,
           count: 10,
       },
+    },
+    zkSyncTest: {
+      url: "https://testnet.era.zksync.dev",
+      zksync: true,
+      chainId: 280,
+      ethNetwork: 'goerli',
+      accounts: {
+          mnemonic: mnemonic.mainnet,
+          initialIndex: 0,
+          count: 10,
+      },
     }
   },
   etherscan: {
