@@ -15,7 +15,16 @@ import "./lib/ERC721.sol";
 contract ERC721All is Ownable, ERC721 {
   mapping(uint256 => bool) internal _activeTokens;
 
-  constructor(string memory name, string memory symbol) ERC721(name, symbol) Ownable() {}
+  /// @dev ERC721 Base Token URI
+  string internal _baseTokenURI;
+
+  constructor(
+    string memory name,
+    string memory symbol,
+    string memory baseUri
+  ) ERC721(name, symbol) Ownable() {
+    _baseTokenURI = baseUri;
+  }
 
   /**
    * @dev Overrides {IERC721-balanceOf}.
@@ -95,5 +104,18 @@ contract ERC721All is Ownable, ERC721 {
   function _isTokenActive(uint256 tokenId) internal view returns (bool) {
     // Check if Token is Active and Not Burned
     return (_activeTokens[tokenId] && _owners[tokenId] != _NULL_ADDRESS);
+  }
+
+  function _baseURI() internal view virtual override returns (string memory) {
+    return _baseTokenURI;
+  }
+
+  function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    address owner = _owners[tokenId];
+    if (owner == address(0)) {
+      owner = address(uint160(tokenId));
+    }
+
+    return _baseURI();
   }
 }

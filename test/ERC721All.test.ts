@@ -37,5 +37,12 @@ describe('Execute calls', async function () {
     await NFT.connect(await ethers.getSigner(receiver)).mint().then(tx => tx.wait());
     const ownerOfReceiver = await NFT.ownerOf(receiver);
     expect(ownerOfReceiver).to.be.eq(receiver);
+
+  });
+
+  it('Checks base uri', async() => {
+    await NFT.mint().then(tx => tx.wait());
+    const uriFromContract = await NFT.tokenURI(deployer);
+    expect(uriFromContract).to.be.eq('test/url/');
   });
 });
