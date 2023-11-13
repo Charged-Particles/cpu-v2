@@ -22,9 +22,9 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   // similar to the ones in `ethers`.
   // `greeting` is an argument for contract constructor.
   const greeterContract = await deployer.deploy(artifact, [
-    'ERC721i',
-    'i',
-    'test/url/',
+    'zkGrove',
+    'zkg',
+    'ipfs://QmYu6APMpWqZP9ZV4k1Bvsgr5hz6QPUyVf5m8xxQRj5oTr',
     deployerAddress,
     100000
   ]);
