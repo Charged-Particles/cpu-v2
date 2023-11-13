@@ -57,8 +57,8 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/contracts/ERC721i.sol": {
-      "lastModificationDate": 1699643720425,
-      "contentHash": "623d3b7fe6c754966af59750981cbbec",
+      "lastModificationDate": 1699885172630,
+      "contentHash": "7383817a673c2cd818bd2ddcb9d06a6b",
       "sourceName": "contracts/ERC721i.sol",
       "solcConfig": {
         "version": "0.8.13",

@@ -73,5 +73,5 @@ contract ERC721i is
     _requireMinted(tokenId);
 
     return _baseURI();
-  };
+  }
 }
