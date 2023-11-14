@@ -4,7 +4,7 @@ import { NFTMock, Account, IERC6551Registry } from "../typechain-types";
 
 
 describe('Execute calls', async function () {
-  const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
+  const REGISTRY = 	"0x000000006551c19487814612e58FE06813775758";
   
   // Contracts
   let chargedParticlesAccount: Account, nftMock: NFTMock, registryContract: IERC6551Registry;
@@ -12,6 +12,8 @@ describe('Execute calls', async function () {
   let nftMockAddress: string, chargedParticlesAccountAddress: string;
   // Signers
   let deployer: string, receiver: string;
+
+  const salt = ethers.encodeBytes32String('0')
 
   before(async function () {
     const { deployer: deployerAccount, user1 } = await getNamedAccounts();
@@ -46,7 +48,7 @@ describe('Execute calls', async function () {
 
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
-      '0x',
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
@@ -55,7 +57,7 @@ describe('Execute calls', async function () {
 
     const newAccountReceipt = await registryContract.createAccount(
       chargedParticlesAccountAddress,
-      '0x',
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
@@ -79,7 +81,7 @@ describe('Execute calls', async function () {
     // Create an account
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
-      '0x',
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
@@ -87,7 +89,7 @@ describe('Execute calls', async function () {
 
     await registryContract.createAccount(
       chargedParticlesAccountAddress,
-      '0x',
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
@@ -140,7 +142,7 @@ describe('Execute calls', async function () {
     // Create an account
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
-      '0x',
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
@@ -148,7 +150,7 @@ describe('Execute calls', async function () {
 
     await registryContract.createAccount(
       chargedParticlesAccountAddress,
-      '0x',
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
