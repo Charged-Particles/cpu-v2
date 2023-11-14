@@ -22,7 +22,7 @@ error OwnershipCycle();
  */
 contract Account is
     IERC165,
-    // IERC6551Account, // TODO
+    IERC6551Account,
     IERC721Receiver,
     IERC1155Receiver
 {
@@ -49,14 +49,19 @@ contract Account is
     }
 
     /// @dev reverts if caller is not authorized to execute on this account
-    modifier onlyAuthorized() {
-        if (!isAuthorized(msg.sender)) revert NotAuthorized();
+    modifier onlyAuthorized(bytes calldata context) {
+        if (isValidSigner(msg.sender, context) != 0x523e3260) revert NotAuthorized();
         _;
     }
 
     /// @dev reverts if this account is currently locked
     modifier onlyUnlocked() {
         if (isLocked()) revert AccountLocked();
+        _;
+    }
+
+    modifier onlyAllowedMethod(bytes calldata _data) {
+        require(allowedMethod(_data), "Method all not allowed");
         _;
     }
 
@@ -71,7 +76,7 @@ contract Account is
         address to,
         uint256 value,
         bytes calldata data
-    ) external payable onlyAuthorized onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
+    ) external payable onlyAuthorized(data) onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
         // emit TransactionExecuted(to, value, data);
 
         return _call(to, value, data);
@@ -139,7 +144,7 @@ contract Account is
     }
 
     /// @dev Returns the authorization status for a given caller
-    function isAuthorized(address caller) public view returns (bool) {
+    function isValidSigner(address signer, bytes calldata context) public view returns (bytes4 magicValue) {
         (
             ,
             address tokenContract,
@@ -148,12 +153,12 @@ contract Account is
         address _owner = IERC721(tokenContract).ownerOf(tokenId);
 
         // authorize token owner
-        if (caller == _owner) return true;
+        if (signer == _owner) return 0x523e3260;
 
         // authorize caller if owner has granted permissions
-        if (permissions[_owner][caller]) return true;
+        if (permissions[_owner][signer]) return 0x523e3260;
 
-        return false;
+        return 0xffffffff;
     }
 
     /// @dev Returns true if a given interfaceId is supported by this account. This method can be
@@ -265,8 +270,7 @@ contract Account is
         return bytes4(_data[:4]);
     }
 
-    modifier onlyAllowedMethod(bytes calldata _data) {
-        require(allowedMethod(_data), "Method all not allowed");
-        _;
+    function state() external view returns (uint256) {
+        return 1;
     }
 }
