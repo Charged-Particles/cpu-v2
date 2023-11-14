@@ -116,10 +116,11 @@ describe('Execute calls', async function () {
 
     const breakCovalentBondCallData = breakCovalentBond(newAccountAddress, receiver, depositedTokenId); 
 
-    await account.executeCall(
+    await account.execute(
       nftMockAddress,
       0,
-      breakCovalentBondCallData
+      breakCovalentBondCallData,
+      0,
     ).then(tx => tx.wait());
 
     expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
@@ -160,11 +161,11 @@ describe('Execute calls', async function () {
       
     const approveCallData = approveCall('0x277BFc4a8dc79a9F194AD4a83468484046FAFD3A', depositedTokenId);
     
-    await expect(account.executeCall(
+    await expect(account.execute(
       nftMockAddress,
       0,
-      approveCallData
-
+      approveCallData,
+      0
     )).revertedWith('Method all not allowed'); 
   });
 

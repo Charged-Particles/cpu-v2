@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "./interfaces/IERC6551Account.sol";
+import "./interfaces/IERC6551Executable.sol";
 import "./lib/ERC6551AccountLib.sol";
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -23,6 +24,7 @@ error OwnershipCycle();
 contract Account is
     IERC165,
     IERC6551Account,
+    IERC6551Executable,
     IERC721Receiver,
     IERC1155Receiver
 {
@@ -49,7 +51,7 @@ contract Account is
     }
 
     /// @dev reverts if caller is not authorized to execute on this account
-    modifier onlyAuthorized(bytes calldata context) {
+    modifier onlyValidSigner(bytes calldata context) {
         if (isValidSigner(msg.sender, context) != 0x523e3260) revert NotAuthorized();
         _;
     }
@@ -72,11 +74,12 @@ contract Account is
     }
 
     /// @dev executes a low-level call against an account if the caller is authorized to make calls
-    function executeCall(
+    function execute(
         address to,
         uint256 value,
-        bytes calldata data
-    ) external payable onlyAuthorized(data) onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
+        bytes calldata data,
+        uint8 operation
+    ) external payable onlyValidSigner(data) onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
         // emit TransactionExecuted(to, value, data);
 
         return _call(to, value, data);
