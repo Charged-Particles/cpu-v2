@@ -1,19 +1,21 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
-import { NFTMock, ChargedParticlesAccount, IRegistry, ERC20Mock } from "../typechain-types";
+import { NFTMock, ChargedParticlesAccount, IERC6551Registry, ERC20Mock } from "../typechain-types";
 
 
 describe('Account', async function () {
-  const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
+  const REGISTRY = 	"0x000000006551c19487814612e58FE06813775758";
   
   // Contracts
-  let chargedParticlesAccount: ChargedParticlesAccount, nftMock: NFTMock, registryContract: IRegistry;
+  let chargedParticlesAccount: ChargedParticlesAccount, nftMock: NFTMock, registryContract: IERC6551Registry;
   let erc20Mock: ERC20Mock;
 
   // Addresses
   let nftMockAddress: string, chargedParticlesAccountAddress: string, erc20MockAddress: string;
   // Signers
   let deployer: string, receiver: string;
+
+  const salt = ethers.encodeBytes32String('0')
 
   before(async function () {
     const { deployer: deployerAccount, user1 } = await getNamedAccounts();
@@ -29,7 +31,7 @@ describe('Account', async function () {
     erc20Mock = await ethers.getContract('ERC20Mock');
 
     registryContract = await ethers.getContractAt(
-      'IRegistry',
+      'IERC6551Registry',
       REGISTRY
     );
 
@@ -51,20 +53,19 @@ describe('Account', async function () {
 
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0 
     );
     expect(newAccountAddress).to.not.be.empty;
 
     const newAccountReceipt = await registryContract.createAccount(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0,
-      '0x'
     ).then(tx => tx.wait());
 
     expect(newAccountReceipt).to.haveOwnProperty('hash');
@@ -147,19 +148,18 @@ describe('Account', async function () {
     // Create an account
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0 
     );
 
     await registryContract.createAccount(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0,
-      '0x'
     ).then(tx => tx.wait());
 
     return newAccountAddress;

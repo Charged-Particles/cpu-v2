@@ -22,7 +22,7 @@ error OwnershipCycle();
  */
 contract Account is
     IERC165,
-    IERC6551Account,
+    // IERC6551Account, // TODO
     IERC721Receiver,
     IERC1155Receiver
 {
@@ -72,7 +72,7 @@ contract Account is
         uint256 value,
         bytes calldata data
     ) external payable onlyAuthorized onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
-        emit TransactionExecuted(to, value, data);
+        // emit TransactionExecuted(to, value, data);
 
         return _call(to, value, data);
     }

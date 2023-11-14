@@ -4,67 +4,37 @@
   "sourceName": "contracts/interfaces/IERC6551Account.sol",
   "abi": [
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "target",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "bytes",
-          "name": "data",
-          "type": "bytes"
-        }
-      ],
-      "name": "TransactionExecuted",
-      "type": "event"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
-          "name": "to",
+          "name": "signer",
           "type": "address"
         },
         {
-          "internalType": "uint256",
-          "name": "value",
-          "type": "uint256"
-        },
-        {
           "internalType": "bytes",
-          "name": "data",
+          "name": "context",
           "type": "bytes"
         }
       ],
-      "name": "executeCall",
+      "name": "isValidSigner",
       "outputs": [
         {
-          "internalType": "bytes",
-          "name": "",
-          "type": "bytes"
+          "internalType": "bytes4",
+          "name": "magicValue",
+          "type": "bytes4"
         }
       ],
-      "stateMutability": "payable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "owner",
+      "name": "state",
       "outputs": [
         {
-          "internalType": "address",
+          "internalType": "uint256",
           "name": "",
-          "type": "address"
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",

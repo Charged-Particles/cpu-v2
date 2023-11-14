@@ -63,7 +63,7 @@ const config: HardhatUserConfig = {
       chainId: 137,
       forking: {
         url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        blockNumber: 42543137 
+        blockNumber: 49144510 
       },
       accounts: {
         mnemonic: mnemonic.testnet,

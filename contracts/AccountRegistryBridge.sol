@@ -2,7 +2,7 @@
 
 pragma solidity ^0.8.13;
 
-import "./interfaces/IRegistry.sol";
+import "./interfaces/IERC6551Registry.sol";
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 
 contract AccountRegistryBridge {
@@ -13,13 +13,12 @@ contract AccountRegistryBridge {
         address contractAddress,
         uint256 tokenId
     ) external returns (address) {
-        return IRegistry(REGISTRY).createAccount(
+        return IERC6551Registry(REGISTRY).createAccount(
             IMPLEMENTATION,
+            '',
             block.chainid,
             contractAddress,
-            tokenId,
-            0,
-            ''
+            tokenId
         );
     }
 
@@ -27,12 +26,12 @@ contract AccountRegistryBridge {
         address contractAddress,
         uint256 tokenId
     ) external view returns (address) {
-        return IRegistry(REGISTRY).account(
+        return IERC6551Registry(REGISTRY).account(
             IMPLEMENTATION,
+            '',
             block.chainid,
             contractAddress,
-            tokenId,
-            0
+            tokenId
         );
     }
 }

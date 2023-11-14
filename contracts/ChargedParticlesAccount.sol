@@ -5,7 +5,7 @@ import "./Account.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ChargedParticlesAccount is Account {
+contract ChargedParticlesAccount is Account { // TODO
     function covalentBond(
         address nftTokenAddress,
         uint256 nftTokenId,
