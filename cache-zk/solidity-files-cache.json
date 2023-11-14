@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/contracts/ERC721All.sol": {
-      "lastModificationDate": 1699643720425,
-      "contentHash": "88ddc267aa454e9540798d00a51c523b",
+      "lastModificationDate": 1699902680006,
+      "contentHash": "7b162fbc346636d649f3e0d22b7e7883",
       "sourceName": "contracts/ERC721All.sol",
       "solcConfig": {
         "version": "0.8.13",
