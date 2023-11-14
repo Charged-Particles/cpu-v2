@@ -80,8 +80,6 @@ contract Account is
         bytes calldata data,
         uint8 operation
     ) external payable onlyValidSigner(data) onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
-        // emit TransactionExecuted(to, value, data);
-
         return _call(to, value, data);
     }
 
