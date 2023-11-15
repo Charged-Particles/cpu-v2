@@ -139,7 +139,17 @@ const config: HardhatUserConfig = {
           initialIndex: 0,
           count: 10,
       },
-    }
+    },
+    dockerizedNode: {
+      url: "http://localhost:3050",
+      ethNetwork: "http://localhost:8545",
+      zksync: true,
+    },
+    inMemoryNode: {
+      url: "http://127.0.0.1:8011",
+      ethNetwork: "", // in-memory node doesn't support eth node; removing this line will cause an error
+      zksync: true,
+    },
   },
   etherscan: {
     apiKey: {
