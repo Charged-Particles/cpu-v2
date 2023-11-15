@@ -2,7 +2,7 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/contracts/ERC721All.sol": {
-      "lastModificationDate": 1699902680006,
+      "lastModificationDate": 1700045019900,
       "contentHash": "7b162fbc346636d649f3e0d22b7e7883",
       "sourceName": "contracts/ERC721All.sol",
       "solcConfig": {
@@ -30,14 +30,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -57,7 +57,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/contracts/ERC721i.sol": {
-      "lastModificationDate": 1699885172630,
+      "lastModificationDate": 1700045019900,
       "contentHash": "7383817a673c2cd818bd2ddcb9d06a6b",
       "sourceName": "contracts/ERC721i.sol",
       "solcConfig": {
@@ -85,14 +85,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -112,7 +112,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
-      "lastModificationDate": 1698438171538,
+      "lastModificationDate": 1699649474736,
       "contentHash": "5a20b2cad87ddb61c7a3a6af21289e28",
       "sourceName": "@openzeppelin/contracts/access/Ownable.sol",
       "solcConfig": {
@@ -140,14 +140,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -166,7 +166,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/utils/Context.sol": {
-      "lastModificationDate": 1698438171575,
+      "lastModificationDate": 1699649474746,
       "contentHash": "5f2c5c4b6af2dd4551027144797bc8be",
       "sourceName": "@openzeppelin/contracts/utils/Context.sol",
       "solcConfig": {
@@ -194,14 +194,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -218,7 +218,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC721/ERC721.sol": {
-      "lastModificationDate": 1698438171657,
+      "lastModificationDate": 1699649476164,
       "contentHash": "95602b04f0b53f1139f4668d123ddeb7",
       "sourceName": "@openzeppelin/contracts/token/ERC721/ERC721.sol",
       "solcConfig": {
@@ -246,14 +246,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -278,7 +278,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC721/IERC721.sol": {
-      "lastModificationDate": 1698438171657,
+      "lastModificationDate": 1699649476164,
       "contentHash": "48de4c9a3a4ae5ef66a2aa620843413f",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721.sol",
       "solcConfig": {
@@ -306,14 +306,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -332,7 +332,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol": {
-      "lastModificationDate": 1698438171732,
+      "lastModificationDate": 1699649476953,
       "contentHash": "efbc0d15b80a74e34dbe8da0f3e879bb",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol",
       "solcConfig": {
@@ -360,14 +360,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -386,7 +386,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol": {
-      "lastModificationDate": 1698438171657,
+      "lastModificationDate": 1699649476164,
       "contentHash": "c22d4395e33763de693fd440c6fd10e1",
       "sourceName": "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol",
       "solcConfig": {
@@ -414,14 +414,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -438,7 +438,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/utils/Strings.sol": {
-      "lastModificationDate": 1698438171581,
+      "lastModificationDate": 1699649474751,
       "contentHash": "48686fc32a22a3754b8e63321857dd2a",
       "sourceName": "@openzeppelin/contracts/utils/Strings.sol",
       "solcConfig": {
@@ -466,14 +466,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -493,7 +493,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/utils/Address.sol": {
-      "lastModificationDate": 1698438171581,
+      "lastModificationDate": 1699649474745,
       "contentHash": "211ffd288c1588ba8c10eae668ca3c66",
       "sourceName": "@openzeppelin/contracts/utils/Address.sol",
       "solcConfig": {
@@ -521,14 +521,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -545,7 +545,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/utils/introspection/ERC165.sol": {
-      "lastModificationDate": 1698438171694,
+      "lastModificationDate": 1699649476165,
       "contentHash": "0e7db055ce108f9da7bb6686a00287c0",
       "sourceName": "@openzeppelin/contracts/utils/introspection/ERC165.sol",
       "solcConfig": {
@@ -573,14 +573,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -599,7 +599,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/utils/introspection/IERC165.sol": {
-      "lastModificationDate": 1698438171695,
+      "lastModificationDate": 1699649476167,
       "contentHash": "03e6768535ac4da0e9756f1d8a4a018a",
       "sourceName": "@openzeppelin/contracts/utils/introspection/IERC165.sol",
       "solcConfig": {
@@ -627,14 +627,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -651,7 +651,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/utils/math/SignedMath.sol": {
-      "lastModificationDate": 1698438171692,
+      "lastModificationDate": 1699649476167,
       "contentHash": "9488ebd4daacfee8ad04811600d7d061",
       "sourceName": "@openzeppelin/contracts/utils/math/SignedMath.sol",
       "solcConfig": {
@@ -679,14 +679,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -703,7 +703,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/utils/math/Math.sol": {
-      "lastModificationDate": 1698438171692,
+      "lastModificationDate": 1699649476166,
       "contentHash": "fe63409d8a06818b926cf89e0ea88b1b",
       "sourceName": "@openzeppelin/contracts/utils/math/Math.sol",
       "solcConfig": {
@@ -731,14 +731,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -755,7 +755,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol": {
-      "lastModificationDate": 1698438171732,
+      "lastModificationDate": 1699649476953,
       "contentHash": "f4dd06783f321aa26179bc2b6e361c29",
       "sourceName": "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol",
       "solcConfig": {
@@ -783,14 +783,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -837,14 +837,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -892,14 +892,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -952,14 +952,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -978,7 +978,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
-      "lastModificationDate": 1698438171657,
+      "lastModificationDate": 1699649476161,
       "contentHash": "3ae5166c6827a9cf1a7a462d1632b464",
       "sourceName": "@openzeppelin/contracts/token/ERC20/ERC20.sol",
       "solcConfig": {
@@ -1006,14 +1006,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -1034,7 +1034,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1698438171657,
+      "lastModificationDate": 1699649476161,
       "contentHash": "df36f7051335cd1e748b1b6463b7fdd3",
       "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
       "solcConfig": {
@@ -1062,14 +1062,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -1086,7 +1086,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/node_modules/@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol": {
-      "lastModificationDate": 1698438171732,
+      "lastModificationDate": 1699649476952,
       "contentHash": "909ab67fc5c25033fe6cd364f8c056f9",
       "sourceName": "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol",
       "solcConfig": {
@@ -1114,14 +1114,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -1168,14 +1168,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -1195,7 +1195,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/contracts/interfaces/IAccount.sol": {
-      "lastModificationDate": 1698435274907,
+      "lastModificationDate": 1700045010600,
       "contentHash": "1e76eefe5b82d4073f24165682dc696e",
       "sourceName": "contracts/interfaces/IAccount.sol",
       "solcConfig": {
@@ -1223,14 +1223,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -1275,14 +1275,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -1299,7 +1299,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/contracts/interfaces/IERC6551Account.sol": {
-      "lastModificationDate": 1698435274908,
+      "lastModificationDate": 1700045010601,
       "contentHash": "b8bbb8397e301184de1e7a98f8d0bc13",
       "sourceName": "contracts/interfaces/IERC6551Account.sol",
       "solcConfig": {
@@ -1327,14 +1327,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
@@ -1352,7 +1352,7 @@
       ]
     },
     "/Users/skamy/Documents/Dev/Charged/cpu-v2/contracts/interfaces/IRegistry.sol": {
-      "lastModificationDate": 1698435274908,
+      "lastModificationDate": 1700045010601,
       "contentHash": "c1170c955a4fabf1380667c8ef3b848c",
       "sourceName": "contracts/interfaces/IRegistry.sol",
       "solcConfig": {
@@ -1380,14 +1380,14 @@
           "libraries": {}
         },
         "zksolc": {
-          "version": "1.3.16",
+          "version": "1.3.17",
           "compilerSource": "binary",
           "settings": {
             "optimizer": {
               "enabled": true,
               "mode": "3"
             },
-            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.16",
+            "compilerPath": "/Users/skamy/Library/Caches/hardhat-nodejs/compilers-v2/zksolc/zksolc-v1.3.17",
             "missingLibrariesPath": "./.zksolc-libraries-cache/missingLibraryDependencies.json",
             "areLibrariesMissing": false,
             "experimental": {},
