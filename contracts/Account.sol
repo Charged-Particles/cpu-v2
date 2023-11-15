@@ -15,7 +15,6 @@ error NotAuthorized();
 error InvalidInput();
 error AccountLocked();
 error ExceedsMaxLockTime();
-error UntrustedImplementation();
 error OwnershipCycle();
 
 /**
