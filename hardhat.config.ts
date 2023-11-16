@@ -5,7 +5,8 @@ import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 import '@nomicfoundation/hardhat-ethers';
 import "@nomicfoundation/hardhat-toolbox";
-import '@nomicfoundation/hardhat-chai-matchers'
+import '@nomicfoundation/hardhat-chai-matchers';
+import 'hardhat-gas-reporter';
 
 // zkSync
 import "@matterlabs/hardhat-zksync-deploy";
@@ -160,7 +161,9 @@ const config: HardhatUserConfig = {
   gasReporter: {
       currency: 'USD',
       gasPrice: 1,
-      enabled: (process.env.REPORT_GAS) ? true : false
+      enabled: (process.env.REPORT_GAS) ? true : false,
+      // coinmarketcap: process.env.COIN_MARKETCAP_API_KEY || "",
+      token: "ETH"
   },
   zksolc: {
     version: "latest",

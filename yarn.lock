@@ -2846,7 +2846,7 @@ hardhat-deploy@^0.11.34:
     qs "^6.9.4"
     zksync-web3 "^0.14.3"
 
-hardhat-gas-reporter@^1.0.8:
+hardhat-gas-reporter@^1.0.9:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/hardhat-gas-reporter/-/hardhat-gas-reporter-1.0.9.tgz#9a2afb354bc3b6346aab55b1c02ca556d0e16450"
   integrity sha512-INN26G3EW43adGKBNzYWOlI3+rlLnasXTwW79YNnUhXPDa+yHESgt639dJEs37gCjhkbNKcRRJnomXEuMFBXJg==
@@ -4591,6 +4591,11 @@ slice-ansi@^4.0.0:
     ansi-styles "^4.0.0"
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
+
+solady@^0.0.141:
+  version "0.0.141"
+  resolved "https://registry.yarnpkg.com/solady/-/solady-0.0.141.tgz#b55e5b388a82a2c7ee6813746296f1d21bfecad0"
+  integrity sha512-e3ejEUEsLUvINcYpgA3rvdzwPfEyvNocD1alz4/rd0vDkAVQFt+OcxJn5pZKPaZsJwy4DQqVhqI9i+OrqwT1CQ==
 
 solc@0.7.3:
   version "0.7.3"
