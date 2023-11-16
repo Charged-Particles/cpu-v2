@@ -17,13 +17,20 @@ const mnemonic = {
   testnet: `${process.env.TESTNET_MNEMONIC}`.replace(/_/g, ' '),
   mainnet: `${process.env.MAINNET_MNEMONIC}`.replace(/_/g, ' '),
 };
-const optimizerDisabled = process.env.OPTIMIZER_DISABLED
+// const optimizerDisabled = process.env.OPTIMIZER_DISABLED
+const optimizerDisabled = false; 
 
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
       { 
-        version: '0.8.13'
+        version: '0.8.13',
+        settings: {
+          optimizer: {
+            enabled: !optimizerDisabled,
+            runs: 200
+          }
+        },
       },
       {
         version: "0.7.6",
@@ -67,10 +74,10 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       chainId: 137,
-      forking: {
-        url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        blockNumber: 42543137 
-      },
+      // forking: {
+      //   url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
+      //   blockNumber: 42543137 
+      // },
       accounts: {
         mnemonic: mnemonic.testnet,
         initialIndex: 0,

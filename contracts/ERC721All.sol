@@ -5,9 +5,11 @@
 
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
+import "../node_modules/solady/src/auth/Ownable.sol";
 
-import "./lib/ERC721.sol";
+// import "./lib/ERC721.sol";
+import "./lib/ERC721Solady.sol";
 
 /**
  * @dev todo...
@@ -17,105 +19,72 @@ contract ERC721All is Ownable, ERC721 {
 
   /// @dev ERC721 Base Token URI
   string internal _baseTokenURI;
+  string internal _name;
+  string internal _symbol;
 
   constructor(
     string memory name,
     string memory symbol,
     string memory baseUri
-  ) ERC721(name, symbol) Ownable() {
+  ) ERC721() Ownable() {
     _baseTokenURI = baseUri;
+    _symbol = symbol;
+    _name = name;
   }
 
-  /**
-   * @dev Overrides {IERC721-balanceOf}.
-   */
-  function balanceOf(address owner) public view override returns (uint256) {
-    require(owner != address(0), "ERC721: address zero is not a valid owner");
-    if (_balances[owner] == 0 && _hasOwnToken(owner)) {
-      return 1;
-    }
-    return _balances[owner];
+  function name() public view override returns (string memory) {
+    return _name;
   }
 
-  /**
-   * @dev Overrides {IERC721-ownerOf}.
-   */
-  function ownerOf(uint256 tokenId) public view override returns (address) {
-    require(_isTokenActive(tokenId), "ERC721: invalid token ID");
-
-    // If token has been transfered then _owners will be populated,
-    // otherwise the token ID represents the initial owner
-    address owner = _owners[tokenId];
-    if (owner == address(0)) {
-      owner = address(uint160(tokenId));
-    }
-    return owner;
+  function symbol() public view override returns (string memory) {
+    return _symbol;
   }
+
+  // function balanceOf(address owner) public view override returns (uint256) {
+  //   require(owner != address(0), "ERC721: address zero is not a valid owner");
+  //   if (_balances[owner] == 0 && _hasOwnToken(owner)) {
+  //     return 1;
+  //   }
+  //   return _balances[owner];
+  // }
+
+  // function ownerOf(uint256 tokenId) public view override returns (address) {
+  //   require(_isTokenActive(tokenId), "ERC721: invalid token ID");
+
+  //   // If token has been transfered then _owners will be populated,
+  //   // otherwise the token ID represents the initial owner
+  //   address owner = _owners[tokenId];
+  //   if (owner == address(0)) {
+  //     owner = address(uint160(tokenId));
+  //   }
+  //   return owner;
+  // }
 
   function mint() public {
-    _mint(_msgSender());
+    _mint(msg.sender, uint256(uint160(msg.sender)));
   }
 
-  function _mint(address receiver) internal {
-    // Token ID == Minter Address
-    uint256 tokenId = uint256(uint160(receiver));
+  // function _mint(address receiver) internal {
+  //   // Token ID == Minter Address
+  //   uint256 tokenId = uint256(uint160(receiver));
 
-    require(receiver != address(0), "ERC721: mint to the zero address");
-    require(!_isTokenActive(tokenId), "ERC721: token already minted");
+  //   require(receiver != address(0), "ERC721: mint to the zero address");
+  //   require(!_isTokenActive(tokenId), "ERC721: token already minted");
 
-    // Mark Token as Active
-    _activeTokens[tokenId] = true;
+  //   // Mark Token as Active
+  //   _activeTokens[tokenId] = true;
 
-    // Fire Transfer Event
-    emit Transfer(address(0), receiver, tokenId);
-  }
+  //   // Fire Transfer Event
+  //   emit Transfer(address(0), receiver, tokenId);
+  // }
 
-  function _transfer(
-    address from,
-    address to,
-    uint256 tokenId
-  ) internal override {
-    require(ownerOf(tokenId) == from, "ERC721: transfer from incorrect owner");
-    require(to != address(0), "ERC721: transfer to the zero address");
+  // function _hasOwnToken(address owner) internal view returns (bool) {
+  //   uint256 ownerTokenId = uint256(uint160(owner));
+  //   address currentOwner = _owners[ownerTokenId];
+  //   return (_isTokenActive(ownerTokenId) && (currentOwner == owner || currentOwner == address(0)));
+  // }
 
-    _beforeTokenTransfer(from, to, tokenId);
-
-    // Clear approvals from the previous owner
-    _approve(address(0), tokenId);
-
-    // Only if token has previously been transfered after mint
-    if (_owners[tokenId] != address(0)) {
-      _balances[from] -= 1;
-    }
-    _balances[to] += 1;
-    _owners[tokenId] = to;
-
-    emit Transfer(from, to, tokenId);
-
-    _afterTokenTransfer(from, to, tokenId);
-  }
-
-  function _hasOwnToken(address owner) internal view returns (bool) {
-    uint256 ownerTokenId = uint256(uint160(owner));
-    address currentOwner = _owners[ownerTokenId];
-    return (_isTokenActive(ownerTokenId) && (currentOwner == owner || currentOwner == address(0)));
-  }
-
-  function _isTokenActive(uint256 tokenId) internal view returns (bool) {
-    // Check if Token is Active and Not Burned
-    return (_activeTokens[tokenId] && _owners[tokenId] != _NULL_ADDRESS);
-  }
-
-  function _baseURI() internal view virtual override returns (string memory) {
+  function tokenURI(uint256 id) public view override returns (string memory) {
     return _baseTokenURI;
-  }
-
-  function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-    address owner = _owners[tokenId];
-    if (owner == address(0)) {
-      owner = address(uint160(tokenId));
-    }
-
-    return _baseURI();
   }
 }
