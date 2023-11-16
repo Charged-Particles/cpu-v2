@@ -22,7 +22,6 @@ export default async function (hre: HardhatRuntimeEnvironment) {
     'ipfs://QmYu6APMpWqZP9ZV4k1Bvsgr5hz6QPUyVf5m8xxQRj5oTr',
   ]);
 
-  console.log(ERC721AllEstimateCost);
   // Deploy this contract. The returned object will be of a `Contract` type,
   // similar to the ones in `ethers`.
   // `greeting` is an argument for contract constructor.
@@ -36,5 +35,8 @@ export default async function (hre: HardhatRuntimeEnvironment) {
   // console.log(mintTx, mintTx.gasUsed.toString())
 
   const feeData = await deployer.zkWallet.provider.getFeeData()
-  // console.log('>>>> ' ,feeData, 106690n * feeData.gasPrice)
+  console.log(feeData.gasPrice);
+  console.log('1 >>>> ', 198166n * feeData.gasPrice)
+  console.log('2 >>>> ', 140518n * feeData.gasPrice)
+  console.log('3>>>> ', 124361n * feeData.gasPrice)
 }
