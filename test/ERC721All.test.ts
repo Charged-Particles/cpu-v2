@@ -29,15 +29,25 @@ describe('Execute calls', async function () {
     expect(NFTAddress).to.not.be.empty
   });
 
-  it('Mints', async () => {
+  it('Mints deployer', async () => {
     const mintReceipt = await NFT.mint().then(tx => tx.wait());
     const ownerOfDeployer = await NFT.ownerOf(deployer);
     expect(ownerOfDeployer).to.be.eq(deployer)
+  });
 
+  it('Mints receiver', async () => {
     await NFT.connect(await ethers.getSigner(receiver)).mint().then(tx => tx.wait());
     const ownerOfReceiver = await NFT.ownerOf(receiver);
     expect(ownerOfReceiver).to.be.eq(receiver);
+  });
 
+  it('Transfers', async () => {
+    await NFT.mint().then(tx => tx.wait());
+    const ownerOfDeployer = await NFT.ownerOf(deployer);
+    expect(ownerOfDeployer).to.be.eq(deployer)
+
+    await NFT.transferFrom(deployer, receiver, deployer).then(tx => tx.wait());
+    expect(await NFT.ownerOf(deployer)).to.be.eq(receiver);
   });
 
   it('Checks base uri', async() => {
