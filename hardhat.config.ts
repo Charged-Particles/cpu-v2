@@ -1,10 +1,10 @@
 require('dotenv').config()
-import { HardhatUserConfig } from "hardhat/config";
+import { HardhatUserConfig } from 'hardhat/config';
 import '@typechain/hardhat';
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
 import '@nomicfoundation/hardhat-ethers';
-import "@nomicfoundation/hardhat-toolbox";
+import '@nomicfoundation/hardhat-toolbox';
 import '@nomicfoundation/hardhat-chai-matchers'
 
 const mnemonic = {
@@ -16,14 +16,29 @@ const optimizerDisabled = process.env.OPTIMIZER_DISABLED
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
-      { 
-        version: '0.8.13'
+      {
+        version: '0.6.12',
+        settings: {
+          optimizer: {
+            enabled: !optimizerDisabled,
+            runs: 200
+          }
+        },
       },
       {
-        version: "0.7.6",
+        version: '0.8.13',
+        settings: {
+          optimizer: {
+            enabled: !optimizerDisabled,
+            runs: 200
+          }
+        },
       },
       {
-        version: "0.8.17",
+        version: '0.7.6',
+      },
+      {
+        version: '0.8.17',
         settings: {
           optimizer: {
             enabled: !optimizerDisabled,
@@ -51,19 +66,21 @@ const config: HardhatUserConfig = {
     },
   },
   paths: {
-      sources: "./contracts",
-      tests: "./test",
-      cache: "./cache",
+      sources: './contracts',
+      tests: './test',
+      cache: './cache',
       artifacts: './build/contracts',
       deploy: './deploy',
       deployments: './deployments'
   },
   networks: {
     hardhat: {
-      chainId: 137,
+      chainId: 80001,
       forking: {
-        url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        blockNumber: 42543137 
+        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
+        blockNumber: 38812688
+        // url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
+        // blockNumber: 38812688
       },
       accounts: {
         mnemonic: mnemonic.testnet,
@@ -72,13 +89,24 @@ const config: HardhatUserConfig = {
       },
     },
     goerli: {
-        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_GOERLI_APIKEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.testnet,
             initialIndex: 0,
             count: 10,
-        }
+        },
+        chainId: 5
+    },
+    sepolia: {
+        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_API_KEY}`,
+        gasPrice: 'auto',
+        accounts: {
+            mnemonic: mnemonic.testnet,
+            initialIndex: 0,
+            count: 10,
+        },
+        chainId: 11155111
     },
     mainnet: {
         url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
@@ -90,7 +118,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-        url: 'https://rpc-mumbai.maticvigil.com',
+      url: `https://polygon-mumbai.g.alchemy.io/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -100,8 +128,8 @@ const config: HardhatUserConfig = {
         chainId: 80001
     },
     polygon: {
-        url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        gasPrice: 'auto',
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_API_KEY}`,
+        gasPrice: 150e9,
         accounts: {
             mnemonic: mnemonic.mainnet,
             count: 8,
@@ -111,13 +139,15 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      polygon: process.env.POLYGONSCAN_APIKEY ?? '',
-      polygonMumbai: process.env.POLYGONSCAN_APIKEY ?? '',
+      mainnet: process.env.ETHERSCAN_API_KEY ?? '',
+      goerli: process.env.ETHERSCAN_API_KEY ?? '',
+      polygon: process.env.POLYGONSCAN_API_KEY ?? '',
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY ?? '',
     }
   },
   gasReporter: {
       currency: 'USD',
-      gasPrice: 1,
+      gasPrice: 32,
       enabled: (process.env.REPORT_GAS) ? true : false
   },
 };
