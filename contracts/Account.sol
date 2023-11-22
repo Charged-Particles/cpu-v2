@@ -2,6 +2,7 @@
 pragma solidity ^0.8.13;
 
 import "./interfaces/IERC6551Account.sol";
+import "./interfaces/IERC6551Executable.sol";
 import "./lib/ERC6551AccountLib.sol";
 
 import "@openzeppelin/contracts/utils/introspection/IERC165.sol";
@@ -14,15 +15,15 @@ error NotAuthorized();
 error InvalidInput();
 error AccountLocked();
 error ExceedsMaxLockTime();
-error UntrustedImplementation();
 error OwnershipCycle();
 
 /**
  * @title A smart contract account owned by a single ERC721 token
  */
-contract MinimalisticAccount is
+contract Account is
     IERC165,
     IERC6551Account,
+    IERC6551Executable,
     IERC721Receiver,
     IERC1155Receiver
 {
@@ -49,14 +50,19 @@ contract MinimalisticAccount is
     }
 
     /// @dev reverts if caller is not authorized to execute on this account
-    modifier onlyAuthorized() {
-        if (!isAuthorized(msg.sender)) revert NotAuthorized();
+    modifier onlyValidSigner(bytes calldata context) {
+        if (isValidSigner(msg.sender, context) != 0x523e3260) revert NotAuthorized();
         _;
     }
 
     /// @dev reverts if this account is currently locked
     modifier onlyUnlocked() {
         if (isLocked()) revert AccountLocked();
+        _;
+    }
+
+    modifier onlyAllowedMethod(bytes calldata _data) {
+        require(allowedMethod(_data), "Method all not allowed");
         _;
     }
 
@@ -67,13 +73,12 @@ contract MinimalisticAccount is
     }
 
     /// @dev executes a low-level call against an account if the caller is authorized to make calls
-    function executeCall(
+    function execute(
         address to,
         uint256 value,
-        bytes calldata data
-    ) external payable onlyAuthorized onlyUnlocked returns (bytes memory) {
-        emit TransactionExecuted(to, value, data);
-
+        bytes calldata data,
+        uint8 operation
+    ) external payable onlyValidSigner(data) onlyUnlocked onlyAllowedMethod(data) returns (bytes memory) {
         return _call(to, value, data);
     }
 
@@ -139,7 +144,7 @@ contract MinimalisticAccount is
     }
 
     /// @dev Returns the authorization status for a given caller
-    function isAuthorized(address caller) public view returns (bool) {
+    function isValidSigner(address signer, bytes calldata context) public view returns (bytes4 magicValue) {
         (
             ,
             address tokenContract,
@@ -148,12 +153,12 @@ contract MinimalisticAccount is
         address _owner = IERC721(tokenContract).ownerOf(tokenId);
 
         // authorize token owner
-        if (caller == _owner) return true;
+        if (signer == _owner) return 0x523e3260;
 
         // authorize caller if owner has granted permissions
-        if (permissions[_owner][caller]) return true;
+        if (permissions[_owner][signer]) return 0x523e3260;
 
-        return false;
+        return 0xffffffff;
     }
 
     /// @dev Returns true if a given interfaceId is supported by this account. This method can be
@@ -248,5 +253,24 @@ contract MinimalisticAccount is
                 revert(add(result, 32), mload(result))
             }
         }
+    }
+
+    function allowedMethod(bytes calldata _data) internal returns (bool) {
+        bytes4 signature = parseFirst4Bytes(_data);
+        //  approve > 0x095ea7b3
+
+        if (signature == 0x095ea7b3) {
+            return false;
+        }
+
+        return true;
+    }
+
+    function parseFirst4Bytes(bytes calldata _data) public pure returns (bytes4) {
+        return bytes4(_data[:4]);
+    }
+
+    function state() external view returns (uint256) {
+        return 1;
     }
 }

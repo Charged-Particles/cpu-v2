@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "./MinimalisticAccount.sol";
+import "./Account.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ChargedParticlesAccount is MinimalisticAccount {
+contract ChargedParticlesAccount is Account {
     function covalentBond(
         address nftTokenAddress,
         uint256 nftTokenId,
@@ -26,4 +27,19 @@ contract ChargedParticlesAccount is MinimalisticAccount {
     ) external {
         IERC721(nftTokenAddress).safeTransferFrom(address(this), receiver, nftTokenId);
     }
+
+    function energizeParticle(
+        address assetToken,
+        uint256 assetAmount
+    ) external {
+        IERC20(assetToken).transferFrom(msg.sender, address(this), assetAmount);
+    }
+
+    function dischargeParticle(
+      address receiver,
+      address assetToken,
+      uint256 assetAmount
+  ) external {
+        IERC20(assetToken).transfer(receiver, assetAmount);
+  }
 }

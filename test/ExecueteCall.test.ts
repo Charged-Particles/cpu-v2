@@ -1,17 +1,19 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
-import { NFTMock, MinimalisticAccount, IRegistry } from "../typechain-types";
+import { NFTMock, Account, IERC6551Registry } from "../typechain-types";
 
 
 describe('Execute calls', async function () {
-  const REGISTRY = 	"0x02101dfB77FDE026414827Fdc604ddAF224F0921";
+  const REGISTRY = 	"0x000000006551c19487814612e58FE06813775758";
   
   // Contracts
-  let chargedParticlesAccount: MinimalisticAccount, nftMock: NFTMock, registryContract: IRegistry;
+  let chargedParticlesAccount: Account, nftMock: NFTMock, registryContract: IERC6551Registry;
   // Addresses
   let nftMockAddress: string, chargedParticlesAccountAddress: string;
   // Signers
   let deployer: string, receiver: string;
+
+  const salt = ethers.encodeBytes32String('0')
 
   before(async function () {
     const { deployer: deployerAccount, user1 } = await getNamedAccounts();
@@ -25,7 +27,7 @@ describe('Execute calls', async function () {
     chargedParticlesAccount = await ethers.getContract('ChargedParticlesAccount');
     nftMock = await ethers.getContract('NFTMock');
     registryContract = await ethers.getContractAt(
-      'IRegistry',
+      'IERC6551Registry',
       REGISTRY
     );
 
@@ -46,25 +48,24 @@ describe('Execute calls', async function () {
 
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0 
     );
     expect(newAccountAddress).to.not.be.empty;
 
     const newAccountReceipt = await registryContract.createAccount(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0,
-      '0x'
     ).then(tx => tx.wait());
 
     expect(newAccountReceipt).to.haveOwnProperty('hash');
 
-    const chargedParticlesAccountContract = chargedParticlesAccount.attach(newAccountAddress) as MinimalisticAccount;
+    const chargedParticlesAccountContract = chargedParticlesAccount.attach(newAccountAddress) as Account;
     const chargedParticlesDataFromTBA = await chargedParticlesAccountContract.token();
 
     expect(chargedParticlesDataFromTBA).to.be.lengthOf(3);
@@ -80,20 +81,19 @@ describe('Execute calls', async function () {
     // Create an account
     const newAccountAddress = await registryContract.account(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0 
     );
 
     await registryContract.createAccount(
       chargedParticlesAccountAddress,
+      salt,
       network.config.chainId ?? 137,
       nftMockAddress,
       tokenId,
-      0,
-      '0x'
-    ).then(tx => tx.wait());
+      ).then(tx => tx.wait());
 
     // Give permission
     await nftMock.approve(newAccountAddress, depositedTokenId).then(tx => tx.wait());
@@ -116,13 +116,57 @@ describe('Execute calls', async function () {
 
     const breakCovalentBondCallData = breakCovalentBond(newAccountAddress, receiver, depositedTokenId); 
 
-    await account.executeCall(
+    await account.execute(
       nftMockAddress,
       0,
-      breakCovalentBondCallData
+      breakCovalentBondCallData,
+      0,
     ).then(tx => tx.wait());
 
     expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
+  });
+
+  it('Filters out approve calls', async() => {
+    const approveCall = (to:string, tokenId:number) => {
+      const ABI = ["function approve(address,uint256)"];
+      const iface = new ethers.Interface(ABI);
+      const cdata = iface.encodeFunctionData("approve", [to, tokenId]); 
+
+      return cdata;
+    };
+
+    const tokenId = 1;
+    const depositedTokenId = 2;
+    await nftMock.mint(deployer, tokenId).then(tx => tx.wait());
+    await nftMock.mint(deployer, depositedTokenId).then(tx => tx.wait());
+
+    // Create an account
+    const newAccountAddress = await registryContract.account(
+      chargedParticlesAccountAddress,
+      salt,
+      network.config.chainId ?? 137,
+      nftMockAddress,
+      tokenId,
+    );
+
+    await registryContract.createAccount(
+      chargedParticlesAccountAddress,
+      salt,
+      network.config.chainId ?? 137,
+      nftMockAddress,
+      tokenId,
+    ).then(tx => tx.wait());
+
+    const account = await ethers.getContractAt('ChargedParticlesAccount', newAccountAddress);
+      
+    const approveCallData = approveCall('0x277BFc4a8dc79a9F194AD4a83468484046FAFD3A', depositedTokenId);
+    
+    await expect(account.execute(
+      nftMockAddress,
+      0,
+      approveCallData,
+      0
+    )).revertedWith('Method all not allowed'); 
   });
 
 });

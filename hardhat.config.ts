@@ -77,10 +77,8 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 80001,
       forking: {
-        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
-        blockNumber: 38812688
-        // url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
-        // blockNumber: 38812688
+        url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
+        blockNumber: 49144510 
       },
       accounts: {
         mnemonic: mnemonic.testnet,
