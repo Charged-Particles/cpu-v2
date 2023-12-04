@@ -11,7 +11,8 @@ describe('Execute calls', async function () {
   let aaveManager: AaveWalletManager;
 
   // Addresses
-  let NFTAddress: string;
+  let adaiAddress: string;
+
   // Signers
   let deployer: string, receiver: string;
 
@@ -25,6 +26,12 @@ describe('Execute calls', async function () {
 
   beforeEach(async () => {
     chainId = network.config.chainId ?? 80001;
+
+    if (chainId != 80001) {
+      throw new Error('Only run ExecuteForUser.test under hardhat test fork network')
+    };
+
+    adaiAddress = addressBook[chainId].stakingTokens[0].aave
     // set up proton
     proton = await ethers.getContractAt('ProtonC', addressBook[chainId].protonC);
 
@@ -61,15 +68,30 @@ describe('Execute calls', async function () {
 
     expect(mass).to.eq(amountDeposit);
 
+    const dischargeInterface = (recipient: string, amount: BigInt) => {
+      const ABI = ["function transfer(address recipient, uint256 amount)"];
+      const iface = new ethers.Interface(ABI);
+      const cdata = iface.encodeFunctionData("transfer", [recipient, amount]); 
+
+      return cdata;
+    };
+
+    const dischargeCallData = dischargeInterface(deployer, amountDeposit); 
+
     // Add executor 
-    await aaveManager.setExecutor(deployer).then(tx => tx.wait());
-    
+    await aaveManager.setController(deployer).then(tx => tx.wait());
+    const aDAI = await ethers.getContractAt('IERC20Detailed', adaiAddress);
+    const balanceBefore = await aDAI.balanceOf.staticCall(deployer);
+
     await aaveManager.executeForAccount(
       addressBook[chainId].protonC,
       tokenId,
-      await dai.getAddress(), 
+      adaiAddress, 
       0,
-      '0x',
-    );
+      dischargeCallData,
+    ).then(tx => tx.wait());
+
+    const savedBalance = await aDAI.balanceOf.staticCall(deployer);
+    expect(balanceBefore).to.be.lessThan(savedBalance)
   });
 });

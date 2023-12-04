@@ -4,6 +4,7 @@ interface StakingToken {
   address: string;
   multiplier: string;
   funding: string;
+  aave?: string;
 }
 
 interface AddressBook {
@@ -92,7 +93,7 @@ export const addressBook: AddressBook = {
     'lepton': '',
     'ionx': '',
     'stakingTokens': [
-      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '20000', funding: '10000', aave: '0x639cB7b21ee2161DF9c882483C9D55c90c20Ca3e' }, // Do-Not-Modify: used in unit-tests
       { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
     ],
   }
