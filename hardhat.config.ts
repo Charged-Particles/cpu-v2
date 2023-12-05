@@ -118,7 +118,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.io/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
