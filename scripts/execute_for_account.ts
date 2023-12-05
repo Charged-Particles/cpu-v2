@@ -1,11 +1,11 @@
 import { ethers, getNamedAccounts } from "hardhat";
-import { ChargedParticles } from "../typechain-types";
 
 async function main() {
   const { deployer } = await getNamedAccounts();
+  const receiver = '0x03828b7129d49313B2cdc966e50369B75EC79A48';
 
-  const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', '0x51f845af34c60499a1056FCDf47BcBC681A0fA39');
-  const manager = await ethers.getContractAt('AaveWalletManager', '0xa8BaA965C302F748197C25a5217fb5b7c7a8C678');
+  // const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', '0x51f845af34c60499a1056FCDf47BcBC681A0fA39');
+  const manager = await ethers.getContractAt('AaveWalletManager', '0x54b32b288d7904D5d98Be1910975a80e45DA5e8d');
 
   const setControllerTx = await manager.setController(deployer).then(tx => tx.wait());
 
@@ -18,7 +18,7 @@ async function main() {
   };
 
   const amountDeposit = 94n;
-  const dischargeCallData = dischargeInterface(deployer, amountDeposit); 
+  const dischargeCallData = dischargeInterface(receiver, amountDeposit); 
 
   const executeTx = await manager.executeForAccount(
     '0x63174FA9680C674a5580f7d747832B2a2133Ad8f', //ProtonC
