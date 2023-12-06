@@ -77,7 +77,7 @@ const config: HardhatUserConfig = {
     hardhat: {
       chainId: 80001,
       forking: {
-        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_APIKEY}`,
+        url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
         blockNumber: 38812688
         // url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
         // blockNumber: 38812688
@@ -89,7 +89,7 @@ const config: HardhatUserConfig = {
       },
     },
     goerli: {
-        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_GOERLI_APIKEY}`,
+        url: `https://eth-goerli.g.alchemy.com/v2/${process.env.ALCHEMY_GOERLI_API_KEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -99,7 +99,7 @@ const config: HardhatUserConfig = {
         chainId: 5
     },
     sepolia: {
-        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_APIKEY}`,
+        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_API_KEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -109,7 +109,7 @@ const config: HardhatUserConfig = {
         chainId: 11155111
     },
     mainnet: {
-        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_APIKEY}`,
+        url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
         gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.mainnet,
@@ -118,7 +118,7 @@ const config: HardhatUserConfig = {
         }
     },
     mumbai: {
-      url: `https://polygon-mumbai.g.alchemy.io/v2/${process.env.ALCHEMY_MUMBAI_APIKEY}`,
+      url: `https://polygon-mumbai.g.alchemy.io/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
         gasPrice: 10e9,
         accounts: {
             mnemonic: mnemonic.testnet,
@@ -128,7 +128,7 @@ const config: HardhatUserConfig = {
         chainId: 80001
     },
     polygon: {
-        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_APIKEY}`,
+        url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_API_KEY}`,
         gasPrice: 150e9,
         accounts: {
             mnemonic: mnemonic.mainnet,
@@ -139,10 +139,10 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      mainnet: process.env.ETHERSCAN_APIKEY ?? '',
-      goerli: process.env.ETHERSCAN_APIKEY ?? '',
-      polygon: process.env.POLYGONSCAN_APIKEY ?? '',
-      polygonMumbai: process.env.POLYGONSCAN_APIKEY ?? '',
+      mainnet: process.env.ETHERSCAN_API_KEY ?? '',
+      goerli: process.env.ETHERSCAN_API_KEY ?? '',
+      polygon: process.env.POLYGONSCAN_API_KEY ?? '',
+      polygonMumbai: process.env.POLYGONSCAN_API_KEY ?? '',
     }
   },
   gasReporter: {
