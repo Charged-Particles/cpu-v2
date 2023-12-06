@@ -190,21 +190,23 @@ contract RewardProgram is
     uint256 parentNftUuid = contractAddress.getTokenUUID(tokenId);
     AssetStake storage assetStake = _assetStake[parentNftUuid];
 
-    // Update Claimable Rewards
-    uint256 newRewards = _calculateRewardsEarned(parentNftUuid, interestAmount);
-    assetStake.claimableRewards = assetStake.claimableRewards.add(newRewards);
+    if (assetStake.start > 0) {
+      // Update Claimable Rewards
+      uint256 newRewards = _calculateRewardsEarned(parentNftUuid, interestAmount);
+      assetStake.claimableRewards = assetStake.claimableRewards.add(newRewards);
 
-    // Reset Stake if Principal Balance falls to Zero
-    IWalletManager walletMgr = _chargedManagers.getWalletManager(assetStake.walletManagerId);
-    uint256 principal = walletMgr.getPrincipal(contractAddress, tokenId, _programData.stakingToken);
-    if (principal == 0) {
-      assetStake.start = 0;
+      // Reset Stake if Principal Balance falls to Zero
+      IWalletManager walletMgr = _chargedManagers.getWalletManager(assetStake.walletManagerId);
+      uint256 principal = walletMgr.getPrincipal(contractAddress, tokenId, _programData.stakingToken);
+      if (principal == 0) {
+        assetStake.start = 0;
+      }
+
+      // Issue Rewards to NFT Owner
+      rewards = _claimRewards(contractAddress, tokenId);
+
+      emit AssetRelease(contractAddress, tokenId, interestAmount);
     }
-
-    // Issue Rewards to NFT Owner
-    rewards = _claimRewards(contractAddress, tokenId);
-
-    emit AssetRelease(contractAddress, tokenId, interestAmount);
   }
 
 
