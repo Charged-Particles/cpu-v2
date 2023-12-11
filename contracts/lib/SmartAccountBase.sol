@@ -22,6 +22,8 @@ error OwnershipCycle();
 abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   bytes4 internal constant _MAGIC_VALUE = 0x523e3260;
 
+  uint256 internal _accountState;
+
   /// @dev mapping from owner => caller => has permissions
   mapping(address => mapping(address => bool)) internal _permissions;
 
@@ -29,6 +31,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
 
   constructor(address controller) {
     _executionController = controller;
+    _accountState = 1;
   }
 
   /// @dev allows eth transfers by default, but allows account owner to override
@@ -73,7 +76,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   }
 
   function state() external view virtual returns (uint256) {
-    return 1;
+    return _accountState;
   }
 
   /// @dev Returns the authorization status for a given caller
@@ -164,6 +167,8 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
       assembly {
         revert(add(result, 32), mload(result))
       }
+    } else {
+      _accountState += 1;
     }
   }
 

@@ -5,7 +5,7 @@ import "./SmartAccount.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract ChargedParticlesAccount is SmartAccount {
+contract ChargedParticles is SmartAccount {
 
   function energizeParticle(
     address assetToken,
