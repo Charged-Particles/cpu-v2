@@ -2,8 +2,8 @@ import { ethers, getNamedAccounts } from "hardhat";
 
 async function main() {
   const { deployer } = await getNamedAccounts();
-  const receiver = '0x03828b7129d49313B2cdc966e50369B75EC79A48';
-  const chargedParticlesAddress = '0x0288280Df6221E7e9f23c1BB398c820ae0Aa6c10';
+  const receiver = '0x03828b7129d49313b2cdc966e50369b75ec79a48';
+  const chargedParticlesAddress = '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41';
 
   // const chargedParticles: ChargedParticles = await ethers.getContractAt('ChargedParticles', '0x51f845af34c60499a1056FCDf47BcBC681A0fA39');
   const manager = await ethers.getContractAt('AaveWalletManager', '0x54b32b288d7904D5d98Be1910975a80e45DA5e8d');
@@ -18,13 +18,13 @@ async function main() {
     return cdata;
   };
 
-  const amountDeposit = 94n;
+  const amountDeposit = 164n;
   const dischargeCallData = dischargeInterface(receiver, amountDeposit); 
 
   const executeTx = await manager.executeForAccount(
-    '0x63174FA9680C674a5580f7d747832B2a2133Ad8f', //ProtonC
+    '0xcaf6e5465c410c187bd6Abb25Ae8c0221881086B', //ProtonC
     103, //Token ID
-    '0xcaf6e5465c410c187bd6Abb25Ae8c0221881086B', //Asset
+    '0x1E6bb68Acec8fefBD87D192bE09bb274170a0548', //Asset
     0,
     dischargeCallData
   ).then(tx => tx.wait());
