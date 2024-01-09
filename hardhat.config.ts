@@ -115,7 +115,8 @@ const config: HardhatUserConfig = {
             mnemonic: mnemonic.mainnet,
             initialIndex: 0,
             count: 10,
-        }
+        },
+        chainId: 1,
     },
     mumbai: {
       url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
