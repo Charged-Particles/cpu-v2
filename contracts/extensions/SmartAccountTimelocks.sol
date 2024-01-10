@@ -12,14 +12,15 @@ error ExceedsMaxLockTime();
 contract SmartAccountTimelocks is SmartAccount {
   event LockUpdated(uint256 lockedUntil);
 
-  /// @dev timestamp at which this account will be unlocked
-  uint256 public lockedUntil;
+  /// @dev timestamp at which this account will be unlocked.
+  /// Attached to "owner" so that the lock is cleared when transferred.
+  mapping(address => uint256) public lockedUntil;
 
   constructor(address controller) SmartAccount(controller) {}
 
   /// @dev returns the current lock status of the account as a boolean
   function isLocked() public view returns (bool) {
-    return lockedUntil > block.timestamp;
+    return lockedUntil[owner()] > block.timestamp;
   }
 
   /// @dev executes a low-level call against an account if the caller is authorized to make calls
@@ -52,7 +53,7 @@ contract SmartAccountTimelocks is SmartAccount {
       revert ExceedsMaxLockTime();
     }
 
-    lockedUntil = _lockedUntil;
+    lockedUntil[owner()] = _lockedUntil;
 
     emit LockUpdated(_lockedUntil);
   }

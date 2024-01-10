@@ -38,6 +38,24 @@ contract SmartAccountController_EX1 is ISmartAccountController, ERC165 {
     return "";
   }
 
+  function onReceived(
+    address tokenContract,
+    uint256 tokenId,
+    uint256 tokenAmount,
+    bytes calldata data
+  ) external {
+    // no-op
+  }
+
+  function onReceivedBatch(
+    address tokenContract,
+    uint256[] calldata tokenIds,
+    uint256[] calldata tokenAmounts,
+    bytes calldata data
+  ) external {
+    // no-op
+  }
+
   /// @dev Returns true if a given interfaceId is supported by this account. This method can be
   /// extended by an override.
   function supportsInterface(bytes4 interfaceId)

@@ -26,6 +26,5 @@ pragma solidity >=0.8.0;
 interface IDynamicTraits {
   function getTraits(uint256 tokenId) external view returns (uint256);
   function hasTrait(uint256 tokenId, uint256 trait) external view returns (bool);
-  function addTraits(uint256 tokenId, uint256 traits) external returns (uint256);
-  function removeTraits(uint256 tokenId, uint256 traits) external returns (uint256);
+  function traitCount(uint256 tokenId) external view returns (uint256 totalTraits);
 }

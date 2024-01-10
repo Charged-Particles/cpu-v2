@@ -2,14 +2,16 @@
 pragma solidity ^0.8.13;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import {ISmartAccountController} from "./interfaces/ISmartAccountController.sol";
+// import {ISmartAccountController} from "./interfaces/ISmartAccountController.sol";
 import {SmartAccountBase, NotAuthorized, InvalidInput} from "./lib/SmartAccountBase.sol";
 
 /**
  * @title A smart contract account owned by a single ERC721 token
  */
 contract SmartAccount is SmartAccountBase {
-  constructor(address controller) SmartAccountBase(controller) {}
+  uint256 public state;
+
+  constructor(address chargedParticles) SmartAccountBase(chargedParticles) {}
 
   /// @dev allows eth transfers by default
   receive() external payable virtual override {}
@@ -25,33 +27,61 @@ contract SmartAccount is SmartAccountBase {
     payable
     virtual
     override
-    onlyValidSigner(data)
+    onlyValidSigner()
     returns (bytes memory)
   {
+    require(operation == 0, "Only call operations are supported");
+    ++state;
+
+    // Perform custom checks/updates from within a custom controller
     _onExecute(to, value, data, operation);
 
-    if (operation == 1) {
-      return _call(to, value, data);
-    }
-    return "";
-  }
-
-  /// @dev grants a given caller execution permissions
-  function setPermissions(address[] calldata callers, bool[] calldata permissions) public virtual {
-    address _owner = owner();
-    if (msg.sender != _owner) { revert NotAuthorized(); }
-
-    uint256 length = callers.length;
-    if (permissions.length != length) { revert InvalidInput(); }
-
-    for (uint256 i = 0; i < length; i++) {
-      _permissions[_owner][callers[i]] = permissions[i];
-      emit PermissionUpdated(_owner, callers[i], permissions[i]);
-    }
+    // Execute Call on Account
+    return _call(to, value, data);
   }
 
   /// @dev ...
-  function setExecutionController(address controller) external virtual onlyOwner {
-    _executionController = controller;
+  function handleERC721Update(
+    bool isReceiving,
+    address tokenContract,
+    uint256 tokenId,
+    bytes calldata data
+  )
+    public
+    virtual
+    override
+  {
+    // Perform custom checks/updates from within a custom controller
+    _onUpdate(isReceiving, tokenContract, tokenId, 1, data);
+  }
+
+  function handleERC1155Update(
+    bool isReceiving,
+    address tokenContract,
+    uint256 tokenId,
+    uint256 tokenAmount,
+    bytes calldata data
+  )
+    public
+    virtual
+    override
+  {
+    // Perform custom checks/updates from within a custom controller
+    _onUpdate(isReceiving, tokenContract, tokenId, tokenAmount, data);
+  }
+
+  function handleERC1155BatchUpdate(
+    bool isReceiving,
+    address tokenContract,
+    uint256[] calldata tokenIds,
+    uint256[] calldata tokenAmounts,
+    bytes calldata data
+  )
+    public
+    virtual
+    override
+  {
+    // Perform custom checks/updates from within a custom controller
+    _onUpdateBatch(isReceiving, tokenContract, tokenIds, tokenAmounts, data);
   }
 }

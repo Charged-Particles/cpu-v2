@@ -3,10 +3,13 @@ pragma solidity ^0.8.13;
 
 import {IERC165, ERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC1271} from "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
+import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import {IERC6551Account} from "../interfaces/IERC6551Account.sol";
+import {IERC6551Executable} from "../interfaces/IERC6551Executable.sol";
 import {ERC6551AccountLib} from "./ERC6551AccountLib.sol";
 
 import {ISmartAccount} from "../interfaces/ISmartAccount.sol";
@@ -20,18 +23,14 @@ error OwnershipCycle();
  * @title A smart contract account owned by a single ERC721 token
  */
 abstract contract SmartAccountBase is ISmartAccount, ERC165 {
-  bytes4 internal constant _MAGIC_VALUE = 0x523e3260;
-
-  uint256 internal _accountState;
-
   /// @dev mapping from owner => caller => has permissions
   mapping(address => mapping(address => bool)) internal _permissions;
 
+  address internal _chargedParticles;
   address internal _executionController;
 
-  constructor(address controller) {
-    _executionController = controller;
-    _accountState = 1;
+  constructor(address chargedParticles) {
+    _chargedParticles = chargedParticles;
   }
 
   /// @dev allows eth transfers by default, but allows account owner to override
@@ -49,7 +48,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   /// @dev Returns the EIP-155 chain ID, token contract address, and token ID for the token that
   /// owns this account.
   function token()
-    external
+    public
     view
     virtual
     returns (
@@ -64,37 +63,54 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   /// @dev Returns the owner of the ERC-721 token which owns this account. By default, the owner
   /// of the token has full permissions on the account.
   function owner() public view virtual returns (address) {
-    (
-      uint256 chainId,
-      address tokenContract,
-      uint256 tokenId
-    ) = ERC6551AccountLib.token();
-
+    (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
     if (chainId != block.chainid) { return address(0); }
 
-    return IERC721(tokenContract).ownerOf(tokenId);
+    try IERC721(tokenContract).ownerOf(tokenId) returns (address _owner) {
+      return _owner;
+    } catch {
+      return address(0);
+    }
   }
 
-  function state() external view virtual returns (uint256) {
-    return _accountState;
+  function isValidSigner(address signer, bytes calldata) external view virtual returns (bytes4) {
+    if (_isValidSigner(signer)) {
+      return IERC6551Account.isValidSigner.selector;
+    }
+    return bytes4(0);
   }
 
-  /// @dev Returns the authorization status for a given caller
-  function isValidSigner(address signer, bytes calldata context) public view virtual returns (bytes4 magicValue) {
-    (
-      ,
-      address tokenContract,
-      uint256 tokenId
-    ) = ERC6551AccountLib.token();
-    address ownerOf = IERC721(tokenContract).ownerOf(tokenId);
+  function isValidSignature(bytes32 hash, bytes memory signature)
+    external
+    view
+    virtual
+    returns (bytes4 magicValue)
+  {
+    bool isValid = SignatureChecker.isValidSignatureNow(owner(), hash, signature);
+    if (isValid) {
+      return IERC1271.isValidSignature.selector;
+    }
+    return bytes4(0);
+  }
 
-    // authorize token owner
-    if (signer == ownerOf) { return _MAGIC_VALUE; }
+  /// @dev grants a given caller execution permissions
+  function setPermissions(address[] calldata callers, bool[] calldata newPermissions) public virtual {
+    address _owner = owner();
+    if (msg.sender != _owner) { revert NotAuthorized(); }
 
-    // authorize caller if owner has granted permissions
-    if (_permissions[ownerOf][signer]) { return _MAGIC_VALUE; }
+    uint256 length = callers.length;
+    if (newPermissions.length != length) { revert InvalidInput(); }
 
-    return 0xffffffff;
+    for (uint256 i = 0; i < length; i++) {
+      _permissions[_owner][callers[i]] = newPermissions[i];
+      emit PermissionUpdated(_owner, callers[i], newPermissions[i]);
+    }
+  }
+
+  /// @dev ...
+  function setExecutionController(address controller) external virtual {
+    if (msg.sender != owner() && msg.sender != _chargedParticles) revert NotAuthorized();
+    _executionController = controller;
   }
 
   /// @dev Returns true if a given interfaceId is supported by this account. This method can be
@@ -106,10 +122,9 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     override(IERC165, ERC165)
     returns (bool)
   {
-    return
-      interfaceId == type(IERC1155Receiver).interfaceId ||
-      interfaceId == type(IERC6551Account).interfaceId ||
-      super.supportsInterface(interfaceId);
+    return interfaceId == type(IERC165).interfaceId
+      || interfaceId == type(IERC6551Account).interfaceId
+      || interfaceId == type(IERC6551Executable).interfaceId;
   }
 
   /// @dev Allows ERC-721 tokens to be received so long as they do not cause an ownership cycle.
@@ -161,25 +176,8 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     bytes calldata data
   ) internal returns (bytes memory result) {
     bool success;
+    // solhint-disable-next-line avoid-low-level-calls
     (success, result) = to.call{value: value}(data);
-
-    if (!success) {
-      assembly {
-        revert(add(result, 32), mload(result))
-      }
-    } else {
-      _accountState += 1;
-    }
-  }
-
-  /// @dev Executes a low-level static call
-  function _callStatic(address to, bytes calldata data)
-    internal
-    view
-    returns (bytes memory result)
-  {
-    bool success;
-    (success, result) = to.staticcall(data);
 
     if (!success) {
       assembly {
@@ -202,8 +200,43 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     }
   }
 
-  function _parseFirst4Bytes(bytes calldata _data) internal pure returns (bytes4) {
-    return bytes4(_data[:4]);
+  function _onUpdate(
+    bool isReceiving,
+    address childTokenContract,
+    uint256 childTokenId,
+    uint256 childTokenAmount,
+    bytes calldata data
+  ) internal {
+    if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
+      (, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      ISmartAccountController(_executionController).onUpdate(isReceiving, tokenContract, tokenId, childTokenContract, childTokenId, childTokenAmount, data);
+    }
+  }
+
+  function _onUpdateBatch(
+    bool isReceiving,
+    address childTokenContract,
+    uint256[] calldata childTokenIds,
+    uint256[] calldata childTokenAmounts,
+    bytes calldata data
+  ) internal {
+    if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
+      (, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      ISmartAccountController(_executionController).onUpdateBatch(isReceiving, tokenContract, tokenId, childTokenContract, childTokenIds, childTokenAmounts, data);
+    }
+  }
+
+  function _isValidSigner(address signer) internal view virtual returns (bool) {
+    address ownerOf = owner();
+
+    // Charged Particles always has permissions
+    if (signer == _chargedParticles) { return true; }
+
+    // authorize caller if owner has granted permissions
+    if (_permissions[ownerOf][signer]) { return true; }
+
+    // authorize token owner
+    return signer == ownerOf;
   }
 
   /// @dev reverts if caller is not the owner of the account
@@ -213,8 +246,8 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   }
 
   /// @dev reverts if caller is not authorized to execute on this account
-  modifier onlyValidSigner(bytes calldata context) {
-    if (isValidSigner(msg.sender, context) != 0x523e3260) revert NotAuthorized();
+  modifier onlyValidSigner() {
+    if (_isValidSigner(msg.sender)) revert NotAuthorized();
     _;
   }
 }
