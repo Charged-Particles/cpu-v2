@@ -82,7 +82,7 @@ contract CustomizableNFT is ISmartAccountController, IDynamicTraits, Ownable, ER
   function _mint(uint256 traits) internal returns (uint256 tokenId) {
     _totalTokens += 1;
     tokenId = _totalTokens;
-    _traitBits[tokenId] |= traits;
+    _traitBits[tokenId] = traits;
     _safeMint(_msgSender(), tokenId);
   }
 

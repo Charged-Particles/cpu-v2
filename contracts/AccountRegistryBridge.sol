@@ -15,10 +15,11 @@ contract AccountRegistryBridge {
     ) external returns (address) {
         return IERC6551Registry(REGISTRY).createAccount(
             IMPLEMENTATION,
-            '',
             block.chainid,
             contractAddress,
-            tokenId
+            tokenId,
+            0,  // seed
+            ""  // initData
         );
     }
 
@@ -28,10 +29,10 @@ contract AccountRegistryBridge {
     ) external view returns (address) {
         return IERC6551Registry(REGISTRY).account(
             IMPLEMENTATION,
-            '',
             block.chainid,
             contractAddress,
-            tokenId
+            tokenId,
+            0 // salt
         );
     }
 }

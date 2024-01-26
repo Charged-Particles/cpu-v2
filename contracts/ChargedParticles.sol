@@ -9,14 +9,24 @@ import {ISmartAccount} from "./interfaces/ISmartAccount.sol";
 import {SmartAccount} from "./SmartAccount.sol";
 
 contract ChargedParticles {
+  // ERC6551 Registry
+  address public constant REGISTRY = 0x02101dfB77FDE026414827Fdc604ddAF224F0921;
 
+  // NFT contract => execution controller
+  mapping (address => address) internal executionControllers;
+  address internal defaultExecutionController;
+
+  // SmartAccount Clone Implementation
   address internal implementation;
 
   // registry version => address
   mapping (uint256 => address) internal erc6551registry;
   uint256 internal defaultRegistry;
 
-  constructor() {
+
+  constructor(address controller) {
+    defaultExecutionController = controller;
+    erc6551registry[0] = REGISTRY;
     implementation = address(new SmartAccount(address(this)));
   }
 
@@ -37,9 +47,14 @@ contract ChargedParticles {
   }
 
   /// @dev ...
-  // function setExecutionController(address controller) external virtual {
-  //   _executionController = controller;
-  // }
+  function setDefaultExecutionController(address controller) external virtual {
+    defaultExecutionController = controller;
+  }
+
+  /// @dev ...
+  function setExecutionController(address nftContract, address controller) external virtual {
+    executionControllers[nftContract] = controller;
+  }
 
   function energizeParticle(
     address assetToken,
