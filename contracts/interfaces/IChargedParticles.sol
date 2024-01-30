@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-pragma solidity >=0.6.0;
+pragma solidity ^0.8.13;
 
 /**
  * @notice Interface for Charged Particles
@@ -37,16 +37,14 @@ interface IChargedParticles {
     uint256 tokenId,
     address assetToken,
     uint256 assetAmount,
-    bytes calldata initData,
-    bytes calldata updateData
+    bytes calldata initData
   ) external;
 
   function releaseParticle(
     address receiver,
     address contractAddress,
     uint256 tokenId,
-    address assetToken,
-    bytes calldata updateData
+    address assetToken
   ) external returns (uint256 amount);
 
   function releaseParticleAmount(
@@ -54,8 +52,7 @@ interface IChargedParticles {
     address contractAddress,
     uint256 tokenId,
     address assetToken,
-    uint256 assetAmount,
-    bytes calldata updateData
+    uint256 assetAmount
   ) external returns (uint256 amount);
 
   function covalentBond(
@@ -64,8 +61,7 @@ interface IChargedParticles {
     address nftTokenAddress,
     uint256 nftTokenId,
     uint256 nftTokenAmount,
-    bytes calldata initData,
-    bytes calldata updateData
+    bytes calldata initData
   ) external returns (bool success);
 
   function breakCovalentBond(
@@ -74,7 +70,6 @@ interface IChargedParticles {
     uint256 tokenId,
     address nftTokenAddress,
     uint256 nftTokenId,
-    uint256 nftTokenAmount,
-    bytes calldata updateData
+    uint256 nftTokenAmount
   ) external returns (bool success);
 }

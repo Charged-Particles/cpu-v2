@@ -1,18 +1,18 @@
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {DeployFunction} from 'hardhat-deploy/types';
 
-const MinimalisticAccountDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const SAC_EX1_Deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const {deployments, getNamedAccounts} = hre;
 	const {deploy} = deployments;
 
 	const { deployer } = await getNamedAccounts();
 
-	await deploy('Account', {
+	await deploy('SmartAccountController_Example1', {
 		from: deployer,
 		args: [],
 		log: true,
 	});
 };
-export default MinimalisticAccountDeploy;
+export default SAC_EX1_Deploy;
 
-MinimalisticAccountDeploy.tags = ['Account'];
+SAC_EX1_Deploy.tags = ['SAC_EX1'];

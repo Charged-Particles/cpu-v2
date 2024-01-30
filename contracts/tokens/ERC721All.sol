@@ -3,11 +3,11 @@
 // Co-founder @ Charged Particles - Visit: https://charged.fi
 // Co-founder @ Taggr             - Visit: https://taggr.io
 
-pragma solidity 0.8.13;
+pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-import "./lib/ERC721.sol";
+import "../lib/ERC721.sol";
 
 /**
  * @dev todo...

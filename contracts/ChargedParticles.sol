@@ -7,13 +7,12 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 import {IERC6551Registry} from "./interfaces/IERC6551Registry.sol";
 import {IChargedParticles} from "./interfaces/IChargedParticles.sol";
-import {ITokenInfoProxy} from "./interfaces/ITokenInfoProxy.sol";
-import {NftTokenType} from "./lib/NftTokenType.sol";
+import {NftTokenInfo} from "./lib/NftTokenInfo.sol";
 import {ISmartAccount} from "./interfaces/ISmartAccount.sol";
 import {SmartAccount} from "./SmartAccount.sol";
 
 contract ChargedParticles is IChargedParticles {
-  using NftTokenType for address;
+  using NftTokenInfo for address;
 
   // ERC6551 Registry
   address public constant REGISTRY = 0x02101dfB77FDE026414827Fdc604ddAF224F0921;
@@ -26,21 +25,10 @@ contract ChargedParticles is IChargedParticles {
   mapping (uint256 => address) internal erc6551registry;
   uint256 internal defaultRegistry;
 
-  ITokenInfoProxy internal _tokenInfoProxy;
-
   constructor(address executionController) {
     erc6551registry[0] = REGISTRY;
     defaultImplementation = address(new SmartAccount(address(this), executionController));
   }
-
-
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // Token Info Proxy
-
-  function setTokenInfoProxy(address proxy) external {
-    _tokenInfoProxy = ITokenInfoProxy(proxy);
-  }
-
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // ERC6551 Wallet Registry
@@ -67,7 +55,7 @@ contract ChargedParticles is IChargedParticles {
   //  - Note: Do not change the implementation after NFTs have already started using one.
 
   /// @dev ...
-  function createCustomImplementation(address nftContract, address executionController) external virtual {
+  function createCustomImplementation(address nftContract, address executionController) public virtual {
     implementations[nftContract] = address(new SmartAccount(address(this), executionController));
   }
 
@@ -141,12 +129,12 @@ contract ChargedParticles is IChargedParticles {
     address account = registry.account(implementation, block.chainid, contractAddress, tokenId, 0);
 
     // Transfer to SmartAccount
-    uint256 assetAmount = IERC20(assetToken).balanceOf(account);
-    IERC20(assetToken).transferFrom(account, receiver, assetAmount);
+    amount = IERC20(assetToken).balanceOf(account);
+    IERC20(assetToken).transferFrom(account, receiver, amount);
 
     // Call "update" on SmartAccount
     if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
-      ISmartAccount(payable(account)).handleTokenUpdate(false, assetToken, assetAmount);
+      ISmartAccount(payable(account)).handleTokenUpdate(false, assetToken, amount);
     }
   }
 
@@ -162,7 +150,7 @@ contract ChargedParticles is IChargedParticles {
     override
     onlyNFTOwnerOrOperator(contractAddress, tokenId)
     // nonReentrant
-    returns (uint256 amount)
+    returns (uint256)
   {
     // Find the SmartAccount for this NFT
     address implementation = getImplementation(contractAddress);
@@ -176,6 +164,8 @@ contract ChargedParticles is IChargedParticles {
     if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
       ISmartAccount(payable(account)).handleTokenUpdate(false, assetToken, assetAmount);
     }
+
+    return assetAmount;
   }
 
 
@@ -263,12 +253,14 @@ contract ChargedParticles is IChargedParticles {
     if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
       ISmartAccount(payable(account)).handleNFTUpdate(false, nftTokenAddress, nftTokenId, nftTokenAmount);
     }
+
+    return true;
   }
 
 
 
   modifier onlyNFTOwnerOrOperator(address contractAddress, uint256 tokenId) {
-    require(_tokenInfoProxy.isNFTOwnerOrOperator(contractAddress, tokenId, msg.sender), "CP:E-105");
+    require(contractAddress.isNFTOwnerOrOperator(tokenId, msg.sender), "CP:E-105");
     _;
   }
 }

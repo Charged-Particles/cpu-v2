@@ -21,7 +21,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-pragma solidity >=0.8.0;
+pragma solidity ^0.8.13;
 
 interface IDynamicTraits {
   function getTraits(uint256 tokenId) external view returns (uint256);

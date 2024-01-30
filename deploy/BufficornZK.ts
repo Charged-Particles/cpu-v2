@@ -1,18 +1,18 @@
 import {HardhatRuntimeEnvironment} from 'hardhat/types';
 import {DeployFunction} from 'hardhat-deploy/types';
 
-const ChargedParticlesAccountDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
+const BufficornZK_Deploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const {deployments, getNamedAccounts} = hre;
 	const {deploy} = deployments;
 
 	const { deployer } = await getNamedAccounts();
 
-	await deploy('ChargedParticlesAccount', {
+	await deploy('BufficornZK', {
 		from: deployer,
-		args: [],
+		args: ["BufficornZK", "BZK"],
 		log: true,
 	});
 };
-export default ChargedParticlesAccountDeploy;
+export default BufficornZK_Deploy;
 
-ChargedParticlesAccountDeploy.tags = ['ChargedParticlesAccount'];
+BufficornZK_Deploy.tags = ['BufficornZK'];

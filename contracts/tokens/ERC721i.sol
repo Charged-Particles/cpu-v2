@@ -3,10 +3,10 @@
 // Co-founder @ Charged Particles - Visit: https://charged.fi
 // Co-founder @ Taggr             - Visit: https://taggr.io
 
-pragma solidity 0.8.13;
+pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./lib/ERC721iEnumerable.sol";
+import "../lib/ERC721iEnumerable.sol";
 
 /**
  * @dev This implements a Pre-Mint version of {ERC721} that adds the ability to Pre-Mint

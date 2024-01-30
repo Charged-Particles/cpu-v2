@@ -254,7 +254,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
 
   /// @dev reverts if caller is not authorized to execute on this account
   modifier onlyValidSigner() {
-    if (_isValidSigner(msg.sender)) revert NotAuthorized();
+    if (!_isValidSigner(msg.sender)) revert NotAuthorized();
     _;
   }
 }
