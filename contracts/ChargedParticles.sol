@@ -25,9 +25,8 @@ contract ChargedParticles is IChargedParticles {
   mapping (uint256 => address) internal erc6551registry;
   uint256 internal defaultRegistry;
 
-  constructor(address executionController) {
+  constructor() {
     erc6551registry[0] = REGISTRY;
-    defaultImplementation = address(new SmartAccount(address(this), executionController));
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,6 +52,11 @@ contract ChargedParticles is IChargedParticles {
   // SmartAccount Implementations with Custom Execution Controllers
   //  - any NFT contract can have its own custom execution controller
   //  - Note: Do not change the implementation after NFTs have already started using one.
+
+  /// @dev ...
+  function createDefaultImplementation(address executionController) public virtual {
+    defaultImplementation = address(new SmartAccount(address(this), executionController));
+  }
 
   /// @dev ...
   function createCustomImplementation(address nftContract, address executionController) public virtual {

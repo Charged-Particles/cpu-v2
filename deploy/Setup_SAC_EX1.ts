@@ -22,5 +22,5 @@ const Setup_SAC_EX1: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
 };
 export default Setup_SAC_EX1;
 
-// Setup_SAC_EX1.dependencies = ['SAC_EX1'];
+Setup_SAC_EX1.dependencies = ['SAC_EX1'];
 Setup_SAC_EX1.tags = ['Setup_SAC_EX1'];

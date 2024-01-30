@@ -19,23 +19,23 @@ const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
   // Set Custom Execution Controller as the BufficornZK contract
   await performTx(
     await chargedParticles.createCustomImplementation(bufficornAddress, bufficornAddress),
-    ' - Custom Implementation Created'
+    ' -- Custom Implementation Created for Bufficorn SmartAccounts'
   );
 
   // Mint a bunch of Bufficorn NFTs
-  console.log(`Minting 10 Bufficorn NFTs...`);
+  console.log(` -- Minting 10 Bufficorn NFTs...`);
   for (let i = 0; i < 10; i++) {
-    await performTx(await bufficorn.mint(), ` - Minted Bufficorn NFT with Token ID {id}...`);
+    await performTx(await bufficorn.mint(), ` ---- Minted Bufficorn NFT with Token ID {id}`);
   }
 
   // Mint a bunch of Bufficorn Trait NFTs
   const traits = ['Hat', 'Gauntlet', 'Sunglasses', 'Sword', 'Crazy-Eye'];
   let traitBit = 1;
   for (let i = 0; i < traits.length; i++) {
-    console.log(`Minting 10 Bufficorn ${traits[i]} Trait-NFTs...`);
+    console.log(` -- Minting 10 Bufficorn ${traits[i]} Trait-NFTs...`);
 
     for (let j = 0; j < 10; j++) {
-      await performTx(await bufficorn.mintWithTraits(traitBit), ` - Minted ${traits[i]} Trait-NFT with TokenID {id}...`);
+      await performTx(await bufficorn.mintWithTraits(traitBit), ` ---- Minted ${traits[i]} Trait-NFT with TokenID {id} and Trait # ${traitBit}`);
     }
 
     // Next Trait Bit
@@ -44,5 +44,5 @@ const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
 };
 export default Setup_Bufficorn;
 
-Setup_Bufficorn.dependencies = ['ChargedParticles', 'BufficornZK'];
+Setup_Bufficorn.dependencies = ['Setup_CPU', 'BufficornZK'];
 Setup_Bufficorn.tags = ['Setup_Bufficorn'];

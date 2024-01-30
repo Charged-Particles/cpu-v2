@@ -15,7 +15,7 @@
     "hint": "solhint \"contracts/**/*.sol\"",
     "coverage": "yarn clean-test && hardhat --show-stack-traces coverage --temp coverage_build && yarn clean-test",
     "gas": "REPORT_GAS=true hardhat test",
-    "deploy-cpu-only": "hardhat deploy --tags Setup_ChargedParticles,Setup_SAC_EX1 --network",
+    "deploy-cpu-only": "hardhat deploy --tags Setup_CPU,Setup_SAC_EX1 --network",
     "deploy-bufficorn": "hardhat deploy --tags Setup_Bufficorn,Setup_SAC_EX1 --network",
     "verify": "hardhat run scripts/verify.ts --network",
     "gen-docs": "solidity-docgen -i contracts -o docs"

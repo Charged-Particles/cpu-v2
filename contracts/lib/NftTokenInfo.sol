@@ -31,15 +31,15 @@ library NftTokenInfo {
   bytes4 constant internal INTERFACE_SIGNATURE_ERC721 = 0x80ac58cd;
   bytes4 constant internal INTERFACE_SIGNATURE_ERC1155 = 0xd9b67a26;
 
-  function isERC721(address contractAddress) external view returns (bool) {
+  function isERC721(address contractAddress) internal view returns (bool) {
     return IERC165(contractAddress).supportsInterface(INTERFACE_SIGNATURE_ERC721);
   }
 
-  function isERC1155(address contractAddress) external view returns (bool) {
+  function isERC1155(address contractAddress) internal view returns (bool) {
     return IERC165(contractAddress).supportsInterface(INTERFACE_SIGNATURE_ERC1155);
   }
 
-  function getTokenUUID(address contractAddress, uint256 tokenId) external pure returns (uint256) {
+  function getTokenUUID(address contractAddress, uint256 tokenId) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked(contractAddress, tokenId)));
   }
 
