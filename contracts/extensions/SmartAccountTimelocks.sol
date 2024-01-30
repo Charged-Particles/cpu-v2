@@ -16,7 +16,8 @@ contract SmartAccountTimelocks is SmartAccount {
   /// Attached to "owner" so that the lock is cleared when transferred.
   mapping(address => uint256) public lockedUntil;
 
-  constructor(address controller) SmartAccount(controller) {}
+  constructor(address chargedParticles, address executionController)
+    SmartAccount(chargedParticles, executionController) {}
 
   /// @dev returns the current lock status of the account as a boolean
   function isLocked() public view returns (bool) {

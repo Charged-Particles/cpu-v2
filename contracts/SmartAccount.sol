@@ -11,7 +11,8 @@ import {SmartAccountBase, NotAuthorized, InvalidInput} from "./lib/SmartAccountB
 contract SmartAccount is SmartAccountBase {
   uint256 public state;
 
-  constructor(address chargedParticles) SmartAccountBase(chargedParticles) {}
+  constructor(address chargedParticles, address executionController)
+    SmartAccountBase(chargedParticles, executionController) {}
 
   /// @dev allows eth transfers by default
   receive() external payable virtual override {}
@@ -27,7 +28,7 @@ contract SmartAccount is SmartAccountBase {
     payable
     virtual
     override
-    onlyValidSigner()
+    onlyValidSigner
     returns (bytes memory)
   {
     require(operation == 0, "Only call operations are supported");
@@ -40,48 +41,48 @@ contract SmartAccount is SmartAccountBase {
     return _call(to, value, data);
   }
 
-  /// @dev ...
-  function handleERC721Update(
+
+  function handleTokenUpdate(
     bool isReceiving,
-    address tokenContract,
-    uint256 tokenId,
-    bytes calldata data
+    address assetToken,
+    uint256 assetAmount
   )
     public
     virtual
     override
+    onlyValidSigner
   {
     // Perform custom checks/updates from within a custom controller
-    _onUpdate(isReceiving, tokenContract, tokenId, 1, data);
+    _onUpdateToken(isReceiving, assetToken, assetAmount);
   }
 
-  function handleERC1155Update(
+  function handleNFTUpdate(
     bool isReceiving,
     address tokenContract,
     uint256 tokenId,
-    uint256 tokenAmount,
-    bytes calldata data
+    uint256 tokenAmount
   )
     public
     virtual
     override
+    onlyValidSigner
   {
     // Perform custom checks/updates from within a custom controller
-    _onUpdate(isReceiving, tokenContract, tokenId, tokenAmount, data);
+    _onUpdateNFT(isReceiving, tokenContract, tokenId, tokenAmount);
   }
 
-  function handleERC1155BatchUpdate(
+  function handleNFTBatchUpdate(
     bool isReceiving,
     address tokenContract,
     uint256[] calldata tokenIds,
-    uint256[] calldata tokenAmounts,
-    bytes calldata data
+    uint256[] calldata tokenAmounts
   )
     public
     virtual
     override
+    onlyValidSigner
   {
     // Perform custom checks/updates from within a custom controller
-    _onUpdateBatch(isReceiving, tokenContract, tokenIds, tokenAmounts, data);
+    _onUpdateNFTBatch(isReceiving, tokenContract, tokenIds, tokenAmounts);
   }
 }

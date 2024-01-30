@@ -29,19 +29,20 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   address internal _chargedParticles;
   address internal _executionController;
 
-  constructor(address chargedParticles) {
+  constructor(address chargedParticles, address executionController) {
     _chargedParticles = chargedParticles;
+    _executionController = executionController;
   }
 
   /// @dev allows eth transfers by default, but allows account owner to override
   receive() external payable virtual override {}
 
 
-  function permissions(address _owner, address caller) external view virtual returns (bool) {
+  function permissions(address _owner, address caller) public view virtual returns (bool) {
     return _permissions[_owner][caller];
   }
 
-  function executionController() external view virtual returns (address) {
+  function getExecutionController() public view virtual returns (address) {
     return _executionController;
   }
 
@@ -105,12 +106,6 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
       _permissions[_owner][callers[i]] = newPermissions[i];
       emit PermissionUpdated(_owner, callers[i], newPermissions[i]);
     }
-  }
-
-  /// @dev ...
-  function setExecutionController(address controller) external virtual {
-    if (msg.sender != owner() && msg.sender != _chargedParticles) revert NotAuthorized();
-    _executionController = controller;
   }
 
   /// @dev Returns true if a given interfaceId is supported by this account. This method can be
@@ -200,29 +195,41 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     }
   }
 
-  function _onUpdate(
+  function _onUpdateToken(
     bool isReceiving,
-    address childTokenContract,
-    uint256 childTokenId,
-    uint256 childTokenAmount,
-    bytes calldata data
+    address assetToken,
+    uint256 assetAmount
   ) internal {
     if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
-      (, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
-      ISmartAccountController(_executionController).onUpdate(isReceiving, tokenContract, tokenId, childTokenContract, childTokenId, childTokenAmount, data);
+      (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      ISmartAccountController(_executionController)
+        .onUpdateToken(isReceiving, chainId, tokenContract, tokenId, assetToken, assetAmount);
     }
   }
 
-  function _onUpdateBatch(
+  function _onUpdateNFT(
+    bool isReceiving,
+    address childTokenContract,
+    uint256 childTokenId,
+    uint256 childTokenAmount
+  ) internal {
+    if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
+      (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      ISmartAccountController(_executionController)
+        .onUpdateNFT(isReceiving, chainId, tokenContract, tokenId, childTokenContract, childTokenId, childTokenAmount);
+    }
+  }
+
+  function _onUpdateNFTBatch(
     bool isReceiving,
     address childTokenContract,
     uint256[] calldata childTokenIds,
-    uint256[] calldata childTokenAmounts,
-    bytes calldata data
+    uint256[] calldata childTokenAmounts
   ) internal {
     if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
-      (, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
-      ISmartAccountController(_executionController).onUpdateBatch(isReceiving, tokenContract, tokenId, childTokenContract, childTokenIds, childTokenAmounts, data);
+      (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      ISmartAccountController(_executionController)
+        .onUpdateNFTBatch(isReceiving, chainId, tokenContract, tokenId, childTokenContract, childTokenIds, childTokenAmounts);
     }
   }
 

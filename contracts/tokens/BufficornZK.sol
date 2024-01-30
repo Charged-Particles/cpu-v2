@@ -14,9 +14,11 @@ import {IDynamicTraits} from "../interfaces/IDynamicTraits.sol";
 /**
  * @dev todo...
  */
-contract CustomizableNFT is ISmartAccountController, IDynamicTraits, Ownable, ERC721Enumerable {
+contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721Enumerable {
   uint256 internal _totalTokens;
   string internal _tokenUri;
+
+  // TokenId => Traits BitMap
   mapping (uint256 => uint256) internal _traitBits;
 
   constructor(string memory name, string memory symbol) ERC721(name, symbol) Ownable() {}
@@ -99,19 +101,38 @@ contract CustomizableNFT is ISmartAccountController, IDynamicTraits, Ownable, ER
     return ""; // success
   }
 
-  function onUpdate(
+  function onUpdateToken(
     bool isReceiving,
+    uint256 chainId,
     address tokenContract,
     uint256 tokenId,
-    address childTokenContract,
-    uint256 childTokenId,
-    uint256,
-    bytes calldata
-  ) external {
-    require(tokenContract == address(this), "Invalid source address");
+    address receivedAssetToken,
+    uint256 receivedAssetAmount
+  )
+    external
+    virtual
+    override
+    onlyValidNFT(tokenContract, chainId)
+  {
+    // no-op
+  }
 
-    if (IERC165(childTokenContract).supportsInterface(type(IDynamicTraits).interfaceId)) {
-      uint256 newTraits = IDynamicTraits(childTokenContract).getTraits(childTokenId);
+  function onUpdateNFT(
+    bool isReceiving,
+    uint256 chainId,
+    address tokenContract,
+    uint256 tokenId,
+    address receivedTokenContract,
+    uint256 receivedTokenId,
+    uint256
+  )
+    external
+    virtual
+    override
+    onlyValidNFT(tokenContract, chainId)
+  {
+    if (IERC165(receivedTokenContract).supportsInterface(type(IDynamicTraits).interfaceId)) {
+      uint256 newTraits = IDynamicTraits(receivedTokenContract).getTraits(receivedTokenId);
       if (isReceiving) {
         _addTraits(tokenId, newTraits);
       } else {
@@ -120,23 +141,26 @@ contract CustomizableNFT is ISmartAccountController, IDynamicTraits, Ownable, ER
     }
   }
 
-  function onUpdateBatch(
+  function onUpdateNFTBatch(
     bool isReceiving,
+    uint256 chainId,
     address tokenContract,
     uint256 tokenId,
-    address childTokenContract,
-    uint256[] calldata childTokenIds,
-    uint256[] calldata,
-    bytes calldata
-  ) external {
-    require(tokenContract == address(this), "Invalid source address");
-
+    address receivedTokenContract,
+    uint256[] calldata receivedTokenIds,
+    uint256[] calldata
+  )
+    external
+    virtual
+    override
+    onlyValidNFT(tokenContract, chainId)
+  {
     uint256 i;
     uint256 t;
-    uint256 n = childTokenIds.length;
-    if (IERC165(childTokenContract).supportsInterface(type(IDynamicTraits).interfaceId)) {
+    uint256 n = receivedTokenIds.length;
+    if (IERC165(receivedTokenContract).supportsInterface(type(IDynamicTraits).interfaceId)) {
       for (; i < n; i++) {
-        t = IDynamicTraits(childTokenContract).getTraits(childTokenIds[i]);
+        t = IDynamicTraits(receivedTokenContract).getTraits(receivedTokenIds[i]);
         if (isReceiving) {
           _addTraits(tokenId, t);
         } else {
@@ -159,5 +183,12 @@ contract CustomizableNFT is ISmartAccountController, IDynamicTraits, Ownable, ER
       interfaceId == type(ISmartAccountController).interfaceId ||
       interfaceId == type(IDynamicTraits).interfaceId ||
       super.supportsInterface(interfaceId);
+  }
+
+
+  modifier onlyValidNFT(address contractAddress, uint256 chainId) {
+    require(contractAddress == address(this), "Invalid source address");
+    require(chainId == block.chainid, "Invalid source chain");
+    _;
   }
 }

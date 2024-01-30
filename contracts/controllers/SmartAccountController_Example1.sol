@@ -5,9 +5,9 @@ import {IERC165, ERC165} from "@openzeppelin/contracts/utils/introspection/ERC16
 import {ISmartAccountController} from "../interfaces/ISmartAccountController.sol";
 
 /**
- * @title A smart contract account owned by a single ERC721 token
+ * @title A SmartAccount Controller which only allows specific methods to be executed on the associated SmartAccount
  */
-contract SmartAccountController_EX1 is ISmartAccountController, ERC165 {
+contract SmartAccountController_Example1 is ISmartAccountController, ERC165 {
   constructor() {}
 
   /// @dev mapping from method signature => allowed method call
@@ -26,6 +26,11 @@ contract SmartAccountController_EX1 is ISmartAccountController, ERC165 {
     return _bannedMethods[signature];
   }
 
+
+  //
+  // SmartAccount Controller Logic
+  //
+
   function onExecute(
     address,
     uint256,
@@ -33,27 +38,56 @@ contract SmartAccountController_EX1 is ISmartAccountController, ERC165 {
     uint8
   ) external virtual override returns (string memory revertReason) {
     if (!_isAllowedMethod(data)) {
-      return "Method call not allowed";
+      revertReason = "Method call not allowed";
     }
-    return "";
+    // else success
   }
 
-  function onReceived(
+  function onUpdateToken(
+    bool isReceiving,
+    uint256 chainId,
     address tokenContract,
     uint256 tokenId,
-    uint256 tokenAmount,
-    bytes calldata data
-  ) external {
-    // no-op
+    address receivedAssetToken,
+    uint256 receivedAssetAmount
+  )
+    external
+    virtual
+    override
+  {
+    // perform conditional logic here..
   }
 
-  function onReceivedBatch(
+  function onUpdateNFT(
+    bool isReceiving,
+    uint256 chainId,
     address tokenContract,
-    uint256[] calldata tokenIds,
-    uint256[] calldata tokenAmounts,
-    bytes calldata data
-  ) external {
-    // no-op
+    uint256 tokenId,
+    address receivedTokenContract,
+    uint256 receivedTokenId,
+    uint256
+  )
+    external
+    virtual
+    override
+  {
+    // perform conditional logic here..
+  }
+
+  function onUpdateNFTBatch(
+    bool isReceiving,
+    uint256 chainId,
+    address tokenContract,
+    uint256 tokenId,
+    address receivedTokenContract,
+    uint256[] calldata receivedTokenIds,
+    uint256[] calldata
+  )
+    external
+    virtual
+    override
+  {
+    // perform conditional logic here..
   }
 
   /// @dev Returns true if a given interfaceId is supported by this account. This method can be

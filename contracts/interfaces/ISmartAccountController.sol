@@ -14,23 +14,32 @@ interface ISmartAccountController is IERC165 {
     uint8 operation
   ) external returns (string memory revertReason);
 
-  function onUpdate(
+  function onUpdateToken(
     bool isReceiving,
+    uint256 chainId,
+    address tokenContract,
+    uint256 tokenId,
+    address receivedAssetToken,
+    uint256 receivedAssetAmount
+  ) external;
+
+  function onUpdateNFT(
+    bool isReceiving,
+    uint256 chainId,
     address tokenContract,
     uint256 tokenId,
     address receivedTokenContract,
     uint256 receivedTokenId,
-    uint256 receivedTokenAmount,
-    bytes calldata data
+    uint256 receivedTokenAmount
   ) external;
 
-  function onUpdateBatch(
+  function onUpdateNFTBatch(
     bool isReceiving,
+    uint256 chainId,
     address tokenContract,
     uint256 tokenId,
     address receivedTokenContract,
     uint256[] calldata receivedTokenIds,
-    uint256[] calldata receivedTokenAmounts,
-    bytes calldata data
+    uint256[] calldata receivedTokenAmounts
   ) external;
 }

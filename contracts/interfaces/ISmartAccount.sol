@@ -21,26 +21,23 @@ interface ISmartAccount is
   event OverrideUpdated(address owner, bytes4 selector, address implementation);
   event PermissionUpdated(address owner, address caller, bool hasPermission);
 
-  function handleERC721Update(
+  function handleTokenUpdate(
+    bool isReceiving,
+    address assetToken,
+    uint256 assetAmount
+  ) external;
+
+  function handleNFTUpdate(
     bool isReceiving,
     address tokenContract,
     uint256 tokenId,
-    bytes calldata data
+    uint256 tokenAmount
   ) external;
 
-  function handleERC1155Update(
-    bool isReceiving,
-    address tokenContract,
-    uint256 tokenId,
-    uint256 tokenAmount,
-    bytes calldata data
-  ) external;
-
-  function handleERC1155BatchUpdate(
+  function handleNFTBatchUpdate(
     bool isReceiving,
     address tokenContract,
     uint256[] calldata tokenIds,
-    uint256[] calldata tokenAmounts,
-    bytes calldata data
+    uint256[] calldata tokenAmounts
   ) external;
 }
