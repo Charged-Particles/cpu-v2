@@ -154,7 +154,7 @@ contract ChargedParticles is IChargedParticles {
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
     address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
 
-    // Transfer to SmartAccount
+    // Transfer to Receiver
     amount = IERC20(assetToken).balanceOf(account);
     IERC20(assetToken).transferFrom(account, receiver, amount);
 
@@ -182,7 +182,7 @@ contract ChargedParticles is IChargedParticles {
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
     address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
 
-    // Transfer to SmartAccount
+    // Transfer to Receiver
     IERC20(assetToken).transferFrom(account, receiver, assetAmount);
 
     // Call "update" on SmartAccount
@@ -273,7 +273,7 @@ contract ChargedParticles is IChargedParticles {
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
     address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
 
-    // Transfer to SmartAccount
+    // Transfer to Receiver
     if (nftTokenAddress.isERC1155()) {
       IERC1155(nftTokenAddress).safeTransferFrom(account, receiver, tokenId, nftTokenAmount, "");
     } else {

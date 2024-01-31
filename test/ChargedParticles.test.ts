@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
 import { ChargedParticles, IERC6551Registry, ERC20Mock, NFTMock } from "../typechain-types";
 
-describe.only('ChargedParticles', async function () {
+describe('ChargedParticles', async function () {
   const REGISTRY = 	'0x000000006551c19487814612e58FE06813775758'; // ERC6551Registry - Same on All Chains
   const salt = ethers.encodeBytes32String('');
   const interfaceIds = {
@@ -14,13 +14,13 @@ describe.only('ChargedParticles', async function () {
 
   // Contracts
   let chargedParticles: ChargedParticles;
-  let nftMock: NFTMock;
   let registryContract: IERC6551Registry;
+  let nftMock: NFTMock;
   let erc20Mock: ERC20Mock;
 
   // Addresses
-  let nftMockAddress: string;
   let chargedParticlesAddress: string;
+  let nftMockAddress: string;
   let erc20MockAddress: string;
 
   // Signers
@@ -194,6 +194,7 @@ describe.only('ChargedParticles', async function () {
     ).then(tx => tx.wait());
     expect(breakReceipt).to.haveOwnProperty('hash');
 
+    // Confirm New Owner
     expect(await nftMock.ownerOf(depositedTokenId)).to.be.eq(receiver);
   });
 });

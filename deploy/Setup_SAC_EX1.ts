@@ -17,7 +17,7 @@ const Setup_SAC_EX1: DeployFunction = async (hre: HardhatRuntimeEnvironment) => 
   // if (rc !== null) {
   //   console.log(`    -- Allowed Method has been set...`);
   // }
-  console.log(` -- TODO: Set Allowed Methods on SmartAccountController_Example1`);
+  // console.log(` -- TODO: Set any Banned Methods on SmartAccountController_Example1`);
 
 };
 export default Setup_SAC_EX1;
