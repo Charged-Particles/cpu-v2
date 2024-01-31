@@ -18,6 +18,12 @@ const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
 
   // Set Custom Execution Controller as the BufficornZK contract
   await performTx(
+    await bufficorn.setBaseURI('http://www.bufficorn-zk.com/'),
+    ' -- Token BaseURI set for BufficornZK'
+  );
+
+  // Set Custom Execution Controller as the BufficornZK contract
+  await performTx(
     await chargedParticles.setCustomExecutionController(bufficornAddress, bufficornAddress),
     ' -- Custom Implementation Created for Bufficorn SmartAccounts'
   );

@@ -5,25 +5,15 @@ import { ChargedParticles, BufficornZK, IERC6551Registry, ERC20Mock, NFTMock } f
 describe('BufficornZK', async function () {
   const REGISTRY = 	'0x000000006551c19487814612e58FE06813775758'; // ERC6551Registry - Same on All Chains
   const salt = ethers.encodeBytes32String('');
-  const interfaceIds = {
-    ISmartAccount:            '0x2f62b227',
-    ISmartAccountController:  '0x39b43188',
-    IChargedParticles:        '0xfb86e1eb',
-    IDynamicTraits:           '0x33c2cbef',
-  };
 
   // Contracts
   let chargedParticles: ChargedParticles;
   let registryContract: IERC6551Registry;
   let bufficorn: BufficornZK;
-  let nftMock: NFTMock;
-  let erc20Mock: ERC20Mock;
 
   // Addresses
   let chargedParticlesAddress: string;
   let bufficornAddress: string;
-  let nftMockAddress: string;
-  let erc20MockAddress: string;
 
   // Signers
   let deployer: string;
@@ -52,15 +42,11 @@ describe('BufficornZK', async function () {
 
     chargedParticles = await ethers.getContract('ChargedParticles');
     bufficorn = await ethers.getContract('BufficornZK');
-    nftMock = await ethers.getContract('NFTMock');
-    erc20Mock = await ethers.getContract('ERC20Mock');
 
     registryContract = await ethers.getContractAt('IERC6551Registry', REGISTRY);
 
     chargedParticlesAddress = await chargedParticles.getAddress();
     bufficornAddress = await bufficorn.getAddress();
-    nftMockAddress = await nftMock.getAddress();
-    erc20MockAddress = await erc20Mock.getAddress();
   });
 
 
@@ -88,7 +74,7 @@ describe('BufficornZK', async function () {
     await bufficorn.mintWithTraits(6, 16n) //  Token ID: 6, Trait-bit = 00010000
     expect(await bufficorn.balanceOf(deployer)).to.be.equal(6);
 
-    // Confirm Zero Traits
+    // Confirm Traits
     expect(await bufficorn.getTraits(2)).to.be.equal(1n);
     expect(await bufficorn.getTraits(3)).to.be.equal(2n);
     expect(await bufficorn.getTraits(4)).to.be.equal(4n);
@@ -167,5 +153,46 @@ describe('BufficornZK', async function () {
 
     // Confirm Owner of all NFTs
     expect(await bufficorn.balanceOf(deployer)).to.be.equal(6);
+  });
+
+  it('includes the Traits in the TokenURI', async function () {
+    const bufficornTokenId = 1;
+
+    // Mint a Bufficorn NFT
+    await bufficorn.mint(bufficornTokenId).then(tx => tx.wait()); // Token ID: 1
+    expect(await bufficorn.balanceOf(deployer)).to.be.equal(bufficornTokenId);
+
+    // Confirm Zero Traits
+    expect(await bufficorn.getTraits(bufficornTokenId)).to.be.equal(0);
+
+    // Mint some Bufficorn Trait-NFTs
+    await bufficorn.mintWithTraits(2, 1n)  //  Token ID: 2, Trait-bit = 00000001
+    await bufficorn.mintWithTraits(3, 2n)  //  Token ID: 3, Trait-bit = 00000010
+    await bufficorn.mintWithTraits(4, 4n)  //  Token ID: 4, Trait-bit = 00000100
+    await bufficorn.mintWithTraits(5, 8n)  //  Token ID: 5, Trait-bit = 00001000
+    await bufficorn.mintWithTraits(6, 16n) //  Token ID: 6, Trait-bit = 00010000
+    expect(await bufficorn.balanceOf(deployer)).to.be.equal(6);
+
+    // Calculate Expected Account Address via Registry
+    const newAccountAddress = await calculateAccountAddress(bufficornAddress, bufficornTokenId);
+    expect(newAccountAddress).to.not.be.empty;
+
+    // Give permission to Bond
+    await bufficorn.approve(chargedParticlesAddress, 2).then(tx => tx.wait());
+    await bufficorn.approve(chargedParticlesAddress, 3).then(tx => tx.wait());
+    await bufficorn.approve(chargedParticlesAddress, 4).then(tx => tx.wait());
+    await bufficorn.approve(chargedParticlesAddress, 5).then(tx => tx.wait());
+    await bufficorn.approve(chargedParticlesAddress, 6).then(tx => tx.wait());
+
+    // Bond Traits to Bufficorn
+    await chargedParticles.covalentBond(bufficornAddress, bufficornTokenId, bufficornAddress, 2, 1n).then(tx => tx.wait());
+    await chargedParticles.covalentBond(bufficornAddress, bufficornTokenId, bufficornAddress, 3, 1n).then(tx => tx.wait());
+    await chargedParticles.covalentBond(bufficornAddress, bufficornTokenId, bufficornAddress, 4, 1n).then(tx => tx.wait());
+    await chargedParticles.covalentBond(bufficornAddress, bufficornTokenId, bufficornAddress, 5, 1n).then(tx => tx.wait());
+    await chargedParticles.covalentBond(bufficornAddress, bufficornTokenId, bufficornAddress, 6, 1n).then(tx => tx.wait());
+
+    // Confirm Token URI includes Traits
+    const tokenUri = await bufficorn.tokenURI(bufficornTokenId);
+    expect(tokenUri).to.be.equal('http://www.bufficorn-zk.com/1/31');
   });
 });

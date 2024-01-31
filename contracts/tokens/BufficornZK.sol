@@ -86,7 +86,7 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
   function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
     _requireMinted(tokenId);
     string memory baseURI = _baseURI();
-    return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString(), "/", _traitBits[tokenId].toHexString())) : "";
+    return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString(), "/", _traitBits[tokenId].toString())) : "";
   }
 
   function _mint(uint256 tokenId, uint256 traits) internal {
