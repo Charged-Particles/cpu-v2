@@ -15,6 +15,9 @@ import {ERC6551AccountLib} from "./ERC6551AccountLib.sol";
 import {ISmartAccount} from "../interfaces/ISmartAccount.sol";
 import {ISmartAccountController} from "../interfaces/ISmartAccountController.sol";
 
+// import "hardhat/console.sol";
+
+error AlreadyInitialized();
 error NotAuthorized();
 error InvalidInput();
 error OwnershipCycle();
@@ -26,10 +29,16 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   /// @dev mapping from owner => caller => has permissions
   mapping(address => mapping(address => bool)) internal _permissions;
 
+  bool internal _initialized;
+
   address internal _chargedParticles;
   address internal _executionController;
 
-  constructor(address chargedParticles, address executionController) {
+  constructor() {}
+
+  function initialize(address chargedParticles, address executionController) external {
+    if (_initialized) revert AlreadyInitialized();
+    _initialized = true;
     _chargedParticles = chargedParticles;
     _executionController = executionController;
   }
@@ -37,9 +46,16 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   /// @dev allows eth transfers by default, but allows account owner to override
   receive() external payable virtual override {}
 
+  function isInitialized() external view virtual override returns (bool) {
+    return _initialized;
+  }
 
   function permissions(address _owner, address caller) public view virtual returns (bool) {
     return _permissions[_owner][caller];
+  }
+
+  function getChargedParticles() public view virtual returns (address) {
+    return _chargedParticles;
   }
 
   function getExecutionController() public view virtual returns (address) {
@@ -117,9 +133,10 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     override(IERC165, ERC165)
     returns (bool)
   {
-    return interfaceId == type(IERC165).interfaceId
-      || interfaceId == type(IERC6551Account).interfaceId
-      || interfaceId == type(IERC6551Executable).interfaceId;
+    return interfaceId == type(IERC6551Account).interfaceId
+      || interfaceId == type(IERC6551Executable).interfaceId
+      || interfaceId == type(ISmartAccount).interfaceId
+      || super.supportsInterface(interfaceId);
   }
 
   /// @dev Allows ERC-721 tokens to be received so long as they do not cause an ownership cycle.

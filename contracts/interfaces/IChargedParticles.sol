@@ -28,6 +28,11 @@ pragma solidity ^0.8.13;
  */
 interface IChargedParticles {
 
+  function setDefaultExecutionController(address executionController) external;
+  function setCustomExecutionController(address nftContract, address executionController) external;
+  function getExecutionController(address nftContract) external view returns (address executionController);
+  function getImplementation() external view returns (address);
+
   /***********************************|
   |        Particle Mechanics         |
   |__________________________________*/
@@ -36,9 +41,8 @@ interface IChargedParticles {
     address contractAddress,
     uint256 tokenId,
     address assetToken,
-    uint256 assetAmount,
-    bytes calldata initData
-  ) external;
+    uint256 assetAmount
+  ) external returns (address account);
 
   function releaseParticle(
     address receiver,
@@ -60,8 +64,7 @@ interface IChargedParticles {
     uint256 tokenId,
     address nftTokenAddress,
     uint256 nftTokenId,
-    uint256 nftTokenAmount,
-    bytes calldata initData
+    uint256 nftTokenAmount
   ) external returns (bool success);
 
   function breakCovalentBond(

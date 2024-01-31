@@ -3,7 +3,7 @@ import { ethers, getNamedAccounts, deployments } from 'hardhat';
 import { ERC721i } from "../typechain-types";
 
 
-describe('Execute calls', async function () {
+describe('ERC721i', async function () {
   // Contracts
   let NFT: ERC721i;
   // Addresses

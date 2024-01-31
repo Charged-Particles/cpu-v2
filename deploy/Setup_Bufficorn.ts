@@ -18,7 +18,7 @@ const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
 
   // Set Custom Execution Controller as the BufficornZK contract
   await performTx(
-    await chargedParticles.createCustomImplementation(bufficornAddress, bufficornAddress),
+    await chargedParticles.setCustomExecutionController(bufficornAddress, bufficornAddress),
     ' -- Custom Implementation Created for Bufficorn SmartAccounts'
   );
 

@@ -11,8 +11,8 @@ import {SmartAccountBase, NotAuthorized, InvalidInput} from "./lib/SmartAccountB
 contract SmartAccount is SmartAccountBase {
   uint256 public state;
 
-  constructor(address chargedParticles, address executionController)
-    SmartAccountBase(chargedParticles, executionController) {}
+  constructor() SmartAccountBase() {}
+
 
   /// @dev allows eth transfers by default
   receive() external payable virtual override {}

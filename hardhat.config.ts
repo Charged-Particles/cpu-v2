@@ -3,6 +3,7 @@ import { HardhatUserConfig } from 'hardhat/config';
 import '@typechain/hardhat';
 import 'hardhat-deploy';
 import 'hardhat-deploy-ethers';
+import 'hardhat-abi-exporter';
 import '@nomicfoundation/hardhat-ethers';
 import '@nomicfoundation/hardhat-toolbox';
 import '@nomicfoundation/hardhat-chai-matchers'
@@ -78,7 +79,7 @@ const config: HardhatUserConfig = {
       chainId: 80001,
       forking: {
         url: "https://polygon-mainnet.g.alchemy.com/v2/" + process.env.ALCHEMY_API_KEY,
-        blockNumber: 49144510 
+        blockNumber: 49144510
       },
       accounts: {
         mnemonic: mnemonic.testnet,
@@ -147,6 +148,20 @@ const config: HardhatUserConfig = {
       currency: 'USD',
       gasPrice: 32,
       enabled: (process.env.REPORT_GAS) ? true : false
+  },
+  abiExporter: {
+    path: './abis',
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    only: [
+      'ChargedParticles',
+      'SmartAccount',
+      'BufficornZK',
+      'ERC721i',
+      'ERC721All',
+      'SmartAccountController_Example1',
+    ],
   },
 };
 

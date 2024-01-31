@@ -21,6 +21,9 @@ interface ISmartAccount is
   event OverrideUpdated(address owner, bytes4 selector, address implementation);
   event PermissionUpdated(address owner, address caller, bool hasPermission);
 
+  function isInitialized() external returns (bool);
+  function initialize(address chargedParticles, address executionController) external;
+
   function handleTokenUpdate(
     bool isReceiving,
     address assetToken,

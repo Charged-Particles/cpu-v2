@@ -4,13 +4,13 @@ interface IERC6551Registry {
     /**
      * @dev The registry MUST emit the ERC6551AccountCreated event upon successful account creation.
      */
-    event AccountCreated(
+    event ERC6551AccountCreated(
         address account,
-        address implementation,
+        address indexed implementation,
+        bytes32 salt,
         uint256 chainId,
-        address tokenContract,
-        uint256 tokenId,
-        uint256 salt
+        address indexed tokenContract,
+        uint256 indexed tokenId
     );
 
     /**
@@ -29,12 +29,11 @@ interface IERC6551Registry {
      */
     function createAccount(
         address implementation,
+        bytes32 salt,
         uint256 chainId,
         address tokenContract,
-        uint256 tokenId,
-        uint256 seed,
-        bytes calldata initData
-    ) external returns (address);
+        uint256 tokenId
+    ) external returns (address account);
 
     /**
      * @dev Returns the computed token bound account address for a non-fungible token.
@@ -43,9 +42,9 @@ interface IERC6551Registry {
      */
     function account(
         address implementation,
+        bytes32 salt,
         uint256 chainId,
         address tokenContract,
-        uint256 tokenId,
-        uint256 salt
-    ) external view returns (address);
+        uint256 tokenId
+    ) external view returns (address account);
 }

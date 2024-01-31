@@ -9,24 +9,28 @@ import {IERC6551Registry} from "./interfaces/IERC6551Registry.sol";
 import {IChargedParticles} from "./interfaces/IChargedParticles.sol";
 import {NftTokenInfo} from "./lib/NftTokenInfo.sol";
 import {ISmartAccount} from "./interfaces/ISmartAccount.sol";
+import {ISmartAccountController} from "./interfaces/ISmartAccountController.sol";
+import {IDynamicTraits} from "./interfaces/IDynamicTraits.sol";
 import {SmartAccount} from "./SmartAccount.sol";
+
+// import "hardhat/console.sol";
 
 contract ChargedParticles is IChargedParticles {
   using NftTokenInfo for address;
 
-  // ERC6551 Registry
-  address public constant REGISTRY = 0x02101dfB77FDE026414827Fdc604ddAF224F0921;
+  address internal smartAccountImplementation;
 
   // NFT contract => SmartAccount Implementation
-  mapping (address => address) internal implementations;
-  address internal defaultImplementation;
+  mapping (address => address) internal executionControllers;
+  address internal defaultExecutionController;
 
   // Registry Version => Registry Address
   mapping (uint256 => address) internal erc6551registry;
   uint256 internal defaultRegistry;
 
-  constructor() {
-    erc6551registry[0] = REGISTRY;
+  constructor(address registry) {
+    erc6551registry[defaultRegistry] = registry;
+    smartAccountImplementation = address(new SmartAccount());
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -49,25 +53,35 @@ contract ChargedParticles is IChargedParticles {
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // SmartAccount Implementations with Custom Execution Controllers
+  // SmartAccount  Execution Controllers
   //  - any NFT contract can have its own custom execution controller
-  //  - Note: Do not change the implementation after NFTs have already started using one.
 
   /// @dev ...
-  function createDefaultImplementation(address executionController) public virtual {
-    defaultImplementation = address(new SmartAccount(address(this), executionController));
+  function setDefaultExecutionController(address executionController) public virtual {
+    defaultExecutionController = executionController;
   }
 
   /// @dev ...
-  function createCustomImplementation(address nftContract, address executionController) public virtual {
-    implementations[nftContract] = address(new SmartAccount(address(this), executionController));
+  function setCustomExecutionController(address nftContract, address executionController) public virtual {
+    executionControllers[nftContract] = executionController;
   }
 
-  function getImplementation(address nftContract) public view returns (address implementation) {
-    implementation = implementations[nftContract];
-    if (implementation == address(0)) {
-      implementation = defaultImplementation;
+  function getExecutionController(address nftContract) public view returns (address executionController) {
+    executionController = executionControllers[nftContract];
+    if (executionController == address(0)) {
+      executionController = defaultExecutionController;
     }
+  }
+
+  function getImplementation() public view returns (address) {
+    return smartAccountImplementation;
+  }
+
+  function getTestingData() public pure returns (bytes4) {
+    return type(ISmartAccount).interfaceId;
+    // return type(ISmartAccountController).interfaceId;
+    // return type(IChargedParticles).interfaceId;
+    // return type(IDynamicTraits).interfaceId;
   }
 
 
@@ -88,25 +102,34 @@ contract ChargedParticles is IChargedParticles {
     address contractAddress,
     uint256 tokenId,
     address assetToken,
-    uint256 assetAmount,
-    bytes calldata initData
+    uint256 assetAmount
   )
     external
     virtual
     override
     // nonReentrant
+    returns (address account)
   {
     // Find the SmartAccount for this NFT
-    address implementation = getImplementation(contractAddress);
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.createAccount(implementation, block.chainid, contractAddress, tokenId, 0, initData);
+    account = registry.createAccount(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
+    ISmartAccount smartAccount = ISmartAccount(payable(account));
+
+    // Initialize the Account
+    if (!smartAccount.isInitialized()) {
+      address executionController = getExecutionController(contractAddress);
+      smartAccount.initialize(address(this), executionController);
+    }
 
     // Transfer to SmartAccount
     IERC20(assetToken).transferFrom(msg.sender, account, assetAmount);
 
+    // Pre-approve Charged Particles to transfer back out
+    smartAccount.execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), assetAmount), 0);
+
     // Call "update" on SmartAccount
     if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
-      ISmartAccount(payable(account)).handleTokenUpdate(true, assetToken, assetAmount);
+      smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
     }
   }
 
@@ -128,9 +151,8 @@ contract ChargedParticles is IChargedParticles {
     returns (uint256 amount)
   {
     // Find the SmartAccount for this NFT
-    address implementation = getImplementation(contractAddress);
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.account(implementation, block.chainid, contractAddress, tokenId, 0);
+    address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to SmartAccount
     amount = IERC20(assetToken).balanceOf(account);
@@ -157,9 +179,8 @@ contract ChargedParticles is IChargedParticles {
     returns (uint256)
   {
     // Find the SmartAccount for this NFT
-    address implementation = getImplementation(contractAddress);
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.account(implementation, block.chainid, contractAddress, tokenId, 0);
+    address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to SmartAccount
     IERC20(assetToken).transferFrom(account, receiver, assetAmount);
@@ -191,8 +212,7 @@ contract ChargedParticles is IChargedParticles {
     uint256 tokenId,
     address nftTokenAddress,
     uint256 nftTokenId,
-    uint256 nftTokenAmount,
-    bytes calldata initData
+    uint256 nftTokenAmount
   )
     external
     virtual
@@ -201,20 +221,28 @@ contract ChargedParticles is IChargedParticles {
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
-    address implementation = getImplementation(contractAddress);
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.createAccount(implementation, block.chainid, contractAddress, tokenId, 0, initData);
+    address account = registry.createAccount(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
+    ISmartAccount smartAccount = ISmartAccount(payable(account));
 
-    // Transfer to SmartAccount
+    // Initialize the Account
+    if (!smartAccount.isInitialized()) {
+      address executionController = getExecutionController(contractAddress);
+      smartAccount.initialize(address(this), executionController);
+    }
+
+    // Transfer to SmartAccount and pre-approve Charged Particles to transfer back out
     if (nftTokenAddress.isERC1155()) {
       IERC1155(nftTokenAddress).safeTransferFrom(msg.sender, account, tokenId, nftTokenAmount, "");
+      smartAccount.execute(nftTokenAddress, 0, abi.encodeWithSelector(IERC1155.setApprovalForAll.selector, address(this), true), 0);
     } else {
       IERC721(nftTokenAddress).safeTransferFrom(msg.sender, account, nftTokenId);
+      smartAccount.execute(nftTokenAddress, 0, abi.encodeWithSelector(IERC721.setApprovalForAll.selector, address(this), true), 0);
     }
 
     // Call "update" on SmartAccount
     if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
-      ISmartAccount(payable(account)).handleNFTUpdate(true, nftTokenAddress, nftTokenId, nftTokenAmount);
+      smartAccount.handleNFTUpdate(true, nftTokenAddress, nftTokenId, nftTokenAmount);
     }
     return true;
   }
@@ -242,9 +270,8 @@ contract ChargedParticles is IChargedParticles {
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
-    address implementation = getImplementation(contractAddress);
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.account(implementation, block.chainid, contractAddress, tokenId, 0);
+    address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to SmartAccount
     if (nftTokenAddress.isERC1155()) {

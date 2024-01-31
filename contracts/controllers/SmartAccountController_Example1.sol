@@ -23,7 +23,7 @@ contract SmartAccountController_Example1 is ISmartAccountController, ERC165 {
 
   function _isAllowedMethod(bytes calldata _data) internal view returns (bool) {
     bytes4 signature = bytes4(_data[:4]);
-    return _bannedMethods[signature];
+    return !_bannedMethods[signature];
   }
 
 

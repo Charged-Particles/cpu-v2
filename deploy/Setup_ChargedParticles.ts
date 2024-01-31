@@ -20,11 +20,11 @@ const Setup_ChargedParticles: DeployFunction = async (hre: HardhatRuntimeEnviron
 
   // Set Default Execution Controller
   await performTx(
-    await chargedParticles.createDefaultImplementation(controllerAddress),
-    ' -- Default Implementation Set for SmartAccounts!'
+    await chargedParticles.setDefaultExecutionController(controllerAddress),
+    ' -- Default Execution Controller Set for SmartAccounts!'
   );
 };
 export default Setup_ChargedParticles;
 
-Setup_ChargedParticles.dependencies = ['CPU', 'SAC_EX1'];
+Setup_ChargedParticles.dependencies = ['ChargedParticles', 'SAC_EX1'];
 Setup_ChargedParticles.tags = ['Setup_CPU'];
