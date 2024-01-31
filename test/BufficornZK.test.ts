@@ -74,18 +74,18 @@ describe('BufficornZK', async function () {
     const bufficornTokenId = 1;
 
     // Mint a Bufficorn NFT
-    await bufficorn.mint().then(tx => tx.wait()); // Token ID: 1
+    await bufficorn.mint(bufficornTokenId).then(tx => tx.wait()); // Token ID: 1
     expect(await bufficorn.balanceOf(deployer)).to.be.equal(bufficornTokenId);
 
     // Confirm Zero Traits
     expect(await bufficorn.getTraits(bufficornTokenId)).to.be.equal(0);
 
     // Mint some Bufficorn Trait-NFTs
-    await bufficorn.mintWithTraits(1n)  //  Token ID: 2, Trait-bit = 00000001
-    await bufficorn.mintWithTraits(2n)  //  Token ID: 3, Trait-bit = 00000010
-    await bufficorn.mintWithTraits(4n)  //  Token ID: 4, Trait-bit = 00000100
-    await bufficorn.mintWithTraits(8n)  //  Token ID: 5, Trait-bit = 00001000
-    await bufficorn.mintWithTraits(16n) //  Token ID: 6, Trait-bit = 00010000
+    await bufficorn.mintWithTraits(2, 1n)  //  Token ID: 2, Trait-bit = 00000001
+    await bufficorn.mintWithTraits(3, 2n)  //  Token ID: 3, Trait-bit = 00000010
+    await bufficorn.mintWithTraits(4, 4n)  //  Token ID: 4, Trait-bit = 00000100
+    await bufficorn.mintWithTraits(5, 8n)  //  Token ID: 5, Trait-bit = 00001000
+    await bufficorn.mintWithTraits(6, 16n) //  Token ID: 6, Trait-bit = 00010000
     expect(await bufficorn.balanceOf(deployer)).to.be.equal(6);
 
     // Confirm Zero Traits

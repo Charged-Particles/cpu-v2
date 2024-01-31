@@ -8,6 +8,7 @@ pragma solidity ^0.8.13;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import {ERC721, ERC721Enumerable} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {ISmartAccountController} from "../interfaces/ISmartAccountController.sol";
 import {IDynamicTraits} from "../interfaces/IDynamicTraits.sol";
 
@@ -15,7 +16,8 @@ import {IDynamicTraits} from "../interfaces/IDynamicTraits.sol";
  * @dev todo...
  */
 contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721Enumerable {
-  uint256 internal _totalTokens;
+  using Strings for uint256;
+
   string internal _tokenUri;
 
   // TokenId => Traits BitMap
@@ -28,13 +30,13 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
   //
 
   // For minting container-NFTs that have no initial traits
-  function mint() external virtual returns (uint256 tokenId) {
-    tokenId = _mint(0);
+  function mint(uint256 tokenId) external virtual {
+    _mint(tokenId, 0);
   }
 
   // For minting child-NFTs that have initial fixed traits
-  function mintWithTraits(uint256 traits) external virtual returns (uint256 tokenId) {
-    tokenId = _mint(traits);
+  function mintWithTraits(uint256 tokenId, uint256 traits) external virtual {
+    _mint(tokenId, traits);
   }
 
   function getTraits(uint256 tokenId) external view override returns (uint256) {
@@ -81,9 +83,13 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
     return _tokenUri;
   }
 
-  function _mint(uint256 traits) internal returns (uint256 tokenId) {
-    _totalTokens += 1;
-    tokenId = _totalTokens;
+  function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
+    _requireMinted(tokenId);
+    string memory baseURI = _baseURI();
+    return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString(), "/", _traitBits[tokenId].toHexString())) : "";
+  }
+
+  function _mint(uint256 tokenId, uint256 traits) internal {
     _traitBits[tokenId] = traits;
     _safeMint(_msgSender(), tokenId);
   }
