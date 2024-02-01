@@ -36,7 +36,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   constructor() {}
 
   function initialize(address chargedParticles, address executionController) external {
-    if (_initialized) revert AlreadyInitialized();
+    if (_initialized) { revert AlreadyInitialized(); }
     _initialized = true;
     _chargedParticles = chargedParticles;
     _executionController = executionController;
@@ -57,8 +57,18 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     return _chargedParticles;
   }
 
+  function setChargedParticles(address chargedParticles) public virtual onlyOwner {
+    if (chargedParticles == address(0)) { revert InvalidInput(); }
+    _chargedParticles = chargedParticles;
+  }
+
   function getExecutionController() public view virtual returns (address) {
     return _executionController;
+  }
+
+  function setExecutionController(address executionController) public virtual onlyOwner {
+    _executionController = executionController;
+    emit ExecutionControllerUpdated(msg.sender, executionController);
   }
 
   /// @dev Returns the EIP-155 chain ID, token contract address, and token ID for the token that
@@ -264,13 +274,13 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
 
   /// @dev reverts if caller is not the owner of the NFT which owns the account
   modifier onlyOwner() {
-    if (msg.sender != owner()) revert NotAuthorized();
+    if (msg.sender != owner()) { revert NotAuthorized(); }
     _;
   }
 
   /// @dev reverts if caller is not authorized to execute on this account
   modifier onlyValidSigner() {
-    if (!_isValidSigner(msg.sender)) revert NotAuthorized();
+    if (!_isValidSigner(msg.sender)) { revert NotAuthorized(); }
     _;
   }
 }

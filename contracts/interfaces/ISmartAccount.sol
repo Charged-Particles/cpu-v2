@@ -18,8 +18,8 @@ interface ISmartAccount is
   IERC721Receiver,
   IERC1155Receiver
 {
-  event OverrideUpdated(address owner, bytes4 selector, address implementation);
   event PermissionUpdated(address owner, address caller, bool hasPermission);
+  event ExecutionControllerUpdated(address owner, address controller);
 
   function isInitialized() external returns (bool);
   function initialize(address chargedParticles, address executionController) external;

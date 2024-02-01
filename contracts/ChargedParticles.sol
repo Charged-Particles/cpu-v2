@@ -323,7 +323,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   // Internal Modifiers
 
   modifier onlyNFTOwnerOrOperator(address contractAddress, uint256 tokenId) {
-    require(contractAddress.isNFTOwnerOrOperator(tokenId, msg.sender), "CP:E-105");
+    require(contractAddress.isNFTOwnerOrOperator(tokenId, msg.sender), "Invalid owner or operator");
     _;
   }
 }
