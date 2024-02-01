@@ -23,17 +23,15 @@ contract SmartAccountTimelocks is SmartAccount {
     return lockedUntil[owner()] > block.timestamp;
   }
 
-  /// @dev executes a low-level call against an account if the caller is authorized to make calls
-  function execute(
-    address to,
-    uint256 value,
-    bytes calldata data,
-    uint8 operation
-  ) public payable virtual override returns (bytes memory) {
-    if (isLocked()) {
-      revert AccountLocked();
+  /// @dev locks the account until a certain timestamp
+  function lock(uint256 _lockedUntil) external onlyValidSigner {
+    if (_lockedUntil > block.timestamp + 365 days) {
+      revert ExceedsMaxLockTime();
     }
-    return super.execute(to, value, data, operation);
+
+    lockedUntil[owner()] = _lockedUntil;
+
+    emit LockUpdated(_lockedUntil);
   }
 
   /// @dev grants a given caller execution permissions
@@ -47,14 +45,43 @@ contract SmartAccountTimelocks is SmartAccount {
     return super.setPermissions(callers, _permissions);
   }
 
-  /// @dev locks the account until a certain timestamp
-  function lock(uint256 _lockedUntil) external onlyOwner {
-    if (_lockedUntil > block.timestamp + 365 days) {
-      revert ExceedsMaxLockTime();
-    }
+  /// @dev executes a low-level call against an account if the caller is authorized to make calls
+  function execute(
+    address to,
+    uint256 value,
+    bytes calldata data,
+    uint8 operation
+  ) public payable virtual override returns (bytes memory) {
+    if (isLocked()) { revert AccountLocked(); }
+    return super.execute(to, value, data, operation);
+  }
 
-    lockedUntil[owner()] = _lockedUntil;
+  function handleTokenUpdate(
+    bool isReceiving,
+    address assetToken,
+    uint256 assetAmount
+  ) public virtual override {
+    if (isLocked()) { revert AccountLocked(); }
+    return super.handleTokenUpdate(isReceiving, assetToken, assetAmount);
+  }
 
-    emit LockUpdated(_lockedUntil);
+  function handleNFTUpdate(
+    bool isReceiving,
+    address tokenContract,
+    uint256 tokenId,
+    uint256 tokenAmount
+  ) public virtual override {
+    if (isLocked()) { revert AccountLocked(); }
+    return super.handleNFTUpdate(isReceiving, tokenContract, tokenId, tokenAmount);
+  }
+
+  function handleNFTBatchUpdate(
+    bool isReceiving,
+    address tokenContract,
+    uint256[] calldata tokenIds,
+    uint256[] calldata tokenAmounts
+  ) public virtual override {
+    if (isLocked()) { revert AccountLocked(); }
+    return super.handleNFTBatchUpdate(isReceiving, tokenContract, tokenIds, tokenAmounts);
   }
 }

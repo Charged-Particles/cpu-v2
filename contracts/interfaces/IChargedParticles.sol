@@ -31,7 +31,10 @@ interface IChargedParticles {
   function setDefaultExecutionController(address executionController) external;
   function setCustomExecutionController(address nftContract, address executionController) external;
   function getExecutionController(address nftContract) external view returns (address executionController);
-  function getImplementation() external view returns (address);
+
+  function setDefaultAccountImplementation(address accountImplementation) external;
+  function setCustomAccountImplementation(address nftContract, address accountImplementation) external;
+  function getAccountImplementation(address nftContract) external view returns (address accountImplementation);
 
   /***********************************|
   |        Particle Mechanics         |

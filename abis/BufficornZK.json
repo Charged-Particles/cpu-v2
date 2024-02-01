@@ -319,12 +319,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "chainId",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "address",
-        "name": "tokenContract",
+        "name": "",
         "type": "address"
       },
       {
@@ -362,12 +362,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "chainId",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "address",
-        "name": "tokenContract",
+        "name": "",
         "type": "address"
       },
       {
@@ -405,12 +405,12 @@
       },
       {
         "internalType": "uint256",
-        "name": "chainId",
+        "name": "",
         "type": "uint256"
       },
       {
         "internalType": "address",
-        "name": "tokenContract",
+        "name": "",
         "type": "address"
       },
       {

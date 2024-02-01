@@ -26,14 +26,13 @@ error OwnershipCycle();
  * @title A smart contract account owned by a single ERC721 token
  */
 abstract contract SmartAccountBase is ISmartAccount, ERC165 {
+  address internal _chargedParticles;
+  address internal _executionController;
+
   /// @dev mapping from owner => caller => has permissions
   mapping(address => mapping(address => bool)) internal _permissions;
 
   bool internal _initialized;
-
-  address internal _chargedParticles;
-  address internal _executionController;
-
   constructor() {}
 
   function initialize(address chargedParticles, address executionController) external {
@@ -263,7 +262,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     return signer == ownerOf;
   }
 
-  /// @dev reverts if caller is not the owner of the account
+  /// @dev reverts if caller is not the owner of the NFT which owns the account
   modifier onlyOwner() {
     if (msg.sender != owner()) revert NotAuthorized();
     _;

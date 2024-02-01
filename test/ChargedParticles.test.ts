@@ -28,7 +28,7 @@ describe('ChargedParticles', async function () {
   let receiver: string;
 
   const calculateAccountAddress = async (nftContractAddress: string, nftTokenId: number) => {
-    const smartAccountImplementation = await chargedParticles.getImplementation();
+    const smartAccountImplementation = await chargedParticles.getAccountImplementation(nftContractAddress);
     const newAccountAddress = await registryContract.account(
       smartAccountImplementation,
       salt,

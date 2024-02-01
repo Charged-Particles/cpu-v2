@@ -1,9 +1,12 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
+import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
+import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
 import {IERC6551Registry} from "./interfaces/IERC6551Registry.sol";
 import {IChargedParticles} from "./interfaces/IChargedParticles.sol";
@@ -11,16 +14,18 @@ import {NftTokenInfo} from "./lib/NftTokenInfo.sol";
 import {ISmartAccount} from "./interfaces/ISmartAccount.sol";
 import {ISmartAccountController} from "./interfaces/ISmartAccountController.sol";
 import {IDynamicTraits} from "./interfaces/IDynamicTraits.sol";
-import {SmartAccount} from "./SmartAccount.sol";
+import {SmartAccountTimelocks} from "./extensions/SmartAccountTimelocks.sol";
 
 // import "hardhat/console.sol";
 
-contract ChargedParticles is IChargedParticles {
+contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   using NftTokenInfo for address;
 
-  address internal smartAccountImplementation;
-
   // NFT contract => SmartAccount Implementation
+  mapping (address => address) internal accountImplementations;
+  address internal defaultAccountImplementation;
+
+  // NFT contract => Execution Controller
   mapping (address => address) internal executionControllers;
   address internal defaultExecutionController;
 
@@ -28,67 +33,18 @@ contract ChargedParticles is IChargedParticles {
   mapping (uint256 => address) internal erc6551registry;
   uint256 internal defaultRegistry;
 
-  constructor(address registry) {
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Initialization
+
+  constructor(address registry) Ownable() ReentrancyGuard() {
     erc6551registry[defaultRegistry] = registry;
-    smartAccountImplementation = address(new SmartAccount());
+    defaultAccountImplementation = address(new SmartAccountTimelocks());
   }
+
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // ERC6551 Wallet Registry
-
-  function getCurrentRegistry() external view returns (address) {
-    return erc6551registry[defaultRegistry];
-  }
-
-  function getRegistry(uint256 registry) external view returns (address) {
-    return erc6551registry[registry];
-  }
-
-  function setRegistry(uint256 version, address registry) external {
-    erc6551registry[version] = registry;
-  }
-
-  function setDefaultRegistryVersion(uint256 version) external {
-    defaultRegistry = version;
-  }
-
-  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // SmartAccount  Execution Controllers
-  //  - any NFT contract can have its own custom execution controller
-
-  /// @dev ...
-  function setDefaultExecutionController(address executionController) public virtual {
-    defaultExecutionController = executionController;
-  }
-
-  /// @dev ...
-  function setCustomExecutionController(address nftContract, address executionController) public virtual {
-    executionControllers[nftContract] = executionController;
-  }
-
-  function getExecutionController(address nftContract) public view returns (address executionController) {
-    executionController = executionControllers[nftContract];
-    if (executionController == address(0)) {
-      executionController = defaultExecutionController;
-    }
-  }
-
-  function getImplementation() public view returns (address) {
-    return smartAccountImplementation;
-  }
-
-  function getTestingData() public pure returns (bytes4) {
-    return type(ISmartAccount).interfaceId;
-    // return type(ISmartAccountController).interfaceId;
-    // return type(IChargedParticles).interfaceId;
-    // return type(IDynamicTraits).interfaceId;
-  }
-
-
-  /***********************************|
-  |        Energize Particles         |
-  |__________________________________*/
-
+  // Energize (Deposit)
 
   /// @notice Fund Particle with Asset Token
   ///    Must be called by the account providing the Asset
@@ -107,12 +63,13 @@ contract ChargedParticles is IChargedParticles {
     external
     virtual
     override
-    // nonReentrant
+    nonReentrant
     returns (address account)
   {
     // Find the SmartAccount for this NFT
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    account = registry.createAccount(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
+    address accountImpl = getAccountImplementation(contractAddress);
+    account = registry.createAccount(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
     ISmartAccount smartAccount = ISmartAccount(payable(account));
 
     // Initialize the Account
@@ -125,7 +82,7 @@ contract ChargedParticles is IChargedParticles {
     IERC20(assetToken).transferFrom(msg.sender, account, assetAmount);
 
     // Pre-approve Charged Particles to transfer back out
-    smartAccount.execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), assetAmount), 0);
+    smartAccount.execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), type(uint256).max), 0);
 
     // Call "update" on SmartAccount
     if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
@@ -133,9 +90,9 @@ contract ChargedParticles is IChargedParticles {
     }
   }
 
-  /***********************************|
-  |         Release Particles         |
-  |__________________________________*/
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Release (Withdraw)
 
   function releaseParticle(
     address receiver,
@@ -147,12 +104,13 @@ contract ChargedParticles is IChargedParticles {
     virtual
     override
     onlyNFTOwnerOrOperator(contractAddress, tokenId)
-    // nonReentrant
+    nonReentrant
     returns (uint256 amount)
   {
     // Find the SmartAccount for this NFT
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
+    address accountImpl = getAccountImplementation(contractAddress);
+    address account = registry.account(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     amount = IERC20(assetToken).balanceOf(account);
@@ -175,12 +133,13 @@ contract ChargedParticles is IChargedParticles {
     virtual
     override
     onlyNFTOwnerOrOperator(contractAddress, tokenId)
-    // nonReentrant
+    nonReentrant
     returns (uint256)
   {
     // Find the SmartAccount for this NFT
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
+    address accountImpl = getAccountImplementation(contractAddress);
+    address account = registry.account(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     IERC20(assetToken).transferFrom(account, receiver, assetAmount);
@@ -194,9 +153,8 @@ contract ChargedParticles is IChargedParticles {
   }
 
 
-  /***********************************|
-  |         Covalent Bonding          |
-  |__________________________________*/
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Covalent Bonds (Nested NFTs)
 
   /// @notice Deposit other NFT Assets into the Particle
   ///    Must be called by the account providing the Asset
@@ -217,12 +175,13 @@ contract ChargedParticles is IChargedParticles {
     external
     virtual
     override
-    // nonReentrant
+    nonReentrant
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.createAccount(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
+    address accountImpl = getAccountImplementation(contractAddress);
+    address account = registry.createAccount(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
     ISmartAccount smartAccount = ISmartAccount(payable(account));
 
     // Initialize the Account
@@ -266,12 +225,13 @@ contract ChargedParticles is IChargedParticles {
     virtual
     override
     onlyNFTOwnerOrOperator(contractAddress, tokenId)
-    // nonReentrant
+    nonReentrant
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
     IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address account = registry.account(smartAccountImplementation, bytes32(0), block.chainid, contractAddress, tokenId);
+    address accountImpl = getAccountImplementation(contractAddress);
+    address account = registry.account(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     if (nftTokenAddress.isERC1155()) {
@@ -289,6 +249,78 @@ contract ChargedParticles is IChargedParticles {
   }
 
 
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // ERC6551 Wallet Registry
+
+  /// @dev ...
+  function getCurrentRegistry() external view returns (address) {
+    return erc6551registry[defaultRegistry];
+  }
+
+  /// @dev ...
+  function getRegistry(uint256 registry) external view returns (address) {
+    return erc6551registry[registry];
+  }
+
+  /// @dev ...
+  function setRegistry(uint256 version, address registry) external onlyOwner {
+    erc6551registry[version] = registry;
+  }
+
+  /// @dev ...
+  function setDefaultRegistryVersion(uint256 version) external onlyOwner {
+    defaultRegistry = version;
+  }
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // SmartAccount Execution Controllers
+  //  - any NFT contract can have its own custom execution controller
+
+  /// @dev ...
+  function setDefaultExecutionController(address executionController) public virtual onlyOwner {
+    defaultExecutionController = executionController;
+  }
+
+  /// @dev ...
+  function setCustomExecutionController(address nftContract, address executionController) public virtual onlyOwner {
+    executionControllers[nftContract] = executionController;
+  }
+
+  /// @dev ...
+  function getExecutionController(address nftContract) public view returns (address executionController) {
+    executionController = executionControllers[nftContract];
+    if (executionController == address(0)) {
+      executionController = defaultExecutionController;
+    }
+  }
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // SmartAccount Implementations
+  //  - any NFT contract can have its own custom execution controller
+
+  /// @dev ...
+  function setDefaultAccountImplementation(address accountImplementation) public virtual onlyOwner {
+    defaultAccountImplementation = accountImplementation;
+  }
+
+  /// @dev ...
+  function setCustomAccountImplementation(address nftContract, address accountImplementation) public virtual onlyOwner {
+    accountImplementations[nftContract] = accountImplementation;
+  }
+
+  /// @dev ...
+  function getAccountImplementation(address nftContract) public view returns (address accountImplementation) {
+    accountImplementation = accountImplementations[nftContract];
+    if (accountImplementation == address(0)) {
+      accountImplementation = defaultAccountImplementation;
+    }
+  }
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Internal Modifiers
 
   modifier onlyNFTOwnerOrOperator(address contractAddress, uint256 tokenId) {
     require(contractAddress.isNFTOwnerOrOperator(tokenId, msg.sender), "CP:E-105");

@@ -2,7 +2,6 @@
 pragma solidity ^0.8.13;
 
 import {IERC165} from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-// import {ISmartAccountController} from "./interfaces/ISmartAccountController.sol";
 import {SmartAccountBase, NotAuthorized, InvalidInput} from "./lib/SmartAccountBase.sol";
 
 /**

@@ -124,11 +124,11 @@
         "type": "address"
       }
     ],
-    "name": "getExecutionController",
+    "name": "getAccountImplementation",
     "outputs": [
       {
         "internalType": "address",
-        "name": "executionController",
+        "name": "accountImplementation",
         "type": "address"
       }
     ],
@@ -136,12 +136,18 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getImplementation",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftContract",
+        "type": "address"
+      }
+    ],
+    "name": "getExecutionController",
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "executionController",
         "type": "address"
       }
     ],
@@ -230,11 +236,42 @@
       },
       {
         "internalType": "address",
+        "name": "accountImplementation",
+        "type": "address"
+      }
+    ],
+    "name": "setCustomAccountImplementation",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftContract",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
         "name": "executionController",
         "type": "address"
       }
     ],
     "name": "setCustomExecutionController",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "accountImplementation",
+        "type": "address"
+      }
+    ],
+    "name": "setDefaultAccountImplementation",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

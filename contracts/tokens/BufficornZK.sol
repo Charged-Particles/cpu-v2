@@ -18,16 +18,21 @@ import {IDynamicTraits} from "../interfaces/IDynamicTraits.sol";
 contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721Enumerable {
   using Strings for uint256;
 
-  string internal _tokenUri;
+  // Base portion of the Token Metadata URI (format: base-uri/tokenId/traitsMap)
+  string internal _tokenUriBase;
 
   // TokenId => Traits BitMap
   mapping (uint256 => uint256) internal _traitBits;
 
-  constructor(string memory name, string memory symbol) ERC721(name, symbol) Ownable() {}
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Initialization
 
-  //
-  // Customizable Traits Logic
-  //
+  constructor(string memory name, string memory symbol)
+    ERC721(name, symbol) Ownable() {}
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Minting Logic
 
   // For minting container-NFTs that have no initial traits
   function mint(uint256 tokenId) external virtual {
@@ -38,6 +43,10 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
   function mintWithTraits(uint256 tokenId, uint256 traits) external virtual {
     _mint(tokenId, traits);
   }
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Customizable Traits Logic
 
   function getTraits(uint256 tokenId) external view override returns (uint256) {
     return _traitBits[tokenId];
@@ -68,20 +77,9 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
     return _traitBits[tokenId];
   }
 
-  //
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Standard NFT Logic
-  //
-
-  /**
-    * @dev Set Base URI for Metadata - Only Owner
-    */
-  function setBaseURI(string memory newBase) external onlyOwner {
-    _tokenUri = newBase;
-  }
-
-  function _baseURI() internal view virtual override returns (string memory) {
-    return _tokenUri;
-  }
 
   function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
     _requireMinted(tokenId);
@@ -89,28 +87,36 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
     return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString(), "/", _traitBits[tokenId].toString())) : "";
   }
 
-  function _mint(uint256 tokenId, uint256 traits) internal {
-    _traitBits[tokenId] = traits;
-    _safeMint(_msgSender(), tokenId);
+  function setBaseURI(string memory newBase) external onlyOwner {
+    _tokenUriBase = newBase;
   }
 
-  //
+  function _baseURI() internal view virtual override returns (string memory) {
+    return _tokenUriBase;
+  }
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // SmartAccount Controller Logic
-  //
 
   function onExecute(
     address,
     uint256,
     bytes calldata,
     uint8
-  ) external virtual override returns (string memory revertReason) {
+  )
+    external
+    virtual
+    override
+    returns (string memory revertReason)
+  {
     return ""; // success
   }
 
   function onUpdateToken(
     bool isReceiving,
-    uint256 chainId,
-    address tokenContract,
+    uint256, // this chain
+    address, // this contract
     uint256 tokenId,
     address receivedAssetToken,
     uint256 receivedAssetAmount
@@ -118,15 +124,14 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
     external
     virtual
     override
-    onlyValidNFT(tokenContract, chainId)
   {
     // no-op
   }
 
   function onUpdateNFT(
     bool isReceiving,
-    uint256 chainId,
-    address tokenContract,
+    uint256, // this chain
+    address, // this contract
     uint256 tokenId,
     address receivedTokenContract,
     uint256 receivedTokenId,
@@ -135,7 +140,6 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
     external
     virtual
     override
-    onlyValidNFT(tokenContract, chainId)
   {
     if (IERC165(receivedTokenContract).supportsInterface(type(IDynamicTraits).interfaceId)) {
       uint256 newTraits = IDynamicTraits(receivedTokenContract).getTraits(receivedTokenId);
@@ -149,8 +153,8 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
 
   function onUpdateNFTBatch(
     bool isReceiving,
-    uint256 chainId,
-    address tokenContract,
+    uint256, // this chain
+    address, // this contract
     uint256 tokenId,
     address receivedTokenContract,
     uint256[] calldata receivedTokenIds,
@@ -159,7 +163,6 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
     external
     virtual
     override
-    onlyValidNFT(tokenContract, chainId)
   {
     uint256 i;
     uint256 t;
@@ -175,6 +178,10 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
       }
     }
   }
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Custom Interfaces
 
   /// @dev Returns true if a given interfaceId is supported by this account. This method can be
   /// extended by an override.
@@ -192,9 +199,18 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
   }
 
 
-  modifier onlyValidNFT(address contractAddress, uint256 chainId) {
-    require(contractAddress == address(this), "Invalid source address");
-    require(chainId == block.chainid, "Invalid source chain");
-    _;
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Internal Functions
+
+  function _mint(uint256 tokenId, uint256 traits) internal {
+    // Note: Do NOT set traits when bridging a Bufficorn-NFT.
+    //       The "traits" param is ONLY used for minting Trait-NFTs
+    //       which can be minted from this contract, or another contract.
+    //       When bridging a Bufficorn, this contract will retain the last-known
+    //       state for a Bufficorns nested traits on zkSync.
+    if (traits > 0) {
+      _traitBits[tokenId] = traits;
+    }
+    _safeMint(_msgSender(), tokenId);
   }
 }
