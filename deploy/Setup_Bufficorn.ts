@@ -16,7 +16,7 @@ const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
   const bufficorn: BufficornZK = await ethers.getContract('BufficornZK');
   const bufficornAddress = await bufficorn.getAddress();
 
-  // Set Custom Execution Controller as the BufficornZK contract
+  // Set Base Token URI on the BufficornZK contract
   await performTx(
     await bufficorn.setBaseURI('http://www.bufficorn-zk.com/'),
     ' -- Token BaseURI set for BufficornZK'
@@ -24,7 +24,7 @@ const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
 
   // Set Custom Execution Controller as the BufficornZK contract
   await performTx(
-    await chargedParticles.setCustomExecutionController(bufficornAddress, bufficornAddress),
+    await chargedParticles.setCustomExecutionController(bufficornAddress, bufficornAddress), // NFT Contract, Execution Controller  (in this case, they happen to be the same)
     ' -- Custom Implementation Created for Bufficorn SmartAccounts'
   );
 };
