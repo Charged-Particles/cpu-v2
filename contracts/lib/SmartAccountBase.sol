@@ -10,7 +10,7 @@ import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/Signa
 
 import {IERC6551Account} from "../interfaces/IERC6551Account.sol";
 import {IERC6551Executable} from "../interfaces/IERC6551Executable.sol";
-import {ERC6551AccountLib} from "./ERC6551AccountLib.sol";
+// import {ERC6551AccountLib} from "./ERC6551AccountLib.sol";
 
 import {ISmartAccount} from "../interfaces/ISmartAccount.sol";
 import {ISmartAccountController} from "../interfaces/ISmartAccountController.sol";
@@ -28,6 +28,9 @@ error OwnershipCycle();
 abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   address internal _chargedParticles;
   address internal _executionController;
+  uint256 internal _parentNftChainId;
+  address internal _parentNftContract;
+  uint256 internal _parentNftTokenId;
 
   /// @dev mapping from owner => caller => has permissions
   mapping(address => mapping(address => bool)) internal _permissions;
@@ -35,11 +38,20 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   bool internal _initialized;
   constructor() {}
 
-  function initialize(address chargedParticles, address executionController) external {
+  function initialize(
+    address chargedParticles,
+    address executionController,
+    uint256 parentNftChainId,
+    address parentNftContract,
+    uint256 parentNftTokenId
+  ) external {
     if (_initialized) { revert AlreadyInitialized(); }
     _initialized = true;
     _chargedParticles = chargedParticles;
     _executionController = executionController;
+    _parentNftChainId = parentNftChainId;
+    _parentNftContract = parentNftContract;
+    _parentNftTokenId = parentNftTokenId;
   }
 
   /// @dev allows eth transfers by default, but allows account owner to override
@@ -83,13 +95,15 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
       uint256 tokenId
     )
   {
-    return ERC6551AccountLib.token();
+    chainId = _parentNftChainId;
+    tokenContract = _parentNftContract;
+    tokenId = _parentNftTokenId;
   }
 
   /// @dev Returns the owner of the ERC-721 token which owns this account. By default, the owner
   /// of the token has full permissions on the account.
   function owner() public view virtual returns (address) {
-    (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+    (uint256 chainId, address tokenContract, uint256 tokenId) = token();
     if (chainId != block.chainid) { return address(0); }
 
     try IERC721(tokenContract).ownerOf(tokenId) returns (address _owner) {
@@ -160,7 +174,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
       uint256 chainId,
       address tokenContract,
       uint256 tokenId
-    ) = ERC6551AccountLib.token();
+    ) = token();
 
     if (chainId == block.chainid && tokenContract == msg.sender && tokenId == receivedTokenId) {
       revert OwnershipCycle();
@@ -227,7 +241,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     uint256 assetAmount
   ) internal {
     if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
-      (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      (uint256 chainId, address tokenContract, uint256 tokenId) = token();
       ISmartAccountController(_executionController)
         .onUpdateToken(isReceiving, chainId, tokenContract, tokenId, assetToken, assetAmount);
     }
@@ -240,7 +254,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     uint256 childTokenAmount
   ) internal {
     if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
-      (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      (uint256 chainId, address tokenContract, uint256 tokenId) = token();
       ISmartAccountController(_executionController)
         .onUpdateNFT(isReceiving, chainId, tokenContract, tokenId, childTokenContract, childTokenId, childTokenAmount);
     }
@@ -253,7 +267,7 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
     uint256[] calldata childTokenAmounts
   ) internal {
     if (IERC165(_executionController).supportsInterface(type(ISmartAccountController).interfaceId)) {
-      (uint256 chainId, address tokenContract, uint256 tokenId) = ERC6551AccountLib.token();
+      (uint256 chainId, address tokenContract, uint256 tokenId) = token();
       ISmartAccountController(_executionController)
         .onUpdateNFTBatch(isReceiving, chainId, tokenContract, tokenId, childTokenContract, childTokenIds, childTokenAmounts);
     }
@@ -262,8 +276,9 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   function _isValidSigner(address signer) internal view virtual returns (bool) {
     address ownerOf = owner();
 
-    // Charged Particles always has permissions
+    // Charged Particles & Execution Controller always have permissions
     if (signer == _chargedParticles) { return true; }
+    if (signer == _executionController) { return true; }
 
     // authorize caller if owner has granted permissions
     if (_permissions[ownerOf][signer]) { return true; }

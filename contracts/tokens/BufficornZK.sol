@@ -82,7 +82,7 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
   // Standard NFT Logic
 
   function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
-    _requireMinted(tokenId);
+    require(_exists(tokenId), "ERC721: token does not exist");
     string memory baseURI = _baseURI();
     return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, tokenId.toString(), "/", _traitBits[tokenId].toString())) : "";
   }

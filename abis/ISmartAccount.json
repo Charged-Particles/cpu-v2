@@ -10,18 +10,12 @@
       },
       {
         "indexed": false,
-        "internalType": "bytes4",
-        "name": "selector",
-        "type": "bytes4"
-      },
-      {
-        "indexed": false,
         "internalType": "address",
-        "name": "implementation",
+        "name": "controller",
         "type": "address"
       }
     ],
-    "name": "OverrideUpdated",
+    "name": "ExecutionControllerUpdated",
     "type": "event"
   },
   {
@@ -173,6 +167,21 @@
         "internalType": "address",
         "name": "executionController",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "parentNftChainId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "parentNftContract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "parentNftTokenId",
+        "type": "uint256"
       }
     ],
     "name": "initialize",

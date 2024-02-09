@@ -8,7 +8,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import {IERC6551Registry} from "./interfaces/IERC6551Registry.sol";
+import {IERC6551zkSyncRegistry} from "./interfaces/IERC6551zkSyncRegistry.sol";
 import {IChargedParticles} from "./interfaces/IChargedParticles.sol";
 import {NftTokenInfo} from "./lib/NftTokenInfo.sol";
 import {ISmartAccount} from "./interfaces/ISmartAccount.sol";
@@ -21,9 +21,9 @@ import {SmartAccountTimelocks} from "./extensions/SmartAccountTimelocks.sol";
 contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   using NftTokenInfo for address;
 
-  // NFT contract => SmartAccount Implementation
-  mapping (address => address) internal accountImplementations;
-  address internal defaultAccountImplementation;
+  // NFT contract => SmartAccount BytecodeHash
+  mapping (address => bytes32) internal accountHashes; // on zkSync these are the "bytecodeHash" of a deployed contract
+  bytes32 internal defaultAccountBytecodeHash;
 
   // NFT contract => Execution Controller
   mapping (address => address) internal executionControllers;
@@ -37,9 +37,9 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialization
 
-  constructor(address registry) Ownable() ReentrancyGuard() {
+  constructor(address registry, bytes32 bytecodeHash) Ownable() ReentrancyGuard() {
     erc6551registry[defaultRegistry] = registry;
-    defaultAccountImplementation = address(new SmartAccountTimelocks());
+    defaultAccountBytecodeHash = bytecodeHash; // for zkSync
   }
 
 
@@ -67,27 +67,27 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (address account)
   {
     // Find the SmartAccount for this NFT
-    IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address accountImpl = getAccountImplementation(contractAddress);
-    account = registry.createAccount(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
-    ISmartAccount smartAccount = ISmartAccount(payable(account));
+    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
+    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
+    account = registry.createAccount(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
+    // ISmartAccount smartAccount = ISmartAccount(payable(account));
 
-    // Initialize the Account
-    if (!smartAccount.isInitialized()) {
-      address executionController = getExecutionController(contractAddress);
-      smartAccount.initialize(address(this), executionController);
-    }
+    // // Initialize the Account
+    // if (!smartAccount.isInitialized()) {
+    //   address executionController = getExecutionController(contractAddress);
+    //   smartAccount.initialize(address(this), executionController, block.chainid, contractAddress, tokenId);
+    // }
 
-    // Transfer to SmartAccount
-    IERC20(assetToken).transferFrom(msg.sender, account, assetAmount);
+    // // Transfer to SmartAccount
+    // IERC20(assetToken).transferFrom(msg.sender, account, assetAmount);
 
-    // Pre-approve Charged Particles to transfer back out
-    smartAccount.execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), type(uint256).max), 0);
+    // // Pre-approve Charged Particles to transfer back out
+    // smartAccount.execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), type(uint256).max), 0);
 
-    // Call "update" on SmartAccount
-    if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
-      smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
-    }
+    // // Call "update" on SmartAccount
+    // if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
+    //   smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
+    // }
   }
 
 
@@ -108,9 +108,9 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (uint256 amount)
   {
     // Find the SmartAccount for this NFT
-    IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address accountImpl = getAccountImplementation(contractAddress);
-    address account = registry.account(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
+    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
+    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
+    address account = registry.account(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     amount = IERC20(assetToken).balanceOf(account);
@@ -137,9 +137,9 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (uint256)
   {
     // Find the SmartAccount for this NFT
-    IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address accountImpl = getAccountImplementation(contractAddress);
-    address account = registry.account(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
+    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
+    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
+    address account = registry.account(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     IERC20(assetToken).transferFrom(account, receiver, assetAmount);
@@ -179,15 +179,15 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
-    IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address accountImpl = getAccountImplementation(contractAddress);
-    address account = registry.createAccount(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
+    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
+    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
+    address account = registry.createAccount(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
     ISmartAccount smartAccount = ISmartAccount(payable(account));
 
     // Initialize the Account
     if (!smartAccount.isInitialized()) {
       address executionController = getExecutionController(contractAddress);
-      smartAccount.initialize(address(this), executionController);
+      smartAccount.initialize(address(this), executionController, block.chainid, contractAddress, tokenId);
     }
 
     // Transfer to SmartAccount and pre-approve Charged Particles to transfer back out
@@ -229,9 +229,9 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
-    IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
-    address accountImpl = getAccountImplementation(contractAddress);
-    address account = registry.account(accountImpl, bytes32(0), block.chainid, contractAddress, tokenId);
+    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
+    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
+    address account = registry.account(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     if (nftTokenAddress.isERC1155()) {
@@ -297,24 +297,24 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
 
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  // SmartAccount Implementations
+  // SmartAccount BytecodeHash
   //  - any NFT contract can have its own custom execution controller
 
   /// @dev ...
-  function setDefaultAccountImplementation(address accountImplementation) public virtual onlyOwner {
-    defaultAccountImplementation = accountImplementation;
+  function setDefaultAccountBytecodeHash(bytes32 accountBytecodeHash) public virtual onlyOwner {
+    defaultAccountBytecodeHash = accountBytecodeHash;
   }
 
   /// @dev ...
-  function setCustomAccountImplementation(address nftContract, address accountImplementation) public virtual onlyOwner {
-    accountImplementations[nftContract] = accountImplementation;
+  function setCustomAccountBytecodeHash(address nftContract, bytes32 accountBytecodeHash) public virtual onlyOwner {
+    accountHashes[nftContract] = accountBytecodeHash;
   }
 
   /// @dev ...
-  function getAccountImplementation(address nftContract) public view returns (address accountImplementation) {
-    accountImplementation = accountImplementations[nftContract];
-    if (accountImplementation == address(0)) {
-      accountImplementation = defaultAccountImplementation;
+  function getAccountBytecodeHash(address nftContract) public view returns (bytes32 accountBytecodeHash) {
+    accountBytecodeHash = accountHashes[nftContract];
+    if (accountBytecodeHash == bytes32(0) || accountBytecodeHash.length == 0) {
+      accountBytecodeHash = defaultAccountBytecodeHash;
     }
   }
 

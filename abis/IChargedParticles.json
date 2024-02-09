@@ -124,12 +124,12 @@
         "type": "address"
       }
     ],
-    "name": "getAccountImplementation",
+    "name": "getAccountBytecodeHash",
     "outputs": [
       {
-        "internalType": "address",
-        "name": "accountImplementation",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "accountBytecodeHash",
+        "type": "bytes32"
       }
     ],
     "stateMutability": "view",
@@ -235,12 +235,12 @@
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "accountImplementation",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "accountBytecodeHash",
+        "type": "bytes32"
       }
     ],
-    "name": "setCustomAccountImplementation",
+    "name": "setCustomAccountBytecodeHash",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -266,12 +266,12 @@
   {
     "inputs": [
       {
-        "internalType": "address",
-        "name": "accountImplementation",
-        "type": "address"
+        "internalType": "bytes32",
+        "name": "accountBytecodeHash",
+        "type": "bytes32"
       }
     ],
-    "name": "setDefaultAccountImplementation",
+    "name": "setDefaultAccountBytecodeHash",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

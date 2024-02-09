@@ -22,7 +22,13 @@ interface ISmartAccount is
   event ExecutionControllerUpdated(address owner, address controller);
 
   function isInitialized() external returns (bool);
-  function initialize(address chargedParticles, address executionController) external;
+  function initialize(
+    address chargedParticles,
+    address executionController,
+    uint256 parentNftChainId,
+    address parentNftContract,
+    uint256 parentNftTokenId
+  ) external;
 
   function handleTokenUpdate(
     bool isReceiving,

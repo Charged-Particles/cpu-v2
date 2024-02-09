@@ -1,20 +1,16 @@
-import { HardhatRuntimeEnvironment } from 'hardhat/types';
-import { DeployFunction } from 'hardhat-deploy/types';
-import { ChargedParticles, BufficornZK } from '../typechain-types';
+
 import { performTx } from '../utils/performTx';
-// import { isTestnet } from '../utils/isTestnet';
+import SetupChargedParticles from './Setup_ChargedParticles';
+import DeployBufficorn from './BufficornZK';
 
-const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
-	const { network, deployments, ethers } = hre;
-  // const chainId = network.config.chainId ?? 1;
 
-  // Load ChargedParticles
-  const chargedParticles: ChargedParticles = await ethers.getContract('ChargedParticles');
-  const chargedParticlesAddress = await chargedParticles.getAddress();
+export default async function () {
+  // Deploy ChargedParticles (including zkSyncRegistry & SmartAccount)
+  const { chargedParticles } = await SetupChargedParticles();
 
-  // Load Bufficorn
-  const bufficorn: BufficornZK = await ethers.getContract('BufficornZK');
-  const bufficornAddress = await bufficorn.getAddress();
+  // Deploy Bufficorn on zkSync
+  const { contract: bufficorn, address: bufficornAddress, bytecodeHash: bufficornHash } = await DeployBufficorn();
+  // console.log(` -- BufficornZK Address: ${bufficornAddress}`);
 
   // Set Base Token URI on the BufficornZK contract
   await performTx(
@@ -27,8 +23,4 @@ const Setup_Bufficorn: DeployFunction = async (hre: HardhatRuntimeEnvironment) =
     await chargedParticles.setCustomExecutionController(bufficornAddress, bufficornAddress), // NFT Contract, Execution Controller  (in this case, they happen to be the same)
     ' -- Custom Implementation Created for Bufficorn SmartAccounts'
   );
-};
-export default Setup_Bufficorn;
-
-Setup_Bufficorn.dependencies = ['Setup_CPU', 'BufficornZK'];
-Setup_Bufficorn.tags = ['Setup_Bufficorn'];
+}

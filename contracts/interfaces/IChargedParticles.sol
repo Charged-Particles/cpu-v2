@@ -32,9 +32,9 @@ interface IChargedParticles {
   function setCustomExecutionController(address nftContract, address executionController) external;
   function getExecutionController(address nftContract) external view returns (address executionController);
 
-  function setDefaultAccountImplementation(address accountImplementation) external;
-  function setCustomAccountImplementation(address nftContract, address accountImplementation) external;
-  function getAccountImplementation(address nftContract) external view returns (address accountImplementation);
+  function setDefaultAccountBytecodeHash(bytes32 accountBytecodeHash) external;
+  function setCustomAccountBytecodeHash(address nftContract, bytes32 accountBytecodeHash) external;
+  function getAccountBytecodeHash(address nftContract) external view returns (bytes32 accountBytecodeHash);
 
   /***********************************|
   |        Particle Mechanics         |

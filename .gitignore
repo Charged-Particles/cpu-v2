@@ -10,6 +10,7 @@ cache
 artifacts
 
 cache-zk
+artifacts-zk
 build
 
 # Allow a dummy project in this directory for testing purposes
