@@ -61,7 +61,6 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
     address tokenContract,
     uint256 tokenId
   ) public returns (address accountAddress) {
-    bytes memory zeroBytes;
     (bool success, bytes memory returnData) = SystemContractsCaller
       .systemCallWithReturndata(
         uint32(gasleft()),
@@ -69,7 +68,7 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
         uint128(0),
         abi.encodeCall(
           DEPLOYER_SYSTEM_CONTRACT.getNewAddressCreate2,
-          (msg.sender, bytecodeHash, salt, zeroBytes)
+          (msg.sender, bytecodeHash, salt, abi.encode(chainId, tokenContract, tokenId))
         )
       );
     if (!success) { revert AccountComputeFailed(); }
