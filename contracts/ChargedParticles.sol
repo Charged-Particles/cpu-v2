@@ -70,24 +70,24 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
     bytes32 accountHash = getAccountBytecodeHash(contractAddress);
     account = registry.createAccount(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
-    // ISmartAccount smartAccount = ISmartAccount(payable(account));
+    ISmartAccount smartAccount = ISmartAccount(payable(account));
 
-    // // Initialize the Account
-    // if (!smartAccount.isInitialized()) {
-    //   address executionController = getExecutionController(contractAddress);
-    //   smartAccount.initialize(address(this), executionController, block.chainid, contractAddress, tokenId);
-    // }
+    // Initialize the Account
+    if (!smartAccount.isInitialized()) {
+      address executionController = getExecutionController(contractAddress);
+      smartAccount.initialize(address(this), executionController, block.chainid, contractAddress, tokenId);
+    }
 
-    // // Transfer to SmartAccount
-    // IERC20(assetToken).transferFrom(msg.sender, account, assetAmount);
+    // Transfer to SmartAccount
+    IERC20(assetToken).transferFrom(msg.sender, account, assetAmount);
 
-    // // Pre-approve Charged Particles to transfer back out
-    // smartAccount.execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), type(uint256).max), 0);
+    // Pre-approve Charged Particles to transfer back out
+    smartAccount.execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), type(uint256).max), 0);
 
-    // // Call "update" on SmartAccount
-    // if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
-    //   smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
-    // }
+    // Call "update" on SmartAccount
+    if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
+      smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
+    }
   }
 
 

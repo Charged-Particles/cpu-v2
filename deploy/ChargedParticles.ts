@@ -23,5 +23,5 @@ export default async function () {
     smartAccountHash,       // BytecodeHash for Pre-deployed SmartAccount contract
   ]
 
-  return await deployContract('ChargedParticles', constructorArgs, { bytecodes: [smartAccountBytecode] });
+  return await deployContract('ChargedParticles', constructorArgs, { bytecodes: [smartAccountBytecode] }); // pass full bytecode for "factory_deps"
 }

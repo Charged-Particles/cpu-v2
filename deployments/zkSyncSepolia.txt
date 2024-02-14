@@ -1,0 +1,103 @@
+
+Starting deployment process of "ERC6551zkSyncRegistry"...
+Estimated deployment cost: 0.0000576408 ETH
+Wallet Balance L1: 3991219030889425462
+
+"ERC6551zkSyncRegistry" was successfully deployed:
+ - Contract address: 0xAaa579e2CD892d24565bDA027225745c11C6A5D9
+ - Contract source: contracts/ERC6551zkSyncRegistry.sol:ERC6551zkSyncRegistry
+ - Contract Bytecode Hash: 1,0,0,187,17,14,173,91,59,56,2,225,179,69,242,95,89,198,73,154,16,237,132,42,166,228,156,64,111,134,48,86
+ - Encoded constructor arguments: 0x
+
+Requesting contract verification...
+Your verification ID is: 3194
+Contract successfully verified on zkSync block explorer!
+
+Starting deployment process of "SmartAccountTimelocks"...
+Estimated deployment cost: 0.0000576408 ETH
+Wallet Balance L1: 3991199484789425462
+
+"SmartAccountTimelocks" was successfully deployed:
+ - Contract address: 0x85E76FbAec7DdE34A3eaF48598915FceC9C586EB
+ - Contract source: contracts/extensions/SmartAccountTimelocks.sol:SmartAccountTimelocks
+ - Contract Bytecode Hash: 1,0,3,205,22,198,53,47,105,91,226,66,219,132,216,79,158,249,5,214,143,60,178,51,191,3,19,72,136,43,187,136
+ - Encoded constructor arguments: 0x
+
+Requesting contract verification...
+Your verification ID is: 3195
+Contract successfully verified on zkSync block explorer!
+
+Starting deployment process of "ChargedParticles"...
+Estimated deployment cost: 0.0001211174 ETH
+Wallet Balance L1: 3991179938089425462
+
+"ChargedParticles" was successfully deployed:
+ - Contract address: 0x971B39bEbe7e2927DA05796bBcFefE103D3370B5
+ - Contract source: contracts/ChargedParticles.sol:ChargedParticles
+ - Contract Bytecode Hash: 1,0,5,65,143,165,201,220,184,89,75,145,20,142,125,109,249,124,206,3,124,241,152,57,116,203,147,206,226,15,190,148
+ - Encoded constructor arguments: 0x000000000000000000000000aaa579e2cd892d24565bda027225745c11c6a5d9010003cd16c6352f695be242db84d84f9ef905d68f3cb233bf031348882bbb88
+
+Requesting contract verification...
+Your verification ID is: 3196
+Contract successfully verified on zkSync block explorer!
+ -- Charged Particles Address: 0x971B39bEbe7e2927DA05796bBcFefE103D3370B5
+
+Starting deployment process of "SmartAccountController_Example1"...
+Estimated deployment cost: 0.0000732658 ETH
+Wallet Balance L1: 3991138056689425462
+
+"SmartAccountController_Example1" was successfully deployed:
+ - Contract address: 0x6A18707c8dF8354E8bf9D82b453eDe51dFcB479F
+ - Contract source: contracts/controllers/SmartAccountController_Example1.sol:SmartAccountController_Example1
+ - Contract Bytecode Hash: 1,0,0,189,134,204,123,222,43,109,114,45,80,96,205,145,63,218,51,198,114,134,103,180,177,46,185,57,196,78,84,5
+ - Encoded constructor arguments: 0x
+
+Requesting contract verification...
+Your verification ID is: 3197
+Contract successfully verified on zkSync block explorer!
+ -- Smart Account Controller Address: 0x6A18707c8dF8354E8bf9D82b453eDe51dFcB479F
+
+Starting deployment process of "BufficornZK"...
+Estimated deployment cost: 0.0001123282 ETH
+Wallet Balance L1: 3991096620789425462
+
+"BufficornZK" was successfully deployed:
+ - Contract address: 0xE22d6bE1607FF50e1A19AAb49be6201747821522
+ - Contract source: contracts/tokens/BufficornZK.sol:BufficornZK
+ - Contract Bytecode Hash: 1,0,5,7,188,170,55,2,61,124,192,94,62,229,243,34,166,5,247,94,132,194,30,188,77,30,233,141,127,151,54,221
+ - Encoded constructor arguments: 0x00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000b4275666669636f726e5a4b0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003425a4b0000000000000000000000000000000000000000000000000000000000
+
+Requesting contract verification...
+Your verification ID is: 3198
+Contract successfully verified on zkSync block explorer!
+
+Deploying Mock ERC20 Token...
+
+Starting deployment process of "ERC20Mock"...
+Estimated deployment cost: 0.0010719044 ETH
+Wallet Balance L1: 3991023882289425462
+
+"ERC20Mock" was successfully deployed:
+ - Contract address: 0xeCd4906d84670b87e1085233A0471cEa0E7AeCf7
+ - Contract source: contracts/mock/ERC20Mock.sol:ERC20Mock
+ - Contract Bytecode Hash: 1,0,1,93,111,16,106,206,155,8,105,111,204,161,157,97,40,209,66,243,72,250,138,4,106,140,161,133,243,134,205,207
+ - Encoded constructor arguments: 0x
+
+Requesting contract verification...
+Your verification ID is: 3199
+Contract successfully verified on zkSync block explorer!
+Deploying Mock NFT Contract...
+
+Starting deployment process of "NFTMock"...
+Estimated deployment cost: 0.0018025662 ETH
+Wallet Balance L1: 3990321934989425462
+
+"NFTMock" was successfully deployed:
+ - Contract address: 0x79Ba636d5169876068eA45f88851598F85797fF6
+ - Contract source: contracts/mock/NFTMock.sol:NFTMock
+ - Contract Bytecode Hash: 1,0,2,155,126,86,181,24,17,169,10,187,221,250,86,139,30,80,137,211,100,209,76,213,85,109,197,122,224,173,241,184
+ - Encoded constructor arguments: 0x00000000000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000000000000080000000000000000000000000000000000000000000000000000000000000000b47616d65206f66204e54460000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005474f4e4654000000000000000000000000000000000000000000000000000000
+
+Requesting contract verification...
+Your verification ID is: 3200
+Contract successfully verified on zkSync block explorer!

@@ -16,7 +16,8 @@
     "coverage": "yarn clean-test && hardhat --show-stack-traces coverage --temp coverage_build && yarn clean-test",
     "gas": "REPORT_GAS=true yarn test",
     "deploy-cpu-only": "hardhat deploy-zksync --script Setup_ChargedParticles.ts --network",
-    "deploy-bufficorn": "hardhat deploy-zksync --script Setup_Bufficorn.ts --network"
+    "deploy-bufficorn": "hardhat deploy-zksync --script Setup_Bufficorn.ts --network",
+    "deploy-test-script": "hardhat deploy-zksync --script ZkSepoliaTest.ts --network"
   },
   "devDependencies": {
     "@matterlabs/hardhat-zksync-chai-matchers": "^1.2.1",

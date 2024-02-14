@@ -39,17 +39,29 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork: 'zkSyncTestnet',
   networks: {
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_API_KEY}`,
+      gasPrice: 'auto',
+      accounts: {
+        mnemonic: mnemonic.testnet,
+        initialIndex: 0,
+        count: 10,
+      },
+      chainId: 11155111,
+    },
     zkSyncTestnet: {
       url: "https://sepolia.era.zksync.dev",
       ethNetwork: "sepolia",
       zksync: true,
       verifyURL: "https://explorer.sepolia.era.zksync.dev/contract_verification",
+      chainId: 324,
     },
     zkSyncMainnet: {
       url: "https://mainnet.era.zksync.io",
       ethNetwork: "mainnet",
       zksync: true,
       verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
+      chainId: 300,
     },
     dockerizedNode: {
       url: "http://localhost:3050",

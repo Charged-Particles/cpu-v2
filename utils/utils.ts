@@ -3,12 +3,18 @@ import * as hre from "hardhat";
 import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
 import dotenv from "dotenv";
 import { ethers } from "ethers";
+import { isTestnet } from "./isTestnet";
 
 import "@matterlabs/hardhat-zksync-node/dist/type-extensions";
 import "@matterlabs/hardhat-zksync-verify/dist/src/type-extensions";
 
 // Load env file
 dotenv.config();
+
+const mnemonic = {
+  testnet: `${process.env.TESTNET_MNEMONIC}`.replace(/_/g, ' '),
+  mainnet: `${process.env.MAINNET_MNEMONIC}`.replace(/_/g, ' '),
+};
 
 export const getProvider = () => {
   const rpcUrl = hre.network.config.url;
@@ -20,24 +26,25 @@ export const getProvider = () => {
   return provider;
 }
 
-export const getWallet = (privateKey?: string) => {
-  if (!privateKey) {
-    // Get wallet private key from .env file
-    if (!process.env.WALLET_PRIVATE_KEY) throw "⛔️ Wallet private key wasn't found in .env file!";
-  }
-
+export const getWallet = () => {
+  // const _mnemonic = isTestnet() ? mnemonic.testnet : mnemonic.mainnet;
   const provider = getProvider();
 
   // Initialize zkSync Wallet
-  const wallet = new Wallet(privateKey ?? process.env.WALLET_PRIVATE_KEY!, provider);
+  const wallet = new Wallet(process.env.WALLET_PRIVATE_KEY!, provider);
+  // The following seems to break transaction signing:
+  // const wallet = Wallet.fromMnemonic(_mnemonic, provider);
 
   return wallet;
 }
 
 export const verifyEnoughBalance = async (wallet: Wallet, amount: bigint) => {
   // Check if the wallet has enough balance
-  const balance = await wallet.getBalance();
-  if (balance < amount) throw `⛔️ Wallet balance is too low! Required ${ethers.formatEther(amount)} ETH, but current ${wallet.address} balance is ${ethers.formatEther(balance)} ETH`;
+  const balanceL1 = await wallet.getBalanceL1();
+  // console.log(`Wallet Balance L1: ${balanceL1}`);
+  // const balanceL2 = await wallet.getBalance();
+  // console.log(`Wallet Balance L2: ${balanceL2}`);
+  if (balanceL1 < amount) throw `⛔️ Wallet balance is too low! Required ${ethers.formatEther(amount)} ETH, but current ${wallet.address} balance is ${ethers.formatEther(balanceL1)} ETH`;
 }
 
 /**
@@ -108,6 +115,7 @@ export const deployContract = async (contractArtifactName: string, constructorAr
   log(`\n"${artifact.contractName}" was successfully deployed:`);
   log(` - Contract address: ${address}`);
   log(` - Contract source: ${fullContractSource}`);
+  log(` - Contract Bytecode Hash: ${bytecodeHash}`);
   log(` - Encoded constructor arguments: ${constructorArgs}\n`);
 
   if (!options?.noVerify && hre.network.config.verifyURL) {
