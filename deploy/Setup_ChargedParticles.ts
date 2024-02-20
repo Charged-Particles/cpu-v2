@@ -11,18 +11,22 @@ const Setup_ChargedParticles: DeployFunction = async (hre: HardhatRuntimeEnviron
   // Load ChargedParticles
   const chargedParticles: ChargedParticles = await ethers.getContract('ChargedParticles');
   const chargedParticlesAddress = await chargedParticles.getAddress();
-  // console.log(` -- Charged Particles Address: ${chargedParticlesAddress}`);
+  console.log(` -- Charged Particles Address: ${chargedParticlesAddress}`);
 
   // Load SmartAccountController_Example1
   const controller: SmartAccountController_Example1 = await ethers.getContract('SmartAccountController_Example1');
   const controllerAddress = await controller.getAddress();
-  // console.log(` -- Execution Controller Address: ${controllerAddress}`);
+  console.log(` -- Execution Controller Address: ${controllerAddress}`);
 
   // Set Default Execution Controller
-  await performTx(
-    await chargedParticles.setDefaultExecutionController(controllerAddress),
-    ' -- Default Execution Controller Set for SmartAccounts!'
-  );
+  const setController = await chargedParticles.setDefaultExecutionController(controllerAddress);
+  console.log(setController)
+
+  await setController.wait()
+  // await performTx(
+  //   await chargedParticles.setDefaultExecutionController(controllerAddress),
+  //   ' -- Default Execution Controller Set for SmartAccounts!'
+  // );
 };
 export default Setup_ChargedParticles;
 

@@ -10,18 +10,12 @@
       },
       {
         "indexed": false,
-        "internalType": "bytes4",
-        "name": "selector",
-        "type": "bytes4"
-      },
-      {
-        "indexed": false,
         "internalType": "address",
-        "name": "implementation",
+        "name": "controller",
         "type": "address"
       }
     ],
-    "name": "OverrideUpdated",
+    "name": "ExecutionControllerUpdated",
     "type": "event"
   },
   {

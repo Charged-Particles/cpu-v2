@@ -35,18 +35,12 @@
       },
       {
         "indexed": false,
-        "internalType": "bytes4",
-        "name": "selector",
-        "type": "bytes4"
-      },
-      {
-        "indexed": false,
         "internalType": "address",
-        "name": "implementation",
+        "name": "controller",
         "type": "address"
       }
     ],
-    "name": "OverrideUpdated",
+    "name": "ExecutionControllerUpdated",
     "type": "event"
   },
   {
@@ -439,6 +433,32 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "chargedParticles",
+        "type": "address"
+      }
+    ],
+    "name": "setChargedParticles",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "executionController",
+        "type": "address"
+      }
+    ],
+    "name": "setExecutionController",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
