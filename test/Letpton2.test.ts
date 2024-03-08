@@ -1,7 +1,8 @@
 import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
 import { Lepton2 } from "../typechain-types";
-import { leptonConfig } from "../deploy/Lepton2";
+import { LeptonType, leptonConfig } from "../deploy/Lepton2";
+import { isTestnet } from "../utils/isTestnet";
 
 describe('Lepton2 deployment', async () => {
   let lepton: Lepton2;
@@ -39,4 +40,41 @@ describe('Lepton2 deployment', async () => {
     await lepton.batchMintLepton(20, { value: price * 20n })
     expect(await lepton.balanceOf(deployer)).to.be.eq(40);
   });
+
+
+  it ('Distributes free leptons', async () => {
+    await lepton.setMaxMintPerTx(1000000n).then(tx => tx.wait());
+
+    // updateLeptonType set all leptons mint price to 0
+    const chainType = isTestnet() ? 'test' : 'live';
+
+    let mintCount = 0n;
+
+    for (const leptonKey in leptonConfig.types) {
+      const leptonType: LeptonType = leptonConfig.types[leptonKey];
+
+      await lepton.updateLeptonType(
+        leptonKey,
+        leptonType.tokenUri,
+        0n,
+        leptonType.supply[chainType],
+        leptonType.multiplier,
+        leptonType.bonus,
+      );
+
+      const price = await lepton.getNextPrice();
+      expect(price).to.be.eq(0);
+      await lepton.batchMintLepton(leptonType.supply[chainType], { value: 0n  }).then(tx => tx.wait());
+      
+      mintCount = leptonType.supply[chainType] + mintCount;
+
+      console.log(await lepton.balanceOf(deployer));
+      expect(await lepton.balanceOf(deployer)).to.be.eq(mintCount); 
+    }
+
+  });
 });
+
+function toWei(arg0: string) {
+  throw new Error("Function not implemented.");
+}

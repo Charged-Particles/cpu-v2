@@ -6,7 +6,7 @@ import { Lepton2 } from '../typechain-types';
 import { isTestnet } from '../utils/isTestnet';
 import { addressBook } from '../utils/globals';
 
-interface LeptonType {
+export interface LeptonType {
   tokenUri: string;
   price: { [key: string]: bigint };
   supply: { [key: string]: bigint };
