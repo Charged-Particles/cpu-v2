@@ -67,11 +67,24 @@ describe('Lepton2 deployment', async () => {
       await lepton.batchMintLepton(leptonType.supply[chainType], { value: 0n  }).then(tx => tx.wait());
       
       mintCount = leptonType.supply[chainType] + mintCount;
-
-      console.log(await lepton.balanceOf(deployer));
       expect(await lepton.balanceOf(deployer)).to.be.eq(mintCount); 
     }
 
+    // restore previous state after distribution.
+    await lepton.setMaxMintPerTx(5n).then(tx => tx.wait());
+
+    for (const leptonKey in leptonConfig.types) {
+      const leptonType: LeptonType = leptonConfig.types[leptonKey];
+
+      await lepton.updateLeptonType(
+        leptonKey,
+        leptonType.tokenUri,
+        leptonType.price[chainType],
+        leptonType.supply[chainType],
+        leptonType.multiplier,
+        leptonType.bonus,
+      );
+    }
   });
 });
 
