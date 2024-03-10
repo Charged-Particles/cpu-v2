@@ -10,7 +10,7 @@ import "../interfaces/ILepton.sol";
 */
 
 interface ILepsonsStore {
-   function load(uint256 amount, uint256 price) external payable;
+   function load(uint256 amount) external payable;
    function setLepton(address _lepton) external;
 }
 
@@ -22,8 +22,8 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
         lepton = ILepton(_lepton);
     }
 
-    function load(uint256 amount, uint256 price) external payable override onlyOwner{
-        revert("Method not implemented");
+    function load(uint256 amount) external payable override onlyOwner {
+        lepton.batchMintLepton{ value: msg.value }(amount);
     }
 
     function onERC721Received(address, address, uint256, bytes calldata) external override returns (bytes4) {
