@@ -5,12 +5,8 @@ import "../interfaces/ILepton.sol";
 
 /*
     TODO: 
-        - OnlyOwner
         - Buy with Ionx method
         - wormhole prevention
-        - constructor
-        - setLepton
-
 */
 
 interface ILepsonsStore {
@@ -20,10 +16,10 @@ interface ILepsonsStore {
 
 contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
 
-    address public lepton;
+    ILepton public lepton;
 
     constructor(address _lepton) public {
-        lepton = _lepton;
+        lepton = ILepton(_lepton);
     }
 
     function load(uint256 amount, uint256 price) external payable override onlyOwner{
@@ -35,6 +31,6 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
     }
 
     function setLepton(address _lepton) external override onlyOwner {
-        lepton = _lepton;
+        lepton = ILepton(_lepton);
     }
 }
