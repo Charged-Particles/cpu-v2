@@ -1,20 +1,25 @@
 pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "../interfaces/ILepton.sol";
 
 /*
     TODO: 
-        1. OnlyOwner
-        2. Buy with Ionx method
-        3. Can receive NFTs
-        4. wormhole prevention
+        - OnlyOwner
+        - Buy with Ionx method
+        - wormhole prevention
+        - constructor
+        - setLepton
+
 */
 
 interface ILepsonsStore {
    function load(uint256 amount, uint256 price) external payable;
 }
 
-contract LeptonStore is ILepsonsStore, IERC721Receiver  {
+contract LeptonsStore is ILepsonsStore, IERC721Receiver  {
+
     function load(uint256 amount, uint256 price) external payable override {
+        revert("Method not implemented");
     }
 
 
