@@ -1,5 +1,6 @@
 pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/ILepton.sol";
 
 /*
@@ -17,7 +18,7 @@ interface ILepsonsStore {
    function setLepton(address _lepton) external;
 }
 
-contract LeptonsStore is ILepsonsStore, IERC721Receiver  {
+contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
 
     address public lepton;
 
@@ -25,7 +26,7 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver  {
         lepton = _lepton;
     }
 
-    function load(uint256 amount, uint256 price) external payable override {
+    function load(uint256 amount, uint256 price) external payable override onlyOwner{
         revert("Method not implemented");
     }
 
@@ -33,7 +34,7 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver  {
         return IERC721Receiver.onERC721Received.selector;
     }
 
-    function setLepton(address _lepton) external override {
+    function setLepton(address _lepton) external override onlyOwner {
         lepton = _lepton;
     }
 }
