@@ -4,18 +4,22 @@ import { Ionx, Lepton2, LeptonsStore } from "../typechain-types";
 import { DEAD_ADDRESS } from "../utils/globals";
 import { LeptonType, leptonConfig } from "../deploy/Lepton2";
 import { isTestnet } from "../utils/isTestnet";
+import { Signature, Wallet } from "ethers";
 
 describe('Ionx deployment', async () => {
   let leptonStore: LeptonsStore;
   let lepton: Lepton2;
+  let ionx: Ionx;
+
   let deployer: string;
   let leptonStoreAddress: string;
 
   beforeEach(async () => {
-    await deployments.fixture(['Lepton2', 'LeptonsStore']);
+    await deployments.fixture(['Ionx', 'Lepton2', 'LeptonsStore']);
     
     leptonStore = await ethers.getContract('LeptonsStore');
     lepton = await ethers.getContract('Lepton2');
+    ionx = await ethers.getContract('Ionx');
     
     leptonStoreAddress =  await leptonStore.getAddress();
   });
@@ -41,8 +45,6 @@ describe('Ionx deployment', async () => {
     const mintCost = amountToBuy * singleMintCost;
 
     await leptonStore.load(amountToBuy, { value: mintCost });
-
-    
 
     for (let i = 1; i <= amountToBuy; i++){
       expect(await lepton.ownerOf(i)).to.be.eq(leptonStoreAddress);
@@ -86,7 +88,62 @@ describe('Ionx deployment', async () => {
     const priceAfterReset = await lepton.getNextPrice();
 
     expect(priceAfterReset).to.be.eq(leptonType.price[chainType]);
-    
   });
+
+  it ('IONX Permit, increases allowance', async () => {
+
+    const message = 'hola mundo';
+    const signer = await ethers.getSigner(deployer);
+
+    const rawSig = await signer.signMessage(message);
+
+    const sig = Signature.from(rawSig);
+
+    const domainSeparetor = await ionx.DOMAIN_SEPARATOR();
+    console.log(domainSeparetor);
+
+  });
+
+  interface ERC2612PermitMessage {
+    owner: string;
+    spender: string;
+    value: number | string;
+    nonce: number | string;
+    deadline: number | string;
+  }
+
+  interface Domain {
+    name: string;
+    version: string;
+    chainId: number;
+    verifyingContract: string;
+  }
+
+  const EIP712Domain = [
+    { name: "name", type: "string" },
+    { name: "version", type: "string" },
+    { name: "chainId", type: "uint256" },
+    { name: "verifyingContract", type: "address" },
+  ];
+
+  const createTypedERC2612Data = (message: ERC2612PermitMessage, domain: Domain) => {
+    const typedData = {
+      types: {
+        EIP712Domain,
+        Permit: [
+          { name: "owner", type: "address" },
+          { name: "spender", type: "address" },
+          { name: "value", type: "uint256" },
+          { name: "nonce", type: "uint256" },
+          { name: "deadline", type: "uint256" },
+        ],
+      },
+      primaryType: "Permit",
+      domain,
+      message,
+    };
+  
+    return typedData;
+  };
 
 });
