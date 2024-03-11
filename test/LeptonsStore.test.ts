@@ -73,6 +73,20 @@ describe('Ionx deployment', async () => {
     for (let i = 1; i <= amountToBuy; i++){
       expect(await lepton.ownerOf(i)).to.be.eq(leptonStoreAddress);
     }
+
+    await lepton.updateLeptonType(
+      leptonKey,
+      leptonType.tokenUri,
+      leptonType.price[chainType],
+      leptonType.supply[chainType],
+      leptonType.multiplier,
+      leptonType.bonus,
+    );
+
+    const priceAfterReset = await lepton.getNextPrice();
+
+    expect(priceAfterReset).to.be.eq(leptonType.price[chainType]);
+    
   });
 
 });
