@@ -98,11 +98,8 @@ describe('Ionx deployment', async () => {
 
   it ('IONX Permit, increases allowance', async () => {
 
-    const message = 'hola mundo';
     const signer = await ethers.getSigner(deployer);
-
-    const rawSig = await signer.signMessage(message);
-    const sig = Signature.from(rawSig);
+    const allowance = 10000000n;
 
     const result = await signERC2612Permit(
       signer,
@@ -112,12 +109,9 @@ describe('Ionx deployment', async () => {
       10000000  
     );
 
-    // await token.methods.permit(senderAddress, spender, value, result.deadline, result.v, result.r, result.s).send({
-    //   from: senderAddress,
-    // });
-    
-    // await ionx.permit(deployer, leptonStoreAddress, 10000000, result.deadline, result.v, result.r, result.s);
+    await ionx.permit(deployer, leptonStoreAddress, 10000000, result.deadline, result.v, result.r, result.s).then(tx => tx.wait());
+    const storeAllowancePermit = await ionx.allowance(deployer, leptonStoreAddress);
 
-
+    expect(allowance).to.be.eq(storeAllowancePermit);
   });
 });
