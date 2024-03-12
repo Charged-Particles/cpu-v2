@@ -4,7 +4,9 @@ import { Ionx, Lepton2, LeptonsStore } from "../typechain-types";
 import { DEAD_ADDRESS } from "../utils/globals";
 import { LeptonType, leptonConfig } from "../deploy/Lepton2";
 import { isTestnet } from "../utils/isTestnet";
-import { Signature, Wallet } from "ethers";
+import { Signature, Wallet, parseEther } from "ethers";
+
+import { signERC2612Permit }  from "eth-permit";
 
 describe('Ionx deployment', async () => {
   let leptonStore: LeptonsStore;
@@ -13,6 +15,7 @@ describe('Ionx deployment', async () => {
 
   let deployer: string;
   let leptonStoreAddress: string;
+  let ionxAddress: string;
 
   beforeEach(async () => {
     await deployments.fixture(['Ionx', 'Lepton2', 'LeptonsStore']);
@@ -22,6 +25,7 @@ describe('Ionx deployment', async () => {
     ionx = await ethers.getContract('Ionx');
     
     leptonStoreAddress =  await leptonStore.getAddress();
+    ionxAddress = await ionx.getAddress();
   });
 
   before(async () => {
@@ -30,8 +34,10 @@ describe('Ionx deployment', async () => {
   });
   
   it ('Holds lepton address in contract state', async () => {
+
     const leptonAddress = await lepton.getAddress();
     expect(await leptonStore.lepton()).to.be.eq(leptonAddress);
+
   });
 
   it ('Changes leptons contract address', async () => {
@@ -96,54 +102,22 @@ describe('Ionx deployment', async () => {
     const signer = await ethers.getSigner(deployer);
 
     const rawSig = await signer.signMessage(message);
-
     const sig = Signature.from(rawSig);
 
-    const domainSeparetor = await ionx.DOMAIN_SEPARATOR();
-    console.log(domainSeparetor);
+    const result = await signERC2612Permit(
+      signer,
+      ionxAddress,
+      deployer,
+      leptonStoreAddress,
+      10000000  
+    );
+
+    // await token.methods.permit(senderAddress, spender, value, result.deadline, result.v, result.r, result.s).send({
+    //   from: senderAddress,
+    // });
+    
+    // await ionx.permit(deployer, leptonStoreAddress, 10000000, result.deadline, result.v, result.r, result.s);
+
 
   });
-
-  interface ERC2612PermitMessage {
-    owner: string;
-    spender: string;
-    value: number | string;
-    nonce: number | string;
-    deadline: number | string;
-  }
-
-  interface Domain {
-    name: string;
-    version: string;
-    chainId: number;
-    verifyingContract: string;
-  }
-
-  const EIP712Domain = [
-    { name: "name", type: "string" },
-    { name: "version", type: "string" },
-    { name: "chainId", type: "uint256" },
-    { name: "verifyingContract", type: "address" },
-  ];
-
-  const createTypedERC2612Data = (message: ERC2612PermitMessage, domain: Domain) => {
-    const typedData = {
-      types: {
-        EIP712Domain,
-        Permit: [
-          { name: "owner", type: "address" },
-          { name: "spender", type: "address" },
-          { name: "value", type: "uint256" },
-          { name: "nonce", type: "uint256" },
-          { name: "deadline", type: "uint256" },
-        ],
-      },
-      primaryType: "Permit",
-      domain,
-      message,
-    };
-  
-    return typedData;
-  };
-
 });
