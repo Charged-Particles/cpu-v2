@@ -109,9 +109,13 @@ describe('Ionx deployment', async () => {
       10000000  
     );
 
-    await ionx.permit(deployer, leptonStoreAddress, 10000000, result.deadline, result.v, result.r, result.s).then(tx => tx.wait());
-    const storeAllowancePermit = await ionx.allowance(deployer, leptonStoreAddress);
+    const storeAllowanceBeforePermit = await ionx.allowance(deployer, leptonStoreAddress);
 
+    expect(storeAllowanceBeforePermit).to.be.eq(0);
+
+    await ionx.permit(deployer, leptonStoreAddress, 10000000, result.deadline, result.v, result.r, result.s).then(tx => tx.wait());
+
+    const storeAllowancePermit = await ionx.allowance(deployer, leptonStoreAddress);
     expect(allowance).to.be.eq(storeAllowancePermit);
   });
 });
