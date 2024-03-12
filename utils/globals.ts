@@ -18,6 +18,8 @@ interface AddressBook {
   };
 }
 
+export const DEAD_ADDRESS = "0x000000000000000000000000000000000000dEaD";
+
 export const addressBook: AddressBook = {
   // Ethereum Mainnet
   1: {
