@@ -118,4 +118,45 @@ describe('Ionx deployment', async () => {
     const storeAllowancePermit = await ionx.allowance(deployer, leptonStoreAddress);
     expect(allowance).to.be.eq(storeAllowancePermit);
   });
+
+  it ('Purchase lepton with ionx', async () => {
+    // Fund
+    const leptonKey = 0;
+    const amountToBuy = 10n; 
+    const chainType = isTestnet() ? 'test' : 'live';
+
+    const leptonType: LeptonType = leptonConfig.types[leptonKey];
+
+    await lepton.updateLeptonType(
+      leptonKey,
+      leptonType.tokenUri,
+      0n,
+      leptonType.supply[chainType],
+      leptonType.multiplier,
+      leptonType.bonus,
+    );
+
+    await leptonStore.load(amountToBuy, { value: 0n });
+
+    // permit 
+    const signer = await ethers.getSigner(deployer);
+
+    const result = await signERC2612Permit(
+      signer,
+      ionxAddress,
+      deployer,
+      leptonStoreAddress,
+      10000000  
+    );
+
+    await leptonStore.buyWithIonx(
+      10000000,
+      result.deadline,
+      result.v,
+      result.r,
+      result.s
+    ).then(tx => tx.wait());
+
+    expect(await lepton.ownerOf(1)).to.be.eq(deployer);
+  });
 });

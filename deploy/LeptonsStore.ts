@@ -9,11 +9,14 @@ const LeptonStore: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { deployer } = await getNamedAccounts();
 
     const lepton = await ethers.getContract('Lepton2');
+	const ionx = await ethers.getContract('Ionx');
+	
     const leptonAddress = await lepton.getAddress();
+	const ionxAddress = await ionx.getAddress();
 
 	await deploy('LeptonsStore', {
 		from: deployer,
-		args: [ leptonAddress ],
+		args: [ leptonAddress, ionxAddress ],
 		log: true,
 	});
 
