@@ -150,7 +150,7 @@ describe('Ionx deployment', async () => {
     );
 
     await leptonStore.buyWithIonx(
-      10000000,
+      1,
       result.deadline,
       result.v,
       result.r,
