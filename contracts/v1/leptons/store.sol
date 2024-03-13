@@ -22,6 +22,8 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
 
     uint256 ionxPerLepton;
 
+    event SoldLepton(address indexed buyer, uint256 amount, uint256 price);
+
     constructor(address _lepton, address _ionx, uint256 _ionxPerLepton) public {
         lepton = Lepton2(_lepton);
         ionx = Ionx(_ionx);
@@ -69,6 +71,7 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
       uint256 tokenId =  1;
       lepton.safeTransferFrom(address(this), msg.sender, tokenId);
 
-      // TODO: Emit purchase event
+
+      emit SoldLepton(msg.sender, leptonAmount, ionxAmount);
     }
 }
