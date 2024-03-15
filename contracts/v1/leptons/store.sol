@@ -64,17 +64,15 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
       uint256 ionxAmount = leptonAmount * ionxPerLepton;
       require(ionx.balanceOf(msg.sender) >= ionxAmount, "Insufficient IONX balance");
 
-      // IONX Approval (requires signtaure)
       ionx.permit(msg.sender, address(this), ionxAmount, deadline, v, r, s);
-
-      // Payment
       ionx.transferFrom(msg.sender, address(this), ionxAmount);
 
-      // Transfer Lepton to Buyer
-      uint256 tokenId =  nextTtokenId;
-      nextTtokenId = nextTtokenId.add(1);
+      for (uint256 i = 0; i < leptonAmount; ++i) {
+        uint256 tokenId =  nextTtokenId;
+        nextTtokenId = nextTtokenId.add(1);
 
-      lepton.safeTransferFrom(address(this), msg.sender, tokenId);
+        lepton.safeTransferFrom(address(this), msg.sender, tokenId);
+      }
 
       emit SoldLepton(msg.sender, leptonAmount, ionxAmount);
     }

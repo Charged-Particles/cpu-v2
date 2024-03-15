@@ -159,4 +159,70 @@ describe('Ionx deployment', async () => {
 
     expect(await lepton.ownerOf(1)).to.be.eq(deployer);
   });
+
+  it ('Purchase multiple lepton with ionx', async () => {
+    // Fund
+    const leptonKey = 0;
+    const amountToLoad = 10n; 
+    const amountToBuy = 4;
+    const costOfLepton = 10000000;
+    const chainType = isTestnet() ? 'test' : 'live';
+
+    const leptonType: LeptonType = leptonConfig.types[leptonKey];
+
+    await lepton.updateLeptonType(
+      leptonKey,
+      leptonType.tokenUri,
+      0n,
+      leptonType.supply[chainType],
+      leptonType.multiplier,
+      leptonType.bonus,
+    );
+
+    await leptonStore.load(amountToLoad, { value: 0n });
+
+    // permit 
+    const signer = await ethers.getSigner(deployer);
+
+    const signature1 = await signERC2612Permit(
+      signer,
+      ionxAddress,
+      deployer,
+      leptonStoreAddress,
+      costOfLepton * amountToBuy
+    );
+
+    await leptonStore.buyWithIonx(
+      amountToBuy,
+      signature1.deadline,
+      signature1.v,
+      signature1.r,
+      signature1.s
+    ).then(tx => tx.wait());
+
+    
+    for (let i = 1; i <= amountToBuy; i++){
+      expect(await lepton.ownerOf(i)).to.be.eq(deployer);
+    }
+
+    const signature2 = await signERC2612Permit(
+      signer,
+      ionxAddress,
+      deployer,
+      leptonStoreAddress,
+      costOfLepton * amountToBuy
+    );
+
+    await leptonStore.buyWithIonx(
+      amountToBuy,
+      signature2.deadline,
+      signature2.v,
+      signature2.r,
+      signature2.s
+    ).then(tx => tx.wait());
+
+    for (let i = 5; i <= amountToBuy; i++){
+      expect(await lepton.ownerOf(i)).to.be.eq(deployer);
+    }
+  });
 });
