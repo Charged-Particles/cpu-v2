@@ -1,12 +1,12 @@
 pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "../tokens/Ionx.sol";
 import "../tokens/Lepton2.sol";
 
 /*
     TODO: 
-        - Buy with Ionx method
         - wormhole prevention
 */
 
@@ -16,11 +16,13 @@ interface ILepsonsStore {
 }
 
 contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
+    using SafeMath for uint256;
 
     Lepton2 public lepton;
     Ionx public ionx;
 
     uint256 ionxPerLepton;
+    uint256 nextTtokenId;
 
     event SoldLepton(address indexed buyer, uint256 amount, uint256 price);
 
@@ -31,6 +33,7 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
     }
 
     function load(uint256 amount) external payable override onlyOwner {
+        nextTtokenId =  lepton.totalSupply().add(1);
         lepton.batchMintLepton{ value: msg.value }(amount);
     }
 
@@ -68,9 +71,10 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
       ionx.transferFrom(msg.sender, address(this), ionxAmount);
 
       // Transfer Lepton to Buyer
-      uint256 tokenId =  1;
-      lepton.safeTransferFrom(address(this), msg.sender, tokenId);
+      uint256 tokenId =  nextTtokenId;
+      nextTtokenId = nextTtokenId.add(1);
 
+      lepton.safeTransferFrom(address(this), msg.sender, tokenId);
 
       emit SoldLepton(msg.sender, leptonAmount, ionxAmount);
     }
