@@ -4,6 +4,7 @@ interface StakingToken {
   address: string;
   multiplier: string;
   funding: string;
+  aave?: string;
 }
 
 interface AddressBook {
@@ -14,6 +15,7 @@ interface AddressBook {
     tokenInfoProxy: string;
     ionx: string;
     lepton: string;
+    protonC: string;
     stakingTokens: Array<StakingToken>;
   };
 }
@@ -29,6 +31,7 @@ export const addressBook: AddressBook = {
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
     'ionx': '0x02D3A27Ac3f55d5D91Fb0f52759842696a864217',
     'lepton': '0x3Cd2410EAa9c2dCE50aF6CCAb72Dc93879a09c1F',
+    'protonC': '0xBb4Ddbc0E26d4E4ae838B12a832379295D5fD917',
     'stakingTokens': [
       // { id: 'DAI',  address: '0x6B175474E89094C44Da98b954EedeAC495271d0F', multiplier: '24500', funding: '10000' }, // Deployed
       // { id: 'USDC', address: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48', multiplier: '21750', funding: '10000' }, // Deployed
@@ -46,6 +49,7 @@ export const addressBook: AddressBook = {
     'tokenInfoProxy': '0x349eEF86Ea34A69D8B880D5Fd5F39a6d2a7DE716',
     'ionx': '0x01b317bC5eD573FAa112eF64DD029F407CecB155',
     'lepton': '0xe349557325164577Ded350A8cAB03159c728B9E7',
+    'protonC': '0x59dde2EBe605cD75365F387FFFE82E5203b8E4cd',
     'stakingTokens': [
       { id: 'DAI',  address: '0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063', multiplier: '41000', funding: '10000' },
       { id: 'USDC', address: '0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174', multiplier: '42850', funding: '10000' },
@@ -60,6 +64,7 @@ export const addressBook: AddressBook = {
     'tokenInfoProxy': '0x8fa84be9492aEA190d62d5f0fc11618d23a9ead2',
     'ionx': '0xa817464e5faD7D5928739E1C37Ef845C53ab1eea',
     'lepton': '0xa99294Caed407273A4b6320CaC68B27C58F46c5d',
+    'protonC': '0x92971E5bB4d098CaCf2314292bDb5eDC3f5CF25e',
     'stakingTokens': [
       { id: 'DAI',  address: '0x75Ab5AB1Eef154C0352Fc31D2428Cef80C7F8B33', multiplier: '71500', funding: '10000' },
     ],
@@ -71,6 +76,7 @@ export const addressBook: AddressBook = {
     'chargedParticles': '0xaB1a1410EA40930755C1330Cc0fB3367897C8c41',
     'chargedSettings' : '0x07DdB208d52947320d07E0E4611a80Fb7eFD001D',
     'tokenInfoProxy': '0xeF0D1DEDaAF0D9e4B868a049101a9DB1Ba1e50c5',
+    'protonC': '',
     'lepton': '',
     'ionx': '',
     'stakingTokens': [
@@ -85,10 +91,11 @@ export const addressBook: AddressBook = {
     'chargedParticles': '0x51f845af34c60499a1056FCDf47BcBC681A0fA39',
     'chargedSettings' : '0x60428D3e580907C74Ee8690E4E192317864aAE1d',
     'tokenInfoProxy': '0xda8d21714ea5784d5b6990c170485effb9104883',
+    'protonC': '0x56D0d2e232e73634E5E9aaAB5d1b2f2e68e062Bd',
     'lepton': '',
     'ionx': '',
     'stakingTokens': [
-      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
+      { id: 'DAI',  address: '0x001b3b4d0f3714ca98ba10f6042daebf0b1b7b6f', multiplier: '20000', funding: '10000', aave: '0x639cB7b21ee2161DF9c882483C9D55c90c20Ca3e' }, // Do-Not-Modify: used in unit-tests
       { id: 'USDC', address: '0x0fa8781a83e46826621b3bc094ea2a0212e71b23', multiplier: '20000', funding: '10000' }, // Do-Not-Modify: used in unit-tests
     ],
   }
