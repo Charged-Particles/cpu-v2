@@ -62,7 +62,14 @@ describe('Ionx deployment', async () => {
     const price = await lepton.getNextPrice();
     expect(price).to.be.eq(0);
 
+    const tokenIdFromBatchStart = Number(await lepton.totalSupply()) + 1;
+
     //load
+    await leptonStore.load(amountToBuy, { value: price });
+
+    for (let i = tokenIdFromBatchStart; i <= amountToBuy; i++){
+      expect(await lepton.ownerOf(i)).to.be.eq(leptonStoreAddress);
+    }
   });
 
 });
