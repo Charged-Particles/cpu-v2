@@ -1,10 +1,9 @@
 import { expect } from "chai";
-import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
+import { ethers, getNamedAccounts, deployments } from 'hardhat';
 import { Ionx, Lepton2, LeptonsStore } from "../typechain-types";
 import { DEAD_ADDRESS } from "../utils/globals";
 import { LeptonType, leptonConfig } from "../deploy/Lepton2";
 import { isTestnet } from "../utils/isTestnet";
-import { Signature, Wallet, parseEther } from "ethers";
 
 import { signERC2612Permit }  from "eth-permit";
 
