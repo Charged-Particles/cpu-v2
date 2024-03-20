@@ -1,42 +1,7 @@
-import { expect } from "chai";
-import { ethers, getNamedAccounts, deployments } from 'hardhat';
+import { ethers } from 'hardhat';
 import { Ionx, Lepton2, LeptonsStore } from "../typechain-types";
-import { DEAD_ADDRESS } from "../utils/globals";
 import { LeptonType, leptonConfig } from "../deploy/Lepton2";
 import { isTestnet } from "../utils/isTestnet";
-
-import { signERC2612Permit }  from "eth-permit";
-import { parseEther } from "ethers";
-
-describe('Ionx deployment', async () => {
-  let leptonStore: LeptonsStore;
-  let lepton: Lepton2;
-  let ionx: Ionx;
-
-  let deployer: string;
-  let leptonStoreAddress: string;
-  let ionxAddress: string;
-
-  beforeEach(async () => {
-    await deployments.fixture(['Ionx']);
-    
-    leptonStore = await ethers.getContract('LeptonsStore');
-    lepton = await ethers.getContract('Lepton2');
-    ionx = await ethers.getContract('Ionx');
-    
-    leptonStoreAddress =  await leptonStore.getAddress();
-    ionxAddress = await ionx.getAddress();
-  });
-
-  before(async () => {
-    const { deployer: deployerAccount, user1 } = await getNamedAccounts();
-    deployer = deployerAccount;
-  });
-  
-  it ('Loads leptons', async() => {
-
-  });
-});
 
 async function main() {
   const leptonStore = await ethers.getContract<LeptonsStore>('LeptonsStore');
