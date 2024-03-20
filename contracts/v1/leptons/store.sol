@@ -2,20 +2,16 @@ pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "../lib/BlackholePrevention.sol";
 import "../tokens/Ionx.sol";
 import "../tokens/Lepton2.sol";
-
-/*
-    TODO: 
-        - wormhole prevention
-*/
 
 interface ILepsonsStore {
    function load(uint256 amount) external payable;
    function setLepton(address _lepton) external;
 }
 
-contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
+contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePrevention  {
     using SafeMath for uint256;
 
     Lepton2 public lepton;
@@ -75,5 +71,18 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
       }
 
       emit SoldLepton(msg.sender, leptonAmount, ionxAmount);
+    }
+
+    // Black hole prevention.
+    function withdrawEther(address payable receiver, uint256 amount) external onlyOwner {
+        _withdrawEther(receiver, amount);
+    }
+
+    function withdrawErc20(address payable receiver, address tokenAddress, uint256 amount) external onlyOwner {
+        _withdrawERC20(receiver, tokenAddress, amount);
+    }
+
+    function withdrawERC721(address payable receiver, address tokenAddress, uint256 tokenId) external onlyOwner {
+        _withdrawERC721(receiver, tokenAddress, tokenId);
     }
 }

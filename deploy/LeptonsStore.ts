@@ -22,11 +22,11 @@ const LeptonStore: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	
     const leptonAddress = await lepton.getAddress();
 	const ionxAddress = await ionx.getAddress();
-	const leptonPrice = 10000000;
+	const leptonPrice = 1;
 
 	await deploy('LeptonsStore', {
 		from: deployer,
-		args: [ leptonAddress, ionxAddress, leptonPrice],
+		args: [ leptonAddress, ionxAddress, leptonPrice ],
 		log: true,
 	});
 

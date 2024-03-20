@@ -48,9 +48,9 @@ describe('Ionx deployment', async () => {
     const chainType = isTestnet() ? 'test' : 'live';
 
     const leptonType: LeptonType = leptonConfig.types[Number(leptonKey)];
-    const leptonConenctedOwener = lepton.connect(owner) as Lepton2;
+    const leptonConnectedOwner = lepton.connect(owner) as Lepton2;
 
-    await leptonConenctedOwener.updateLeptonType(
+    await leptonConnectedOwner.updateLeptonType(
       leptonKey,
       leptonType.tokenUri,
       0n,
@@ -70,6 +70,19 @@ describe('Ionx deployment', async () => {
     for (let i = tokenIdFromBatchStart; i <= amountToBuy; i++){
       expect(await lepton.ownerOf(i)).to.be.eq(leptonStoreAddress);
     }
+
+    await leptonConnectedOwner.updateLeptonType(
+        leptonKey,
+        leptonType.tokenUri,
+        leptonType.price[chainType],
+        leptonType.supply[chainType],
+        leptonType.multiplier,
+        leptonType.bonus,
+      );
+  
+      const priceAfterReset = await lepton.getNextPrice();
+  
+      expect(priceAfterReset).to.be.eq(leptonType.price[chainType]);
   });
 
 });
