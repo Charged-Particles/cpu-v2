@@ -9,7 +9,6 @@
     "clean-deployed": "rm -rf abis && rm -f .openzeppelin/unknown-31337.json && rm -f .openzeppelin/kovan.json",
     "clean-test": "rm -rf abis .openzeppelin/${npm_config_network:-'unknown-31337'}.json deployments/${npm_config_network:-hardhat}/*.json test-results.xml",
     "compile": "hardhat --show-stack-traces --max-memory 8192 compile",
-    "test": "yarn clean-test && hardhat test --show-stack-traces",
     "test-only": "yarn clean-test && hardhat test --show-stack-traces",
     "watch-test": "hardhat watch test",
     "hint": "solhint \"contracts/**/*.sol\"",
@@ -22,7 +21,8 @@
     "deploy-only": "hardhat deploy --tags",
     "verify": "hardhat run scripts/verify.ts --network",
     "unreg": "hardhat run scripts/unregister.ts --network",
-    "gen-docs": "solidity-docgen -i contracts -o docs"
+    "gen-docs": "solidity-docgen -i contracts -o docs",
+    "test": "yarn hardhat test --network hardhat"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
@@ -52,9 +52,7 @@
   "dependencies": {
     "@openzeppelin/contracts": "^3.2.0",
     "@openzeppelin/contracts-upgradeable": "^3.3.0",
-    "dotenv": "^16.3.1"
-  },
-  "scripts": {
-    "test": "yarn hardhat test --network hardhat"
+    "dotenv": "^16.3.1",
+    "eth-permit": "^0.2.3"
   }
 }

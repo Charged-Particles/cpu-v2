@@ -1,38 +1,35 @@
 pragma solidity 0.6.12;
 import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../interfaces/ILepton.sol";
-
-/*
-    TODO:
-        - Buy with Ionx method
-        - wormhole prevention
-*/
+import "../lib/BlackholePrevention.sol";
+import "../tokens/Ionx.sol";
+import "../tokens/Lepton2.sol";
 
 interface ILepsonsStore {
    function load(uint256 amount) external payable;
    function setLepton(address _lepton) external;
-   function setIonx(address _ionx) external;
-   function buyWithIonx(uint256 leptonAmount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
 }
 
-interface IIonx {
-  function permit(address owner, address spender, uint256 amount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
-  function transfer(address recipient, uint256 amount) external returns (bool);
-}
+contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePrevention  {
+    using SafeMath for uint256;
 
-contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
+    Lepton2 public lepton;
+    Ionx public ionx;
 
-    IIonx public ionx;
-    ILepton public lepton;
     uint256 ionxPerLepton;
+    uint256 nextTtokenId;
 
-    constructor(address _lepton, address _ionx) public {
-        lepton = ILepton(_lepton);
-        ionx = IIonx(_ionx);
+    event SoldLepton(address indexed buyer, uint256 amount, uint256 price);
+
+    constructor(address _lepton, address _ionx, uint256 _ionxPerLepton) public {
+        lepton = Lepton2(_lepton);
+        ionx = Ionx(_ionx);
+        ionxPerLepton = _ionxPerLepton;
     }
 
     function load(uint256 amount) external payable override onlyOwner {
+        nextTtokenId =  lepton.totalSupply().add(1);
         lepton.batchMintLepton{ value: msg.value }(amount);
     }
 
@@ -41,33 +38,51 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable  {
     }
 
     function setLepton(address _lepton) external override onlyOwner {
-        require(_lepton != address(0), "Invalid address");
-        lepton = ILepton(_lepton);
+        lepton = Lepton2(_lepton);
     }
 
-    function setIonx(address _ionx) external override onlyOwner {
+    function setIonx(address _ionx) external onlyOwner {
         require(_ionx != address(0), "Invalid address");
-        ionx = IIonx(_ionx);
+        ionx = Ionx(_ionx);
     }
 
-    function setIonxPerLepton(uint256 ionxAmount) external override onlyOwner {
+    function setIonxPerLepton(uint256 ionxAmount) external onlyOwner {
         ionxPerLepton = ionxAmount;
     }
 
-    function buyWithIonx(uint256 leptonAmount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external override {
+    function buyWithIonx(
+        uint256 leptonAmount,
+        uint256 deadline,
+        uint8 v,
+        bytes32 r,
+        bytes32 s
+    ) external {
       uint256 ionxAmount = leptonAmount * ionxPerLepton;
       require(ionx.balanceOf(msg.sender) >= ionxAmount, "Insufficient IONX balance");
 
-      // IONX Approval (requires signtaure)
       ionx.permit(msg.sender, address(this), ionxAmount, deadline, v, r, s);
-
-      // Payment
       ionx.transferFrom(msg.sender, address(this), ionxAmount);
 
-      // Transfer Lepton to Buyer
-      uint256 tokenId = 123; // TODO: Get Next Token ID
-      lepton.safeTransferFrom(address(this), msg.sender, tokenId);
+      for (uint256 i = 0; i < leptonAmount; ++i) {
+        uint256 tokenId =  nextTtokenId;
+        nextTtokenId = nextTtokenId.add(1);
 
-      // TODO: Emit purchase event
+        lepton.safeTransferFrom(address(this), msg.sender, tokenId);
+      }
+
+      emit SoldLepton(msg.sender, leptonAmount, ionxAmount);
+    }
+
+    // Black hole prevention.
+    function withdrawEther(address payable receiver, uint256 amount) external onlyOwner {
+        _withdrawEther(receiver, amount);
+    }
+
+    function withdrawErc20(address payable receiver, address tokenAddress, uint256 amount) external onlyOwner {
+        _withdrawERC20(receiver, tokenAddress, amount);
+    }
+
+    function withdrawERC721(address payable receiver, address tokenAddress, uint256 tokenId) external onlyOwner {
+        _withdrawERC721(receiver, tokenAddress, tokenId);
     }
 }
