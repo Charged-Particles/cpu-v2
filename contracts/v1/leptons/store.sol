@@ -11,7 +11,7 @@ interface ILepsonsStore {
    function setLepton(address _lepton) external;
 }
 
-contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePrevention  {
+contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePrevention {
     using SafeMath for uint256;
 
     Lepton2 public lepton;
