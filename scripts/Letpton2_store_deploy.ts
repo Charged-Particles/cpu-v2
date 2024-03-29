@@ -13,7 +13,7 @@ async function main() {
 
   // set minting free 0
   const leptonKey = await lepton.getNextType();
-  const amountToBuy = 3n; 
+  const amountToBuy = 20n; 
   const chainType = isTestnet() ? 'test' : 'live';
 
   const leptonType: LeptonType = leptonConfig.types[Number(leptonKey)];
