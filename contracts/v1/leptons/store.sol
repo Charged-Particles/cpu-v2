@@ -20,8 +20,8 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePreve
   Lepton2 public lepton;
   Ionx public ionx;
 
-  uint256 internal ionxPerLepton;
-  uint256 internal nextTokenId;
+  uint256 public nextTokenId;
+  uint256 public ionxPerLepton;
 
   constructor(address _lepton, address _ionx, uint256 _ionxPerLepton) public {
     lepton = Lepton2(_lepton);

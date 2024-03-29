@@ -76,7 +76,7 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
   // Check for Previously Deployed Version
   const leptonAddress = addressBook[chainId].lepton;
-  if (leptonAddress.length < 1) {
+  if (leptonAddress.length) {
     await deploy('Lepton2', {
       from: deployer,
       args: [],
