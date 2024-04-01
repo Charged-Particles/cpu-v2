@@ -167,9 +167,14 @@ contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, Blackhole
   {
     address rewardProgram = _getRewardProgram(assetToken);
     if (rewardProgram != address(0)) {
-      // "receiverEnergy" includes the "principalAmount"
-      uint256 totalInterest = receiverEnergy.sub(principalAmount).add(creatorEnergy);
-      IRewardProgram(rewardProgram).registerAssetRelease(contractAddress, tokenId, totalInterest);
+      uint256 parentNftUuid = contractAddress.getTokenUUID(tokenId);
+
+      if (IRewardProgram(rewardProgram).getAssetStake(parentNftUuid)) {
+        // "receiverEnergy" includes the "principalAmount"
+        uint256 totalInterest = receiverEnergy.sub(principalAmount).add(creatorEnergy);
+        IRewardProgram(rewardProgram).registerAssetRelease(contractAddress, tokenId, totalInterest);
+      }
+
     }
   }
 
@@ -289,6 +294,10 @@ contract UniverseRP is IUniverseRP, Initializable, OwnableUpgradeable, Blackhole
   /***********************************|
   |         Private Functions         |
   |__________________________________*/
+
+  function _isAssetStakeExists(bytes32 key) public view returns (bool) {
+    return assetStakeExists[key];
+  }
 
   function _getRewardProgram(address assetToken) internal view returns (address) {
     return _assetRewardPrograms[assetToken];
