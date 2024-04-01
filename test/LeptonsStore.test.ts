@@ -7,7 +7,7 @@ import { isTestnet } from "../utils/isTestnet";
 
 import { signERC2612Permit }  from "eth-permit";
 
-describe('Ionx deployment', async () => {
+describe('Leptons Store', async () => {
   let leptonStore: LeptonsStore;
   let lepton: Lepton2;
   let ionx: Ionx;
@@ -18,11 +18,11 @@ describe('Ionx deployment', async () => {
 
   beforeEach(async () => {
     await deployments.fixture(['Ionx', 'Lepton2', 'LeptonsStore']);
-    
+
     leptonStore = await ethers.getContract('LeptonsStore');
     lepton = await ethers.getContract('Lepton2');
     ionx = await ethers.getContract('Ionx');
-    
+
     leptonStoreAddress =  await leptonStore.getAddress();
     ionxAddress = await ionx.getAddress();
   });
@@ -31,9 +31,8 @@ describe('Ionx deployment', async () => {
     const { deployer: deployerAccount, user1 } = await getNamedAccounts();
     deployer = deployerAccount;
   });
-  
-  it ('Holds lepton address in contract state', async () => {
 
+  it ('Holds lepton address in contract state', async () => {
     const leptonAddress = await lepton.getAddress();
     expect(await leptonStore.lepton()).to.be.eq(leptonAddress);
 
@@ -44,7 +43,7 @@ describe('Ionx deployment', async () => {
     expect(await leptonStore.lepton()).to.be.eq(DEAD_ADDRESS);
   });
 
-  it ('Loads: Batch mints payed leptons', async () => {
+  it ('Loads: Batch mints paid leptons', async () => {
     const amountToBuy = 10n;
     const singleMintCost = await lepton.getNextPrice();
     const mintCost = amountToBuy * singleMintCost;
@@ -58,7 +57,7 @@ describe('Ionx deployment', async () => {
 
   it ('Loads: Batch mint free leptons', async () => {
     const leptonKey = 0;
-    const amountToBuy = 10n; 
+    const amountToBuy = 10n;
     const chainType = isTestnet() ? 'test' : 'live';
 
     const leptonType: LeptonType = leptonConfig.types[leptonKey];
@@ -105,7 +104,7 @@ describe('Ionx deployment', async () => {
       ionxAddress,
       deployer,
       leptonStoreAddress,
-      10000000  
+      10000000
     );
 
     const storeAllowanceBeforePermit = await ionx.allowance(deployer, leptonStoreAddress);
@@ -121,7 +120,7 @@ describe('Ionx deployment', async () => {
   it ('Purchase lepton with ionx', async () => {
     // Fund
     const leptonKey = 0;
-    const amountToBuy = 10n; 
+    const amountToBuy = 10n;
     const chainType = isTestnet() ? 'test' : 'live';
 
     const leptonType: LeptonType = leptonConfig.types[leptonKey];
@@ -137,7 +136,7 @@ describe('Ionx deployment', async () => {
 
     await leptonStore.load(amountToBuy, { value: 0n });
 
-    // permit 
+    // permit
     const signer = await ethers.getSigner(deployer);
 
     const result = await signERC2612Permit(
@@ -145,7 +144,7 @@ describe('Ionx deployment', async () => {
       ionxAddress,
       deployer,
       leptonStoreAddress,
-      10000000  
+      1 // price of lepton in IONX (see leptonPrice in deploy/LeptonsStore.ts)
     );
 
     await leptonStore.buyWithIonx(
@@ -162,9 +161,9 @@ describe('Ionx deployment', async () => {
   it ('Purchase multiple lepton with ionx', async () => {
     // Fund
     const leptonKey = 0;
-    const amountToLoad = 10n; 
+    const amountToLoad = 10n;
     const amountToBuy = 4;
-    const costOfLepton = 10000000;
+    const costOfLepton = 1; // price of lepton in IONX (see leptonPrice in deploy/LeptonsStore.ts)
     const chainType = isTestnet() ? 'test' : 'live';
 
     const leptonType: LeptonType = leptonConfig.types[leptonKey];
@@ -180,7 +179,7 @@ describe('Ionx deployment', async () => {
 
     await leptonStore.load(amountToLoad, { value: 0n });
 
-    // permit 
+    // permit
     const signer = await ethers.getSigner(deployer);
 
     const signature1 = await signERC2612Permit(
@@ -199,7 +198,7 @@ describe('Ionx deployment', async () => {
       signature1.s
     ).then(tx => tx.wait());
 
-    
+
     for (let i = 1; i <= amountToBuy; i++){
       expect(await lepton.ownerOf(i)).to.be.eq(deployer);
     }

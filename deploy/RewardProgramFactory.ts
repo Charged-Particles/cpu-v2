@@ -3,6 +3,7 @@ import { DeployFunction } from 'hardhat-deploy/types';
 import { RewardProgramFactory } from '../typechain-types';
 import { verifyContract } from '../utils/verifyContract';
 import { isTestnet } from '../utils/isTestnet';
+import { isHardhat } from '../utils/isHardhat';
 
 const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { ethers, deployments, getNamedAccounts } = hre;
@@ -16,7 +17,7 @@ const RewardProgramFactory: DeployFunction = async (hre: HardhatRuntimeEnvironme
 	});
   console.log(`  - RewardProgramFactory Deployed...`);
 
-  if (!isTestnet()) {
+  if (!isTestnet() && !isHardhat()) {
     await verifyContract('RewardProgramFactory', await ethers.getContract('RewardProgramFactory'));
   }
 };
