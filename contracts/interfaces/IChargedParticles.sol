@@ -28,6 +28,13 @@ pragma solidity ^0.8.13;
  */
 interface IChargedParticles {
 
+  event NewAccountCreated(
+      address account,
+      uint256 chainId,
+      address indexed tokenContract,
+      uint256 indexed tokenId
+  );
+
   function setDefaultExecutionController(address executionController) external;
   function setCustomExecutionController(address nftContract, address executionController) external;
   function getExecutionController(address nftContract) external view returns (address executionController);

@@ -33,6 +33,16 @@ contract BufficornZK is ISmartAccountController, IDynamicTraits, Ownable, ERC721
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Minting Logic
+  //
+  //  Traits are stored in a UINT 256 grouped into 32 8-bit words with a range of 256 traits per group.
+  //  ex:
+  //       Hat        Ring       Glasses    Sword            BG         Outfit     Horn       Pet
+  //     | 00000000 | 00000000 | 00000000 | 00000000 | ... | 00000000 | 00000000 | 00000000 | 00000000 |
+  //
+  //   Hat 1 == 00000001 (1)
+  //   Hat 2 == 00000010 (2)
+  //   Hat 3 == 00000011 (3)
+  //   Hat 4 == 00000100 (4)
 
   // For minting container-NFTs that have no initial traits
   function mint(uint256 tokenId) external virtual {

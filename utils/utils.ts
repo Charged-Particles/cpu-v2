@@ -21,7 +21,7 @@ export const getProvider = () => {
   if (!rpcUrl) throw `⛔️ RPC URL wasn't found in "${hre.network.name}"! Please add a "url" field to the network config in hardhat.config.ts`;
 
   // Initialize zkSync Provider
-  const provider = new Provider(rpcUrl);
+  const provider = new Provider(rpcUrl, undefined, {cacheTimeout: -1}); // Fix for ethers nonce issues
 
   return provider;
 }
@@ -40,11 +40,11 @@ export const getWallet = () => {
 
 export const verifyEnoughBalance = async (wallet: Wallet, amount: bigint) => {
   // Check if the wallet has enough balance
-  const balanceL1 = await wallet.getBalanceL1();
+  // const balanceL1 = await wallet.getBalanceL1();
   // console.log(`Wallet Balance L1: ${balanceL1}`);
-  // const balanceL2 = await wallet.getBalance();
+  const balanceL2 = await wallet.getBalance();
   // console.log(`Wallet Balance L2: ${balanceL2}`);
-  if (balanceL1 < amount) throw `⛔️ Wallet balance is too low! Required ${ethers.formatEther(amount)} ETH, but current ${wallet.address} balance is ${ethers.formatEther(balanceL1)} ETH`;
+  if (balanceL2 < amount) throw `⛔️ Wallet balance is too low! Required ${ethers.formatEther(amount)} ETH, but current ${wallet.address} balance is ${ethers.formatEther(balanceL2)} ETH`;
 }
 
 /**

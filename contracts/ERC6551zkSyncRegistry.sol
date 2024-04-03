@@ -6,7 +6,6 @@ import {IERC6551zkSyncRegistry} from "./interfaces/IERC6551zkSyncRegistry.sol";
 import "@matterlabs/zksync-contracts/l2/system-contracts/Constants.sol";
 import "@matterlabs/zksync-contracts/l2/system-contracts/libraries/SystemContractsCaller.sol";
 
-
 contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
   function createAccount(
     bytes32 bytecodeHash,
@@ -29,9 +28,9 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
         );
       if (!success) { revert AccountCreationFailed(); }
 
-      emit ERC6551AccountCreated(newAccount, bytecodeHash, salt, chainId, tokenContract, tokenId);
-
       accountAddress = abi.decode(returnData, (address));
+
+      emit ERC6551AccountCreated(accountAddress, bytecodeHash, salt, chainId, tokenContract, tokenId);
     } else {
       accountAddress = newAccount;
     }
@@ -43,12 +42,13 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
   //
   //  import { ethers } from "ethers";
   //  import { utils } from "zksync-ethers";
-  //  const salt = ethers.encodeBytes32String('');
-  //  const input = ethers.encodeBytes32String('');
+  //  const abi = ethers.AbiCoder.defaultAbiCoder();
+  //  const salt = ethers.encodeBytes32String('0');
+  //  const input = abi.encode(['uint256', 'address', 'uint256'], [chainId, nftContractAddress, nftTokenId]);
   //  const nftContractAddress = ethers.ZeroAddress; // OR the NFT Contract Address the SmartAccount is being computed for.
   //  const smartAccountHash = await chargedParticlesContract.getAccountBytecodeHash(nftContractAddress);
   //  const newAccountAddress = utils.create2Address(
-  //    __User_Address__,
+  //    __address_of_this_contract__,
   //    smartAccountHash,
   //    salt,
   //    input,
@@ -68,7 +68,7 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
         uint128(0),
         abi.encodeCall(
           DEPLOYER_SYSTEM_CONTRACT.getNewAddressCreate2,
-          (msg.sender, bytecodeHash, salt, abi.encode(chainId, tokenContract, tokenId))
+          (address(this), bytecodeHash, salt, abi.encode(chainId, tokenContract, tokenId))
         )
       );
     if (!success) { revert AccountComputeFailed(); }

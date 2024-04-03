@@ -16,7 +16,7 @@ import {ISmartAccountController} from "./interfaces/ISmartAccountController.sol"
 import {IDynamicTraits} from "./interfaces/IDynamicTraits.sol";
 import {SmartAccountTimelocks} from "./extensions/SmartAccountTimelocks.sol";
 
-// import "hardhat/console.sol";
+import "hardhat/console.sol";
 
 contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   using NftTokenInfo for address;
@@ -33,6 +33,8 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   mapping (uint256 => address) internal erc6551registry;
   uint256 internal defaultRegistry;
 
+  bytes32 internal defaultSalt;
+
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Initialization
@@ -40,8 +42,12 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   constructor(address registry, bytes32 bytecodeHash) Ownable() ReentrancyGuard() {
     erc6551registry[defaultRegistry] = registry;
     defaultAccountBytecodeHash = bytecodeHash; // for zkSync
+    defaultSalt = bytes32('0');
   }
 
+  // function getInterfaceId() public view returns (bytes4) {
+  //   return type(ISmartAccount).interfaceId;
+  // }
 
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Energize (Deposit)
@@ -69,7 +75,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     // Find the SmartAccount for this NFT
     IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
     bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    account = registry.createAccount(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
+    account = registry.createAccount(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
     ISmartAccount smartAccount = ISmartAccount(payable(account));
 
     // Initialize the Account
@@ -88,6 +94,8 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
       smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
     }
+
+    emit NewAccountCreated(account, block.chainid, contractAddress, tokenId);
   }
 
 
@@ -110,7 +118,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     // Find the SmartAccount for this NFT
     IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
     bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.account(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
+    address account = registry.account(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     amount = IERC20(assetToken).balanceOf(account);
@@ -139,7 +147,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     // Find the SmartAccount for this NFT
     IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
     bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.account(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
+    address account = registry.account(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     IERC20(assetToken).transferFrom(account, receiver, assetAmount);
@@ -181,7 +189,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     // Find the SmartAccount for this NFT
     IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
     bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.createAccount(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
+    address account = registry.createAccount(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
     ISmartAccount smartAccount = ISmartAccount(payable(account));
 
     // Initialize the Account
@@ -231,7 +239,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     // Find the SmartAccount for this NFT
     IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
     bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.account(accountHash, bytes32(0), block.chainid, contractAddress, tokenId);
+    address account = registry.account(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
 
     // Transfer to Receiver
     if (nftTokenAddress.isERC1155()) {
