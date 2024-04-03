@@ -18,9 +18,11 @@
     "deploy-main": "hardhat deploy --tags RPSetupMain --network",
     "deploy-rp": "hardhat deploy --tags RPDeploy --network",
     "deploy-rp-poly": "hardhat deploy --tags RPSetupPolygon --network",
+    "deploy-store": "hardhat deploy --tags LeptonsStore --network",
     "deploy-only": "hardhat deploy --tags",
     "verify": "hardhat run scripts/verify.ts --network",
     "unreg": "hardhat run scripts/unregister.ts --network",
+    "load-lepton-store": "hardhat run scripts/Lepton2_store_deploy.ts --network",
     "gen-docs": "solidity-docgen -i contracts -o docs",
     "test": "yarn hardhat test --network hardhat"
   },

@@ -36,7 +36,7 @@ export const leptonConfig = {
     {
       name        : 'Tau Neutrino',
       tokenUri    : 'https://gateway.pinata.cloud/ipfs/Qma2ZPnCM95AYZ1wPxZdDVvRiS114Svrw2J632ZpLiX7JV',
-      price       : {live: toWei('1.7'), test: toWei('0.000000017')},
+      price       : {live: toWei('0.1'), test: toWei('0.000000017')},
       supply      : {live: 301n,         test: 12n},
       multiplier  : 150n,  // 1.5%
       bonus       : 2n,
@@ -44,7 +44,7 @@ export const leptonConfig = {
     {
       name        : 'Electron',
       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmNRKJsUwqEE9zYK6sEND8HDGa4cHFkkC2ntjQA5bFL6jJ',
-      price       : {live: toWei('2.9'), test: toWei('0.00000029')},
+      price       : {live: toWei('0.5'), test: toWei('0.00000029')},
       supply      : {live: 201n,         test: 8n},
       multiplier  : 180n,  // 1.8%
       bonus       : 4n,
@@ -52,7 +52,7 @@ export const leptonConfig = {
     {
       name        : 'Muon',
       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmWiH5F9yPp7yRzcqocmQKuhrA3KVY9fGJZxD9UKBDu5wr',
-      price       : {live: toWei('5.1'), test: toWei('0.00000051')},
+      price       : {live: toWei('0.7'), test: toWei('0.00000051')},
       supply      : {live: 88n,          test: 5n},
       multiplier  : 230n,  // 2.3%
       bonus       : 8n,
@@ -60,7 +60,7 @@ export const leptonConfig = {
     {
       name        : 'Tau',
       tokenUri    : 'https://gateway.pinata.cloud/ipfs/QmUkCXgyguBSxnGRtfBAvofAkyhFbRCwS7HPaoytAZvemt',
-      price       : {live: toWei('21'), test: toWei('0.0000021')},
+      price       : {live: toWei('1'), test: toWei('0.0000021')},
       supply      : {live: 21n,         test: 2n},
       multiplier  : 510n,  // 5.1%
       bonus       : 16n,

@@ -10,7 +10,7 @@ const LeptonStore: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { deploy } = deployments;
 	const { deployer } = await getNamedAccounts();
 
-    let lepton: Lepton2 ;
+  let lepton: Lepton2;
 	let ionx: Ionx;
 
 	if (isTestnet() || isHardhat()) {
@@ -23,7 +23,13 @@ const LeptonStore: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
   const leptonAddress = await lepton.getAddress();
 	const ionxAddress = await ionx.getAddress();
-	const leptonPrice = 1;
+	const leptonPrice = (isTestnet() || isHardhat()) ? 1 : ethers.parseEther('15000'); // in IONX
+
+  console.log(`Deployer = "${deployer}"`);
+  console.log('Deploying LeptonsStore with:');
+  console.log(`Lepton Address: "${leptonAddress}"`);
+  console.log(`IONX Address: "${ionxAddress}"`);
+  console.log(`Lepton Price: "${leptonPrice}"`);
 
 	await deploy('LeptonsStore', {
 		from: deployer,
@@ -34,7 +40,7 @@ const LeptonStore: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   console.log(`  - Leptons Store Deployed...`);
 
   if (!isTestnet() && !isHardhat()) {
-    await verifyContract('LeptonsStore', await ethers.getContract('LeptonsStore'));
+    await verifyContract('LeptonsStore', await ethers.getContract('LeptonsStore'), [ leptonAddress, ionxAddress, leptonPrice ]);
   }
 };
 export default LeptonStore;
