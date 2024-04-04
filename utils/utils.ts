@@ -76,7 +76,9 @@ type DeployContractOptions = {
    * If specified, the contract will be deployed using this wallet
    */
   wallet?: Wallet
-
+  /**
+   * If specified, these bytecodes will be added to "factory_deps"
+   */
   bytecodes?: [string]
 }
 export const deployContract = async (contractArtifactName: string, constructorArguments?: any[], options?: DeployContractOptions) => {

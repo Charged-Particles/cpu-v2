@@ -16,7 +16,7 @@ import DeploySmartAccountController from '../deploy/SAC_EX1';
 
 describe('ChargedParticles', async function () {
   let chainId: bigint;
-  const defaultSalt = ethers.encodeBytes32String('0');
+  const defaultSalt = ethers.encodeBytes32String('CPU-V2');
   const interfaceIds = {
     ISmartAccount: '0x90fe7511',
   };

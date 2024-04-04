@@ -43,12 +43,12 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
   //  import { ethers } from "ethers";
   //  import { utils } from "zksync-ethers";
   //  const abi = ethers.AbiCoder.defaultAbiCoder();
-  //  const salt = ethers.encodeBytes32String('0');
+  //  const salt = ethers.encodeBytes32String('CPU-V2');
   //  const input = abi.encode(['uint256', 'address', 'uint256'], [chainId, nftContractAddress, nftTokenId]);
   //  const nftContractAddress = ethers.ZeroAddress; // OR the NFT Contract Address the SmartAccount is being computed for.
   //  const smartAccountHash = await chargedParticlesContract.getAccountBytecodeHash(nftContractAddress);
   //  const newAccountAddress = utils.create2Address(
-  //    __address_of_this_contract__,
+  //    __address_of_this_contract_(ERC6551zkSyncRegistry)__,
   //    smartAccountHash,
   //    salt,
   //    input,
