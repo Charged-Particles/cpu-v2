@@ -5,6 +5,7 @@ import { parseEther as toWei } from 'ethers';
 import { Lepton2 } from '../typechain-types';
 import { isTestnet } from '../utils/isTestnet';
 import { addressBook } from '../utils/globals';
+import { isHardhat } from '../utils/isHardhat';
 
 export interface LeptonType {
   tokenUri: string;
@@ -89,7 +90,7 @@ const Lepton2: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
     await lepton2.setMaxMintPerTx(leptonConfig.maxMintPerTx).then(tx => tx.wait());
 
     // mint
-    const chainType = isTestnet() ? 'test' : 'live';
+    const chainType = isHardhat() ? 'test' : 'live';
     for (const leptonKey in leptonConfig.types) {
       const lepton: LeptonType = leptonConfig.types[leptonKey];
 

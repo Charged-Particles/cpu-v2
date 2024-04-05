@@ -5,6 +5,7 @@ import { ContractTransactionReceipt, EventLog, Log } from 'ethers';
 import { addressBook } from '../utils/globals';
 import { isTestnet } from '../utils/isTestnet';
 import * as RewardProgramJson from '../build/contracts/contracts/v1/incentives/RewardProgram.sol/RewardProgram.json';
+import { isHardhat } from '../utils/isHardhat';
 
 const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network, deployments, ethers } = hre;
@@ -19,7 +20,7 @@ const RewardPrograms: DeployFunction = async (hre: HardhatRuntimeEnvironment) =>
 
   // Load IONX
   let ionx: Ionx;
-  if (addressBook[chainId].ionx.length > 0) {
+  if (!isHardhat() && addressBook[chainId].ionx.length > 0) {
     ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
   } else {
     ionx = await ethers.getContract('Ionx');

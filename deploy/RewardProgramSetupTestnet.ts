@@ -21,7 +21,7 @@ const RewardProgramSetupTestnet: DeployFunction = async (hre: HardhatRuntimeEnvi
 
   // Load Lepton2
   let lepton: Lepton2;
-  if (addressBook[chainId].lepton.length > 0) {
+  if (!_isHardhat && addressBook[chainId].lepton.length > 0) {
     lepton = await ethers.getContractAt('Lepton2', addressBook[chainId].lepton);
   } else {
     lepton = await ethers.getContract('Lepton2');
