@@ -230,7 +230,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
       .to.emit(rewardProgram, 'AssetRelease')
         .withArgs(leptonAddress, 1, atLeast(expectedAaveInterest / 2n))
       .to.emit(rewardProgram, 'RewardsClaimed')
-        // .withArgs(leptonAddress, 1, deployer, 1, atLeast(expectedIonxReward));
+        // .withArgs(leptonAddress, 1, deployer, 1, atLeast(expectedIonxReward)); // TODO
   });
 
   it('Rewards with One Lepton Multiplier', async () => {
@@ -265,7 +265,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
         .withArgs(leptonAddress, 1, atLeast(expectedAaveInterest));
     await expect(releaseState)
       .to.emit(rewardProgram, 'RewardsClaimed')
-        // .withArgs(leptonAddress, 1, deployer, atLeast(expectedIonxReward), 0);
+        // .withArgs(leptonAddress, 1, deployer, atLeast(expectedIonxReward), 0); //TODO
   });
 
   it('Rewards with Two Lepton Multipliers', async () => {
@@ -300,7 +300,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
         .withArgs(leptonAddress, 1, atLeast(expectedAaveInterest));
     await expect(releaseState)
       .to.emit(rewardProgram, 'RewardsClaimed')
-        // .withArgs(leptonAddress, 1, deployer, atLeast(expectedIonxReward), 0);
+        // .withArgs(leptonAddress, 1, deployer, atLeast(expectedIonxReward), 0); // TODO
   });
 
   it('Rewards with Six Lepton Multipliers', async () => {
