@@ -1,10 +1,13 @@
 import { Ionx, RewardProgram, UniverseRP } from '../typechain-types';
 import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
-import { ethers } from 'hardhat';
+import { ethers, getNamedAccounts } from 'hardhat';
 import { isTestnet } from '../utils/isTestnet';
+import { isHardhat } from '../utils/isHardhat';
 import { addressBook } from '../utils/globals';
 import { verifyContract } from '../utils/verifyContract';
+import { getChargedParticlesOwner } from '../utils/getSigners';
+import { parseEther } from 'ethers';
 
 const RewardProgramDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network } = hre;
@@ -12,10 +15,21 @@ const RewardProgramDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironmen
 
   // Load IONX
   let ionx: Ionx;
-  if (addressBook[chainId].ionx.length > 0) {
-    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx);
+  if (!isHardhat() && addressBook[chainId].ionx.length > 0) {
+    const { deployer } = await getNamedAccounts();
+    ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx, await ethers.getSigner(deployer));
+    // fund signer
+    const ionxOwner = await ionx.owner();
+    await ionx.connect(await ethers.getSigner(ionxOwner)).transfer(deployer, parseEther('100')).then(tx => tx.wait());
+
   } else {
-    ionx = await ethers.getContract('Ionx');
+    const { deployer } = await getNamedAccounts();
+    ionx = await ethers.getContract('Ionx', await ethers.getSigner(deployer));
+    // ionx = await ethers.getContractAt('Ionx', addressBook[chainId].ionx, await ethers.getSigner(deployer));
+    // fund signer
+    const ionxOwner = await ionx.owner();
+    await ionx.connect(await ethers.getSigner(ionxOwner)).transfer(deployer, parseEther('100000')).then(tx => tx.wait());
+    ionx = await ethers.getContract('Ionx', await ethers.getSigner(deployer));
   }
 
   // const ionxAddress = await ionx.getAddress();
@@ -28,14 +42,14 @@ const RewardProgramDeploy: DeployFunction = async (hre: HardhatRuntimeEnvironmen
     const rewardProgramAddress = await rewardProgram.getAddress();
 
     // verify reward program
-    if (!isTestnet()) {
+    if (!isTestnet() && !isHardhat()) {
       await verifyContract(`RewardProgram${stakingToken.id}`, rewardProgram);
     }
 
     // fund reward program
-    console.log(`  - Funding RewardProgram for ${stakingToken.id} with ${stakingToken.funding} IONX...`);
-    await ionx.approve(rewardProgramAddress, ethers.parseEther(stakingToken.funding)).then(tx => tx.wait());
-    await rewardProgram.fundProgram(ethers.parseEther(stakingToken.funding)).then(tx => tx.wait());
+    const { deployer } = await getNamedAccounts();
+    await ionx.connect(await ethers.getSigner(deployer)).approve(rewardProgramAddress, ethers.parseEther(stakingToken.funding)).then(tx => tx.wait());
+    await rewardProgram.connect(await ethers.getSigner(deployer)).fundProgram(1).then(tx => tx.wait());
 
     // register reward program in universe
     console.log(`    -- Registering RewardProgram in the Universe...`);

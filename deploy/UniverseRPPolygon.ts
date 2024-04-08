@@ -2,6 +2,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types';
 import { DeployFunction } from 'hardhat-deploy/types';
 import { verifyContract } from '../utils/verifyContract';
 import { isTestnet } from '../utils/isTestnet';
+import { isHardhat } from '../utils/isHardhat';
 
 const UniverseRPPolygon: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 	const { network, ethers, deployments, getNamedAccounts } = hre;
@@ -25,7 +26,7 @@ const UniverseRPPolygon: DeployFunction = async (hre: HardhatRuntimeEnvironment)
 	});
   console.log(`  - UniverseRP Deployed...`);
 
-  if (!isTestnet()) {
+  if (!isTestnet() && !isHardhat()) {
     await verifyContract('UniverseRPPolygon', await ethers.getContract('UniverseRPPolygon'));
   }
 };

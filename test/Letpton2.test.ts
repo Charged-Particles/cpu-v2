@@ -2,7 +2,7 @@ import { expect } from "chai";
 import { ethers, network, getNamedAccounts, deployments } from 'hardhat';
 import { Lepton2 } from "../typechain-types";
 import { LeptonType, leptonConfig } from "../deploy/Lepton2";
-import { isTestnet } from "../utils/isTestnet";
+import { isHardhat } from "../utils/isHardhat";
 
 describe('Lepton2 deployment', async () => {
   let lepton: Lepton2;
@@ -47,7 +47,7 @@ describe('Lepton2 deployment', async () => {
     await lepton.setMaxMintPerTx(1000000n).then(tx => tx.wait());
 
     // updateLeptonType set all leptons mint price to 0
-    const chainType = isTestnet() ? 'test' : 'live';
+    const chainType = isHardhat() ? 'test' : 'live';
 
     let mintCount = 0n;
 
