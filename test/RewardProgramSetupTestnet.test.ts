@@ -210,7 +210,7 @@ describe('RewardProgramSetupTestnet deployments', async () => {
     expect(nftStake[0]).to.be.eq(1010); // Tier 1 + 2 + 3 + 4 + 5 + 6
   });
 
-  it.only('Rewards without Lepton Multiplier', async () => {
+  it('Rewards without Lepton Multiplier', async () => {
     const price = await lepton.getNextPrice();
     await lepton.mintLepton({ value: price }).then(tx => tx.wait());
     expect(await lepton.balanceOf(deployer)).to.be.eq(1);
