@@ -118,7 +118,7 @@ const config: HardhatUserConfig = {
     },
     mumbai: {
       url: `https://polygon-mumbai.g.alchemy.io/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
-        gasPrice: 10e9,
+      gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.testnet,
             initialIndex: 0,
@@ -128,7 +128,7 @@ const config: HardhatUserConfig = {
     },
     polygon: {
         url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_POLYGON_API_KEY}`,
-        gasPrice: 180e9,
+        gasPrice: 'auto',
         accounts: {
             mnemonic: mnemonic.mainnet,
             count: 10,
@@ -138,8 +138,8 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     apiKey: {
-      mainnet: process.env.ETHERSCAN_APIKEY ?? '',
-      goerli: process.env.ETHERSCAN_APIKEY ?? '',
+      mainnet: process.env.ETHERSCAN_API_KEY ?? '',
+      goerli: process.env.ETHERSCAN_API_KEY ?? '',
       polygon: process.env.POLYGONSCAN_APIKEY ?? '',
       polygonMumbai: process.env.POLYGONSCAN_APIKEY ?? '',
     }

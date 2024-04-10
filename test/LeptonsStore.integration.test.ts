@@ -67,6 +67,7 @@ describe('Leptons Store Integration', async () => {
     const tokenIdFromBatchStart = Number(await lepton.totalSupply()) + 1;
 
     //load
+    await leptonStore.setNextTokenId(0); // 0 = load tokenId from Lepton Contract (totalSupply)
     await leptonStore.load(amountToBuy, { value: price });
 
     for (let i = tokenIdFromBatchStart; i <= amountToBuy; i++){

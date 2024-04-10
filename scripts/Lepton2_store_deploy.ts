@@ -5,7 +5,9 @@ import { isTestnet } from "../utils/isTestnet";
 import { isHardhat } from '../utils/isHardhat';
 
 async function main() {
-	let ionx: Ionx;
+	const MAX_LEPTONS_PER_LOAD = 24n;
+
+  let ionx: Ionx;
   let lepton: Lepton2;
   let leptonsStore: LeptonsStore;
 
@@ -15,7 +17,7 @@ async function main() {
     ionx = await ethers.getContract<Ionx>('Ionx');
 	} else {
     // Ethereum Mainnet
-		leptonsStore = await ethers.getContractAt('LeptonsStore', '0xbD2b4C929D4D05e74B306d88f7A9ce8920d245E3');
+		leptonsStore = await ethers.getContractAt('LeptonsStore', '0xD5dE6F1c1cb796C63a039EF68451f285Be60Bc74');
 		lepton = await ethers.getContractAt('Lepton2', '0x3Cd2410EAa9c2dCE50aF6CCAb72Dc93879a09c1F');
 		ionx = await ethers.getContractAt('Ionx', '0x02D3A27Ac3f55d5D91Fb0f52759842696a864217');
 	}
@@ -31,7 +33,7 @@ async function main() {
 
   // set minting free 0
   const leptonKey = await lepton.getNextType();
-  const amountToBuy = 5n;
+  const amountToBuy = 24n;
   const chainType = isTestnet() ? 'test' : 'live';
 
   // Set Price of Leptons to Zero
@@ -55,7 +57,20 @@ async function main() {
   const tokenIdFromBatchStart = Number(await lepton.totalSupply()) + 1;
   console.log(`Loading from from ID ${tokenIdFromBatchStart} up to token ${tokenIdFromBatchStart + Number(amountToBuy)}`);
 
-  await leptonsStore.load(amountToBuy, { value: price });
+  await leptonsStore.setNextTokenId(0); // 0 = load tokenId from Lepton Contract (totalSupply)
+
+  if (amountToBuy > MAX_LEPTONS_PER_LOAD) {
+    const remainder = amountToBuy % MAX_LEPTONS_PER_LOAD;
+    const batches = (amountToBuy - remainder) / MAX_LEPTONS_PER_LOAD;
+    for (let i = 0; i < batches; i++) {
+      await leptonsStore.load(MAX_LEPTONS_PER_LOAD, { value: 0 });
+    }
+    if (remainder > 0) {
+      await leptonsStore.load(remainder, { value: 0 });
+    }
+  } else {
+    await leptonsStore.load(amountToBuy, { value: 0 });
+  }
 
   // Reset Price of Leptons
   await lepton.updateLeptonType(

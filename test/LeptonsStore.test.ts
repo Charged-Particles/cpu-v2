@@ -48,6 +48,7 @@ describe('Leptons Store', async () => {
     const singleMintCost = await lepton.getNextPrice();
     const mintCost = amountToBuy * singleMintCost;
 
+    await leptonStore.setNextTokenId(0); // 0 = load tokenId from Lepton Contract (totalSupply)
     await leptonStore.load(amountToBuy, { value: mintCost });
 
     for (let i = 1; i <= amountToBuy; i++){
@@ -74,6 +75,7 @@ describe('Leptons Store', async () => {
     const price = await lepton.getNextPrice();
     expect(price).to.be.eq(0);
 
+    await leptonStore.setNextTokenId(0); // 0 = load tokenId from Lepton Contract (totalSupply)
     await leptonStore.load(amountToBuy, { value: price });
 
     for (let i = 1; i <= amountToBuy; i++){
@@ -134,6 +136,7 @@ describe('Leptons Store', async () => {
       leptonType.bonus,
     );
 
+    await leptonStore.setNextTokenId(0); // 0 = load tokenId from Lepton Contract (totalSupply)
     await leptonStore.load(amountToBuy, { value: 0n });
 
     // permit
@@ -177,6 +180,7 @@ describe('Leptons Store', async () => {
       leptonType.bonus,
     );
 
+    await leptonStore.setNextTokenId(0); // 0 = load tokenId from Lepton Contract (totalSupply)
     await leptonStore.load(amountToLoad, { value: 0n });
 
     // permit

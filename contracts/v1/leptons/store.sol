@@ -8,8 +8,15 @@ import "../tokens/Ionx.sol";
 import "../tokens/Lepton2.sol";
 
 interface ILepsonsStore {
-   function load(uint256 amount) external payable;
-   function setLepton(address _lepton) external;
+  function getLeptonBalance() external view returns (uint256);
+  function getIonxBalance() external view returns (uint256);
+  function buyWithIonx(uint256 leptonAmount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
+
+  function load(uint256 amount) external payable;
+  function setNextTokenId(uint256 tokenId) external;
+  function setLepton(address _lepton) external;
+  function setIonx(address _ionx) external;
+  function setIonxPerLepton(uint256 ionxAmount) external;
 }
 
 contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePrevention {
@@ -29,15 +36,24 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePreve
     ionxPerLepton = _ionxPerLepton;
   }
 
+  function getLeptonBalance() external view override returns (uint256) {
+    return lepton.balanceOf(address(this));
+  }
+
+  function getIonxBalance() external view override returns (uint256) {
+    return ionx.balanceOf(address(this));
+  }
+
   function buyWithIonx(
     uint256 leptonAmount,
     uint256 deadline,
     uint8 v,
     bytes32 r,
     bytes32 s
-  ) external {
+  ) external override {
     uint256 ionxAmount = leptonAmount * ionxPerLepton;
     require(ionx.balanceOf(msg.sender) >= ionxAmount, "Insufficient IONX balance");
+    require(lepton.balanceOf(address(this)) >= leptonAmount, "Insufficient Lepton balance");
 
     ionx.permit(msg.sender, address(this), ionxAmount, deadline, v, r, s);
     ionx.transferFrom(msg.sender, address(this), ionxAmount);
@@ -61,9 +77,11 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePreve
   |__________________________________*/
 
   function load(uint256 amount) external payable override onlyOwner {
-    require(lepton.balanceOf(address(this)) == 0, "store not empty");
-    nextTokenId =  lepton.totalSupply().add(1);
     lepton.batchMintLepton{ value: msg.value }(amount);
+  }
+
+  function setNextTokenId(uint256 tokenId) external override onlyOwner {
+    nextTokenId = (tokenId == 0) ? lepton.totalSupply().add(1) : tokenId;
   }
 
   function setLepton(address _lepton) external override onlyOwner {
@@ -71,12 +89,12 @@ contract LeptonsStore is ILepsonsStore, IERC721Receiver, Ownable, BlackholePreve
     lepton = Lepton2(_lepton);
   }
 
-  function setIonx(address _ionx) external onlyOwner {
+  function setIonx(address _ionx) external override onlyOwner {
     require(_ionx != address(0), "Invalid address");
     ionx = Ionx(_ionx);
   }
 
-  function setIonxPerLepton(uint256 ionxAmount) external onlyOwner {
+  function setIonxPerLepton(uint256 ionxAmount) external override onlyOwner {
     ionxPerLepton = ionxAmount;
   }
 
