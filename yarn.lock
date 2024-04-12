@@ -1083,6 +1083,11 @@ abstract-level@^1.0.0, abstract-level@^1.0.2, abstract-level@^1.0.3, abstract-le
     module-error "^1.0.1"
     queue-microtask "^1.2.3"
 
+acc-erc20@0.5.7:
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/acc-erc20/-/acc-erc20-0.5.7.tgz#1e356ef2402cf6bf74b6e7366dfdf5396c33b612"
+  integrity sha512-D/zg0AbXKHBgH+yjHYZDvkAQyx8RR3F6/6ScjeVhJw8O9EI2M8nCNPlfDKuZxqk3inlfQOTecOayZlLkLVqr/g==
+
 acorn-walk@^8.1.1:
   version "8.3.2"
   resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-8.3.2.tgz#7703af9415f1b6db9315d6895503862e231d34aa"
@@ -1876,6 +1881,13 @@ env-paths@^2.2.0:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/env-paths/-/env-paths-2.2.1.tgz#420399d416ce1fbe9bc0a07c62fa68d67fd0f8f2"
   integrity sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==
+
+erc20permit@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/erc20permit/-/erc20permit-0.1.1.tgz#0823f51f37fc04310344c4cc59fa40352fea537c"
+  integrity sha512-Lhtaqemp38bb8ttOn6xpnelMgjamrSZLuV6vSMx11ZKkkMl3PjqlvtwG5cMSG5KxdiEmkeS9b4rVozc2k7DFzA==
+  dependencies:
+    acc-erc20 "0.5.7"
 
 escalade@^3.1.1:
   version "3.1.2"

@@ -6,11 +6,9 @@ import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import {IERC1271} from "@openzeppelin/contracts/interfaces/IERC1271.sol";
 import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import {IERC1155Receiver} from "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
-import {SignatureChecker} from "@openzeppelin/contracts/utils/cryptography/SignatureChecker.sol";
 
 import {IERC6551Account} from "../interfaces/IERC6551Account.sol";
 import {IERC6551Executable} from "../interfaces/IERC6551Executable.sol";
-// import {ERC6551AccountLib} from "./ERC6551AccountLib.sol";
 
 import {ISmartAccount} from "../interfaces/ISmartAccount.sol";
 import {ISmartAccountController} from "../interfaces/ISmartAccountController.sol";
@@ -116,19 +114,6 @@ abstract contract SmartAccountBase is ISmartAccount, ERC165 {
   function isValidSigner(address signer, bytes calldata) external view virtual returns (bytes4) {
     if (_isValidSigner(signer)) {
       return IERC6551Account.isValidSigner.selector;
-    }
-    return bytes4(0);
-  }
-
-  function isValidSignature(bytes32 hash, bytes memory signature)
-    external
-    view
-    virtual
-    returns (bytes4 magicValue)
-  {
-    bool isValid = SignatureChecker.isValidSignatureNow(owner(), hash, signature);
-    if (isValid) {
-      return IERC1271.isValidSignature.selector;
     }
     return bytes4(0);
   }

@@ -47,6 +47,10 @@ interface IChargedParticles {
   |        Particle Mechanics         |
   |__________________________________*/
 
+  function baseParticleMass(address contractAddress, uint256 tokenId, address assetToken) external returns (uint256);
+  function currentParticleCharge(address contractAddress, uint256 tokenId, address assetToken) external returns (uint256);
+  function currentParticleCovalentBonds(address contractAddress, uint256 tokenId) external view returns (uint256);
+
   function energizeParticle(
     address contractAddress,
     uint256 tokenId,

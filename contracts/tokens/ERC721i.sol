@@ -10,7 +10,7 @@ import "../lib/ERC721iEnumerable.sol";
 
 /**
  * @dev This implements a Pre-Mint version of {ERC721} that adds the ability to Pre-Mint
- * all the token ids in the contract as assign an initial owner for each token id.
+ * all the token ids in the contract and assign an initial owner for each token id.
  *
  * On-chain state for Pre-Mint does not need to be initially stored if Max-Supply is known.
  * Minting is a simple matter of assigning a balance to the pre-mint receiver,

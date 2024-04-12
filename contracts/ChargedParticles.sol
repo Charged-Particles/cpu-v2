@@ -53,6 +53,69 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   //   return type(ISmartAccount).interfaceId;
   // }
 
+
+
+
+
+  /// @notice Gets the Amount of Asset Tokens that have been Deposited into the Particle
+  /// representing the Mass of the Particle.
+  /// @param contractAddress      The Address to the Contract of the Token
+  /// @param tokenId              The ID of the Token
+  /// @param assetToken           The Address of the Asset Token to check
+  /// @return The Amount of underlying Assets held within the Token
+  function baseParticleMass(
+    address contractAddress,
+    uint256 tokenId,
+    address assetToken
+  )
+    external
+    virtual
+    override
+    returns (uint256)
+  {
+    // return _baseParticleMass(contractAddress, tokenId, walletManagerId, assetToken);
+  }
+
+  /// @notice Gets the amount of Interest that the Particle has generated representing
+  /// the Charge of the Particle
+  /// @param contractAddress      The Address to the Contract of the Token
+  /// @param tokenId              The ID of the Token
+  /// @param walletManagerId  The Liquidity-Provider ID to check the Interest balance of
+  /// @param assetToken           The Address of the Asset Token to check
+  /// @return The amount of interest the Token has generated (in Asset Token)
+  function currentParticleCharge(
+    address contractAddress,
+    uint256 tokenId,
+    address assetToken
+  )
+    external
+    virtual
+    override
+    returns (uint256)
+  {
+    // return _currentParticleCharge(contractAddress, tokenId, walletManagerId, assetToken);
+  }
+
+  /// @notice Gets the total amount of ERC721 Tokens that the Particle holds
+  /// @param contractAddress  The Address to the Contract of the Token
+  /// @param tokenId          The ID of the Token
+  /// @param basketManagerId  The ID of the BasketManager to check the token balance of
+  /// @return The total amount of ERC721 tokens that are held  within the Particle
+  function currentParticleCovalentBonds(
+    address contractAddress,
+    uint256 tokenId
+  )
+    external
+    view
+    virtual
+    override
+    returns (uint256)
+  {
+    // return _currentParticleCovalentBonds(contractAddress, tokenId, basketManagerId);
+  }
+
+
+
   // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   // Energize (Deposit)
 
@@ -77,19 +140,55 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (address account)
   {
     // Find the SmartAccount for this NFT
-    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
-    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    account = registry.createAccount(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
+    (address accountAddress, bool isSmartAccount) = _createAccount(contractAddress, tokenId);
+    account = accountAddress;
     ISmartAccount smartAccount = ISmartAccount(payable(account));
-    bool isSmartAccount = IERC165(account).supportsInterface(type(ISmartAccount).interfaceId);
-
-    // Initialize the Account
-    if (isSmartAccount && !smartAccount.isInitialized()) {
-      address executionController = getExecutionController(contractAddress);
-      smartAccount.initialize(address(this), executionController, block.chainid, contractAddress, tokenId);
-    }
 
     // Transfer to SmartAccount
+    IERC20(assetToken).safeTransferFrom(msg.sender, account, assetAmount);
+
+    // Pre-approve Charged Particles to transfer back out
+    IERC6551Executable(account).execute(assetToken, 0, abi.encodeWithSelector(IERC20.approve.selector, address(this), type(uint256).max), 0);
+
+    // Call "update" on SmartAccount
+    if (isSmartAccount) {
+      smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
+    }
+
+    emit NewAccountCreated(account, block.chainid, contractAddress, tokenId);
+  }
+
+  /// @notice Fund Particle with Asset Token
+  ///    Must be called by the account providing the Asset
+  ///    Account must Approve THIS contract as Operator of Asset
+  ///
+  /// @param contractAddress      The Address to the Contract of the Token to Energize
+  /// @param tokenId              The ID of the Token to Energize
+  /// @param assetToken           The Address of the Asset Token being used
+  /// @param assetAmount          The Amount of Asset Token to Energize the Token with
+  function energizeParticleWithPermit(
+    address contractAddress,
+    uint256 tokenId,
+    address assetToken,
+    uint256 assetAmount,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
+  )
+    external
+    virtual
+    override
+    nonReentrant
+    returns (address account)
+  {
+    // Find the SmartAccount for this NFT
+    (address accountAddress, bool isSmartAccount) = _createAccount(contractAddress, tokenId);
+    account = accountAddress;
+    ISmartAccount smartAccount = ISmartAccount(payable(account));
+
+    // Transfer to SmartAccount with Permission
+    IERC20(assetToken).permit(msg.sender, address(this), assetAmount, deadline, v, r, s);
     IERC20(assetToken).safeTransferFrom(msg.sender, account, assetAmount);
 
     // Pre-approve Charged Particles to transfer back out
@@ -121,16 +220,14 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (uint256 amount)
   {
     // Find the SmartAccount for this NFT
-    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
-    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.account(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
+    (address account, bool isSmartAccount) = _findAccount(contractAddress, tokenId);
 
     // Transfer to Receiver
     amount = IERC20(assetToken).balanceOf(account);
     IERC20(assetToken).safeTransferFrom(account, receiver, amount);
 
     // Call "update" on SmartAccount
-    if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
+    if (isSmartAccount) {
       ISmartAccount(payable(account)).handleTokenUpdate(false, assetToken, amount);
     }
   }
@@ -150,15 +247,13 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (uint256)
   {
     // Find the SmartAccount for this NFT
-    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
-    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.account(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
+    (address account, bool isSmartAccount) = _findAccount(contractAddress, tokenId);
 
     // Transfer to Receiver
     IERC20(assetToken).safeTransferFrom(account, receiver, assetAmount);
 
     // Call "update" on SmartAccount
-    if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
+    if (isSmartAccount) {
       ISmartAccount(payable(account)).handleTokenUpdate(false, assetToken, assetAmount);
     }
 
@@ -192,18 +287,10 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
-    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
-    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.createAccount(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
+    (address accountAddress, bool isSmartAccount) = _createAccount(contractAddress, tokenId);
+    account = accountAddress;
     ISmartAccount smartAccount = ISmartAccount(payable(account));
     IERC6551Executable execAccount = IERC6551Executable(account);
-    bool isSmartAccount = IERC165(account).supportsInterface(type(ISmartAccount).interfaceId);
-
-    // Initialize the Account
-    if (isSmartAccount && !smartAccount.isInitialized()) {
-      address executionController = getExecutionController(contractAddress);
-      smartAccount.initialize(address(this), executionController, block.chainid, contractAddress, tokenId);
-    }
 
     // Transfer to SmartAccount and pre-approve Charged Particles to transfer back out
     if (nftTokenAddress.isERC1155()) {
@@ -244,9 +331,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     returns (bool success)
   {
     // Find the SmartAccount for this NFT
-    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
-    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
-    address account = registry.account(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
+    (address account, bool isSmartAccount) = _findAccount(contractAddress, tokenId);
 
     // Transfer to Receiver
     if (nftTokenAddress.isERC1155()) {
@@ -256,7 +341,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     }
 
     // Call "update" on SmartAccount
-    if (IERC165(account).supportsInterface(type(ISmartAccount).interfaceId)) {
+    if (isSmartAccount) {
       ISmartAccount(payable(account)).handleNFTUpdate(false, nftTokenAddress, nftTokenId, nftTokenAmount);
     }
 
@@ -331,6 +416,40 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     if (accountBytecodeHash == bytes32(0) || accountBytecodeHash.length == 0) {
       accountBytecodeHash = defaultAccountBytecodeHash;
     }
+  }
+
+
+  // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  // Private Functions
+
+  /// @dev ...
+  function _createAccount(
+    address contractAddress,
+    uint256 tokenId,
+  ) internal returns (address account, bool isSmartAccount) {
+    // Create the SmartAccount for this NFT
+    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
+    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
+    account = registry.createAccount(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
+    isSmartAccount = IERC165(account).supportsInterface(type(ISmartAccount).interfaceId);
+
+    // Initialize the Account
+    if (isSmartAccount && !smartAccount.isInitialized()) {
+      address executionController = getExecutionController(contractAddress);
+      smartAccount.initialize(address(this), executionController, block.chainid, contractAddress, tokenId);
+    }
+  }
+
+  /// @dev ...
+  function _findAccount(
+    address contractAddress,
+    uint256 tokenId,
+  ) internal returns (address account, bool isSmartAccount) {
+    // Find the SmartAccount for this NFT
+    IERC6551zkSyncRegistry registry = IERC6551zkSyncRegistry(erc6551registry[defaultRegistry]);
+    bytes32 accountHash = getAccountBytecodeHash(contractAddress);
+    account = registry.account(accountHash, defaultSalt, block.chainid, contractAddress, tokenId);
+    isSmartAccount = IERC165(account).supportsInterface(type(ISmartAccount).interfaceId);
   }
 
 
