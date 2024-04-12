@@ -23,6 +23,7 @@
     "verify": "hardhat run scripts/verify.ts --network",
     "unreg": "hardhat run scripts/unregister.ts --network",
     "load-lepton-store": "hardhat run scripts/Lepton2_store_deploy.ts --network",
+    "migrate-lepton-store": "hardhat run scripts/Lepton2_store_migrate.ts --network",
     "gen-docs": "solidity-docgen -i contracts -o docs",
     "test": "yarn hardhat test --network hardhat"
   },
