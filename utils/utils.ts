@@ -16,6 +16,12 @@ const mnemonic = {
   mainnet: `${process.env.MAINNET_MNEMONIC}`.replace(/_/g, ' '),
 };
 
+const getChainId = async () => {
+  const provider = getProvider();
+  const network = await provider.getNetwork();
+  return network.chainId;
+};
+
 export const getProvider = () => {
   const rpcUrl = hre.network.config.url;
   if (!rpcUrl) throw `⛔️ RPC URL wasn't found in "${hre.network.name}"! Please add a "url" field to the network config in hardhat.config.ts`;
@@ -86,7 +92,8 @@ export const deployContract = async (contractArtifactName: string, constructorAr
     if (!options?.silent && !process.env.IS_TEST) console.log(message);
   }
 
-  log(`\nStarting deployment process of "${contractArtifactName}"...`);
+  const chainId = await getChainId();
+  log(`\nStarting deployment process of "${contractArtifactName}" on chain "${hre.network.name} (${chainId})"...`);
 
   const wallet = options?.wallet ?? getWallet();
   const deployer = new Deployer(hre, wallet);

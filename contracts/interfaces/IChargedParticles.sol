@@ -47,15 +47,29 @@ interface IChargedParticles {
   |        Particle Mechanics         |
   |__________________________________*/
 
-  function baseParticleMass(address contractAddress, uint256 tokenId, address assetToken) external returns (uint256);
-  function currentParticleCharge(address contractAddress, uint256 tokenId, address assetToken) external returns (uint256);
-  function currentParticleCovalentBonds(address contractAddress, uint256 tokenId) external view returns (uint256);
+  function getSmartAccountAddress(address contractAddress, uint256 tokenId) external view returns (address);
+  function baseParticleMass(address contractAddress, uint256 tokenId, address assetToken) external view returns (uint256 total);
+  function currentParticleCharge(address contractAddress, uint256 tokenId, address assetToken) external view returns (uint256 total);
+  function currentParticleKinetics(address contractAddress, uint256 tokenId, address assetToken) external view returns (uint256 total);
+  function currentParticleCovalentBonds(address contractAddress, uint256 tokenId, address nftContractAddress, uint256 nftTokenId) external view returns (uint256 total);
 
   function energizeParticle(
     address contractAddress,
     uint256 tokenId,
     address assetToken,
     uint256 assetAmount
+  ) external returns (address account);
+
+
+  function energizeParticleWithPermit(
+    address contractAddress,
+    uint256 tokenId,
+    address assetToken,
+    uint256 assetAmount,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
   ) external returns (address account);
 
   function releaseParticle(

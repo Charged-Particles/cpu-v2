@@ -30,6 +30,11 @@ interface ISmartAccount is
     uint256 parentNftTokenId
   ) external;
 
+  function getPrincipal(address assetToken) external view returns (uint256 total);
+  function getInterest(address assetToken) external view returns (uint256 total);
+  function getRewards(address assetToken) external view returns (uint256 total);
+  function getCovalentBonds(address nftContractAddress, uint256 nftTokenId) external view returns (uint256 total);
+
   function handleTokenUpdate(
     bool isReceiving,
     address assetToken,

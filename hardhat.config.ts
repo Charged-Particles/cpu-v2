@@ -36,6 +36,11 @@ const config: HardhatUserConfig = {
       // find all available options in the official documentation
       // https://era.zksync.io/docs/tools/hardhat/hardhat-zksync-solc.html#configuration
       isSystem: true,
+      optimizer: {
+        enabled: !optimizerDisabled,
+        mode: '3', // optional. 3 by default, z to optimize bytecode size
+        fallback_to_optimizing_for_size: false, // optional. Try to recompile with optimizer mode "z" if the bytecode is too large
+      },
     },
   },
   defaultNetwork: 'zkSyncTestnet',
@@ -43,6 +48,7 @@ const config: HardhatUserConfig = {
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_API_KEY}`,
       gasPrice: 'auto',
+      zksync: false,
       accounts: {
         mnemonic: mnemonic.testnet,
         initialIndex: 0,
@@ -55,14 +61,14 @@ const config: HardhatUserConfig = {
       ethNetwork: "sepolia",
       zksync: true,
       verifyURL: "https://explorer.sepolia.era.zksync.dev/contract_verification",
-      chainId: 324,
+      chainId: 300,
     },
     zkSyncMainnet: {
       url: "https://mainnet.era.zksync.io",
       ethNetwork: "mainnet",
       zksync: true,
       verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
-      chainId: 300,
+      chainId: 324,
     },
     dockerizedNode: {
       url: "http://localhost:3050",
