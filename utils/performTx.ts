@@ -14,6 +14,6 @@ export const performTx = async (tx: ContractTransactionResponse, msg: string) =>
       }
     }
 
-    // console.log(msg);
+    console.log(msg);
   }
 };

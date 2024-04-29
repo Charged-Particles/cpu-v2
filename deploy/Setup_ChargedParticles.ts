@@ -21,3 +21,6 @@ export default async function () {
 
   return { chargedParticles };
 }
+
+// 0.0000381096 + 0.0011257776 + 0.0021826476 + 0.0004042796
+// = 0.0037508144
