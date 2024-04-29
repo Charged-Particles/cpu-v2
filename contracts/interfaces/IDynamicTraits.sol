@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 // IDynamicTraits.sol -- Part of the Charged Particles Protocol
-// Copyright (c) 2023 Firma Lux, Inc. <https://charged.fi>
+// Copyright (c) 2024 Firma Lux, Inc. <https://charged.fi>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
