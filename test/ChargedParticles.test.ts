@@ -1,11 +1,11 @@
-import * as hre from "hardhat";
-import { ethers } from "ethers";
-import { Wallet, Contract, utils } from "zksync-ethers";
-import { Deployer } from "@matterlabs/hardhat-zksync-deploy";
-import { expect } from "chai";
+import * as hre from 'hardhat';
+import { Wallet, Contract } from 'zksync-ethers';
+import { Deployer } from '@matterlabs/hardhat-zksync-deploy';
+import { expect } from 'chai';
 
 import { getWallet, getProvider, deployContract, LOCAL_RICH_WALLETS } from '../utils/utils';
 import { performTx } from '../utils/performTx';
+import { calculateAccountAddress } from '../utils/calculateAccountAddress';
 
 import DeployRegistry from '../deploy/ERC6551zkSyncRegistry';
 import DeploySmartAccount from '../deploy/SmartAccount';
@@ -16,9 +16,8 @@ import DeploySmartAccountController from '../deploy/SAC_EX1';
 
 describe('ChargedParticles', async function () {
   let chainId: bigint;
-  const defaultSalt = ethers.encodeBytes32String('CPU-V2');
   const interfaceIds = {
-    ISmartAccount: '0x90fe7511',
+    ISmartAccount: '0xf51fc6bd',
   };
 
   // Contracts
@@ -52,19 +51,6 @@ describe('ChargedParticles', async function () {
       }
     }
     return _event;
-  };
-
-  const calculateAccountAddress = async (nftContractAddress: string, nftTokenId: number, chainId: bigint) => {
-    const abi = ethers.AbiCoder.defaultAbiCoder();
-    const inputEncoded = abi.encode(['uint256', 'address', 'uint256'], [chainId, nftContractAddress, nftTokenId]);
-    const smartAccountHash = await _chargedParticles.getAccountBytecodeHash(nftContractAddress);
-    const newAccountAddress = utils.create2Address(
-      _zkSyncRegistryAddress,
-      smartAccountHash,
-      defaultSalt,
-      inputEncoded,
-    );
-    return newAccountAddress;
   };
 
   before(async function () {
@@ -123,7 +109,7 @@ describe('ChargedParticles', async function () {
     expect(await _erc20Mock.balanceOf(_deployerAddress)).to.be.equal(10000n);
 
     // Calculate Expected Account Address via Registry
-    const calcAccountAddress = await calculateAccountAddress(_nftMockAddress, tokenId, chainId);
+    const calcAccountAddress = await calculateAccountAddress(_chargedParticles, _zkSyncRegistryAddress, _nftMockAddress, tokenId, chainId);
     expect(calcAccountAddress).to.not.be.empty;
 
     // Energize NFT in order to Create new Smart Account
@@ -149,7 +135,7 @@ describe('ChargedParticles', async function () {
     // TODO: Update SmartAccount isSmartAccount
     const smartAccountContract = await hre.zksyncEthers.getContractAt('SmartAccount', realAccountAddress);
     const isSmartAccount = await smartAccountContract.supportsInterface(interfaceIds.ISmartAccount);
-    // expect(isSmartAccount).to.be.true;
+    expect(isSmartAccount).to.be.true;
 
     // Confirm SmartAccount knows its Parent Token
     const smartAccountToken = await smartAccountContract.token();
@@ -168,7 +154,7 @@ describe('ChargedParticles', async function () {
     const startingBalance = await _erc20Mock.balanceOf(_deployerAddress);
 
     // Calculate Expected Account Address via Registry
-    const newAccountAddress = await calculateAccountAddress(_nftMockAddress, tokenId, chainId);
+    const newAccountAddress = await calculateAccountAddress(_chargedParticles, _zkSyncRegistryAddress, _nftMockAddress, tokenId, chainId);
     expect(newAccountAddress).to.not.be.empty;
 
     // Energize NFT
@@ -214,7 +200,7 @@ describe('ChargedParticles', async function () {
     await _nftMock.mint(_deployerAddress, depositedTokenId).then(tx => tx.wait());
 
     // Calculate Expected Account Address via Registry
-    const newAccountAddress = await calculateAccountAddress(_nftMockAddress, tokenId, chainId);
+    const newAccountAddress = await calculateAccountAddress(_chargedParticles, _zkSyncRegistryAddress, _nftMockAddress, tokenId, chainId);
     expect(newAccountAddress).to.not.be.empty;
 
     // Give permission to Bond
