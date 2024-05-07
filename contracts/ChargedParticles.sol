@@ -77,7 +77,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
 
   constructor(
     address registry,
-    address implementation
+    address implementation,
     bytes32 bytecodeHash
   )
     Ownable()
@@ -230,7 +230,8 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
       smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
     }
 
-    emit NewAccountCreated(account, block.chainid, contractAddress, tokenId);
+    // TODO
+    // emit NewAccountCreated(account, block.chainid, contractAddress, tokenId);
   }
 
   /// @notice Fund Particle with Asset Token
@@ -277,7 +278,8 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
       smartAccount.handleTokenUpdate(true, assetToken, assetAmount);
     }
 
-    emit NewAccountCreated(account, block.chainid, contractAddress, tokenId);
+    // TODO
+    // emit NewAccountCreated(account, block.chainid, contractAddress, tokenId);
   }
 
 
@@ -507,7 +509,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     uint256 tokenId
   ) internal returns (address account, bool isSmartAccount) {
     // Create the SmartAccount for this NFT
-    IERC6551zkSyncRegistry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
+    IERC6551Registry registry = IERC6551Registry(erc6551registry[defaultRegistry]);
     account = registry.createAccount(defaultAccountImplementation, defaultSalt, block.chainid, contractAddress, tokenId);
     isSmartAccount = IERC165(account).supportsInterface(type(ISmartAccount).interfaceId);
     ISmartAccount smartAccount = ISmartAccount(payable(account));

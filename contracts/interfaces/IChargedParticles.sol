@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 // IChargedParticles.sol -- Part of the Charged Particles Protocol
-// Copyright (c) 2021 Firma Lux, Inc. <https://charged.fi>
+// Copyright (c) 2024 Firma Lux, Inc. <https://charged.fi>
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -28,23 +28,48 @@ pragma solidity ^0.8.13;
  */
 interface IChargedParticles {
 
+  event NewAccountCreated(
+      address account,
+      uint256 chainId,
+      address indexed tokenContract,
+      uint256 indexed tokenId
+  );
+
   function setDefaultExecutionController(address executionController) external;
   function setCustomExecutionController(address nftContract, address executionController) external;
   function getExecutionController(address nftContract) external view returns (address executionController);
 
-  function setDefaultAccountImplementation(address accountImplementation) external;
-  function setCustomAccountImplementation(address nftContract, address accountImplementation) external;
-  function getAccountImplementation(address nftContract) external view returns (address accountImplementation);
+  function setDefaultAccountBytecodeHash(bytes32 accountBytecodeHash) external;
+  function setCustomAccountBytecodeHash(address nftContract, bytes32 accountBytecodeHash) external;
+  function getAccountBytecodeHash(address nftContract) external view returns (bytes32 accountBytecodeHash);
 
   /***********************************|
   |        Particle Mechanics         |
   |__________________________________*/
+
+  function getSmartAccountAddress(address contractAddress, uint256 tokenId) external view returns (address);
+  function baseParticleMass(address contractAddress, uint256 tokenId, address assetToken) external view returns (uint256 total);
+  function currentParticleCharge(address contractAddress, uint256 tokenId, address assetToken) external view returns (uint256 total);
+  function currentParticleKinetics(address contractAddress, uint256 tokenId, address assetToken) external view returns (uint256 total);
+  function currentParticleCovalentBonds(address contractAddress, uint256 tokenId, address nftContractAddress, uint256 nftTokenId) external view returns (uint256 total);
 
   function energizeParticle(
     address contractAddress,
     uint256 tokenId,
     address assetToken,
     uint256 assetAmount
+  ) external returns (address account);
+
+
+  function energizeParticleWithPermit(
+    address contractAddress,
+    uint256 tokenId,
+    address assetToken,
+    uint256 assetAmount,
+    uint256 deadline,
+    uint8 v,
+    bytes32 r,
+    bytes32 s
   ) external returns (address account);
 
   function releaseParticle(
