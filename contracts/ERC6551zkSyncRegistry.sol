@@ -36,7 +36,7 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
    *
    * Emits ERC6551AccountCreated event.
    *
-   * @return account The address of the token bound account
+   * @return accountAddress the address of the token bound account
    */
   function createAccount(
     bytes32 bytecodeHash,
@@ -70,7 +70,7 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
   /**
    * @dev Returns the computed token bound account address for a non-fungible token.
    *
-   * @return account The address of the token bound account
+   * @return accountAddress The address of the token bound account
    *
    * NOTE: This function is NOT a "view" function.
    *
