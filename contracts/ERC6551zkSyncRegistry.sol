@@ -79,7 +79,7 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
    *  import { ethers } from "ethers";
    *  import { utils } from "zksync-ethers";
    *  const abi = ethers.AbiCoder.defaultAbiCoder();
-   *  const salt = ethers.encodeBytes32String('CPU-V2');
+   *  const salt = ethers.encodeBytes32String('CPU-V3');
    *  const input = abi.encode(['uint256', 'address', 'uint256'], [chainId, nftContractAddress, nftTokenId]);
    *  const nftContractAddress = ethers.ZeroAddress;  // OR the NFT Contract Address the SmartAccount is being computed for.
    *  const smartAccountHash = await chargedParticlesContract.getAccountBytecodeHash(nftContractAddress);
@@ -89,6 +89,8 @@ contract ERC6551zkSyncRegistry is IERC6551zkSyncRegistry {
    *    salt,
    *    input,
    *  );
+   *
+   * Reference: utils/calculateAccountAddress.ts
    */
   function account(
     bytes32 bytecodeHash,

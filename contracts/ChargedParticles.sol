@@ -74,7 +74,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   constructor(address registry, bytes32 bytecodeHash) Ownable() ReentrancyGuard() {
     erc6551registry[defaultRegistry] = registry;
     defaultAccountBytecodeHash = bytecodeHash; // for zkSync
-    defaultSalt = bytes32('CPU-V2');
+    defaultSalt = bytes32('CPU-V3');
   }
 
   // function getInterfaceId() public view returns (bytes4) {
@@ -228,12 +228,16 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
 
   /// @notice Fund Particle with Asset Token
   ///    Must be called by the account providing the Asset
-  ///    Account must Approve THIS contract as Operator of Asset
+  ///    Account must Sign-to-Permit THIS contract as Operator of Asset
   ///
   /// @param contractAddress      The Address to the Contract of the Token to Energize
   /// @param tokenId              The ID of the Token to Energize
   /// @param assetToken           The Address of the Asset Token being used
   /// @param assetAmount          The Amount of Asset Token to Energize the Token with
+  /// @param deadline             The deadline of the Permit-Signature
+  /// @param v                    The "v" param of the Permit-Signature
+  /// @param r                    The "r" param of the Permit-Signature
+  /// @param s                    The "s" param of the Permit-Signature
   /// @return account             The address of the SmartAccount associated with the NFT
   function energizeParticleWithPermit(
     address contractAddress,
@@ -507,6 +511,7 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
     ISmartAccount smartAccount = ISmartAccount(payable(account));
 
     // Store account address
+    // (on zkSync, getNewAddressCreate2 from the SystemContractsCaller contract is not defined as a view function)
     uint256 uuid = contractAddress.getTokenUUID(tokenId);
     if (nftSmartAccounts[uuid] == address(0)) {
       nftSmartAccounts[uuid] = account;

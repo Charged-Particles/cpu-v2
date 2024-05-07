@@ -2,7 +2,7 @@
 import { Contract, ethers } from "ethers";
 import { utils } from "zksync-ethers";
 
-const defaultSalt = ethers.encodeBytes32String('CPU-V2');
+const defaultSalt = ethers.encodeBytes32String('CPU-V3');
 
 export const calculateAccountAddress = async (
   chargedParticles: Contract,

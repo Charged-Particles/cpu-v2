@@ -1,23 +1,21 @@
-# cpu-v2
-Charged Particles Multiverse
+# cpu-v3
+Charged Particles Multiverse + Bufficorn NFTs on zkSync!
 
 ## Deploy
 
-Using [hardhat deploy](https://github.com/wighawag/hardhat-deploy) hardhat plugin.
+First: Rename the `.env.sample` file to `.env` and update the Environment Variables within to contain Your Deployment-Wallet Private-Key, as well as your Alchemy and Etherscan API keys.
 
-`yarn hardhat deploy  --network NETWORK --tags CONTRACT_TAG`
+Commands to run (in order):
+
+`nvm use` - switch to correct version of NodeJS
+
+`yarn` - install dependencies
+
+`yarn deploy-bufficorn zkSyncTestnet` - deploy to zkSync Testnet
+OR
+`yarn deploy-bufficorn zkSyncMainnet` - deploy to zkSync Mainnet
+
 
 ## Test
 
-`yarn hardhat test --network hardhat`
-
-
-### TODO
-- Move bridge onto lib.
-- Bridge inside the charged particle account.
-- Investigate permit for account approvals.
-- Enumerable oz set lib for allowlisted function signatures..
-- Settings contract hook map.
-- Check if NFT has set up a setting contract.
-- Allow listed functions check inside the setting.
-- Research settings manager contracts.
+`yarn test`
