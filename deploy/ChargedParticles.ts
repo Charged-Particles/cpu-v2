@@ -8,7 +8,9 @@ const ChargedParticles_Deploy: DeployFunction = async (hre: HardhatRuntimeEnviro
 
 	await deploy('ChargedParticles', {
 		from: deployer,
-		args: ['0x000000006551c19487814612e58FE06813775758'], // ERC6551Registry - Same on All Chains
+		args: [
+			'0x000000006551c19487814612e58FE06813775758'
+		], // ERC6551Registry - Same on All Chains
 		log: true,
 	});
 };
