@@ -76,18 +76,13 @@ contract ChargedParticles is IChargedParticles, Ownable, ReentrancyGuard {
   // Initialization
 
   constructor(
-    address registry,
-    address implementation,
-    bytes32 bytecodeHash
+    address registry
   )
     Ownable()
     ReentrancyGuard()
   {
-
     erc6551registry[defaultRegistry] = registry;
-    defaultAccountBytecodeHash = bytecodeHash; // for zkSync
     defaultSalt = bytes32('CPU-V2');
-    defaultAccountImplementation = implementation;
   }
 
   function getSmartAccountAddress(address contractAddress, uint256 tokenId) external view override virtual returns (address) {
