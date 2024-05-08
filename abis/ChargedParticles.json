@@ -5,6 +5,11 @@
         "internalType": "address",
         "name": "registry",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "implementation",
+        "type": "address"
       }
     ],
     "stateMutability": "nonpayable",
