@@ -45,5 +45,8 @@
     "ts-node": ">=8.0.0",
     "typechain": "^8.3.1",
     "typescript": ">=4.5.0"
+  },
+  "dependencies": {
+    "erc20permit": "^0.1.1"
   }
 }

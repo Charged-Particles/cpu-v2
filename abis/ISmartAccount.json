@@ -10,18 +10,12 @@
       },
       {
         "indexed": false,
-        "internalType": "bytes4",
-        "name": "selector",
-        "type": "bytes4"
-      },
-      {
-        "indexed": false,
         "internalType": "address",
-        "name": "implementation",
+        "name": "controller",
         "type": "address"
       }
     ],
-    "name": "OverrideUpdated",
+    "name": "ExecutionControllerUpdated",
     "type": "event"
   },
   {
@@ -81,6 +75,87 @@
       }
     ],
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "nftContractAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nftTokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getCovalentBonds",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "assetToken",
+        "type": "address"
+      }
+    ],
+    "name": "getInterest",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "assetToken",
+        "type": "address"
+      }
+    ],
+    "name": "getPrincipal",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "assetToken",
+        "type": "address"
+      }
+    ],
+    "name": "getRewards",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "total",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -173,6 +248,21 @@
         "internalType": "address",
         "name": "executionController",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "parentNftChainId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "parentNftContract",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "parentNftTokenId",
+        "type": "uint256"
       }
     ],
     "name": "initialize",

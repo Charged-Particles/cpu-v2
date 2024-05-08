@@ -1,5 +1,3 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.13;
 interface IERC6551Registry {
     /**
      * @dev The registry MUST emit the ERC6551AccountCreated event upon successful account creation.
