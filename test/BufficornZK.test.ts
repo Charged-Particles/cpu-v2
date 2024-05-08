@@ -4,7 +4,7 @@ import { ChargedParticles, BufficornZK, IERC6551Registry, ERC20Mock, NFTMock } f
 
 describe('BufficornZK', async function () {
   const REGISTRY = 	'0x000000006551c19487814612e58FE06813775758'; // ERC6551Registry - Same on All Chains
-  const salt = ethers.encodeBytes32String('');
+  const salt = ethers.encodeBytes32String('CPU-V2');
 
   // Contracts
   let chargedParticles: ChargedParticles;
