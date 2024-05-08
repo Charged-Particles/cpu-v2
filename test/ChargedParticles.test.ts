@@ -3,7 +3,7 @@ import { Wallet, Contract } from 'zksync-ethers';
 import { Deployer } from '@matterlabs/hardhat-zksync-deploy';
 import { expect } from 'chai';
 
-import { getWallet, getProvider, deployContract, LOCAL_RICH_WALLETS } from '../utils/utils';
+import { getChainId, getWallet, getProvider, deployContract, LOCAL_RICH_WALLETS } from '../utils/utils';
 import { performTx } from '../utils/performTx';
 import { calculateAccountAddress } from '../utils/calculateAccountAddress';
 
@@ -36,12 +36,6 @@ describe('ChargedParticles', async function () {
   let _deployer: Deployer;
   let _deployerAddress: string;
   let _receiver: string;
-
-  const getChainId = async () => {
-    const provider = getProvider();
-    const network = await provider.getNetwork();
-    return network.chainId;
-  };
 
   const findEventArgs = (logs: any[], eventName: string) => {
     let _event = null;

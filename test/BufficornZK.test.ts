@@ -3,15 +3,13 @@ import { Wallet, Contract } from 'zksync-ethers';
 import { Deployer } from '@matterlabs/hardhat-zksync-deploy';
 import { expect } from 'chai';
 
-import { getWallet, getProvider, deployContract, LOCAL_RICH_WALLETS } from '../utils/utils';
+import { getChainId, getWallet, deployContract, tokenBaseUri, LOCAL_RICH_WALLETS } from '../utils/utils';
 import { performTx } from '../utils/performTx';
 import { calculateAccountAddress } from '../utils/calculateAccountAddress';
 
 import DeployRegistry from '../deploy/ERC6551zkSyncRegistry';
 import DeployBufficornZK from '../deploy/BufficornZK';
 import DeploySmartAccount from '../deploy/SmartAccount';
-import DeployERC20Mock from '../deploy/ERC20Mock';
-import DeployNFTMock from '../deploy/NFTMock';
 import DeploySmartAccountController from '../deploy/SAC_EX1';
 
 
@@ -21,15 +19,11 @@ describe('BufficornZK', async function () {
   // Contracts
   let _chargedParticles: Contract;
   let _bufficorn: Contract;
-  let _nftMock: Contract;
-  let _erc20Mock: Contract;
 
   // Addresses
   let _chargedParticlesAddress: string;
   let _bufficornAddress: string;
   let _zkSyncRegistryAddress: string;
-  let _nftMockAddress: string;
-  let _erc20MockAddress: string;
 
   // Signers
   let _wallet: Wallet;
@@ -37,28 +31,12 @@ describe('BufficornZK', async function () {
   let _deployerAddress: string;
   let _receiver: string;
 
-  const getChainId = async () => {
-    const provider = getProvider();
-    const network = await provider.getNetwork();
-    return network.chainId;
-  };
-
   before(async function () {
     _wallet = getWallet();
     _deployer = new Deployer(hre, _wallet);
     _deployerAddress = _deployer.ethWallet.address;
     _receiver = LOCAL_RICH_WALLETS[1].address;
     _chainId = await getChainId();
-
-    // Deploy ERC20 Mock
-    const { contract: erc20Mock, address: erc20MockAddress } = await DeployERC20Mock();
-    _erc20Mock = erc20Mock;
-    _erc20MockAddress = erc20MockAddress;
-
-    // Deploy NFT Mock
-    const { contract: nftMock, address: nftMockAddress } = await DeployNFTMock();
-    _nftMock = nftMock;
-    _nftMockAddress = nftMockAddress;
 
     // Deploy zkSyncRegistry
     const { contract: zkSyncRegistry, address: zkSyncRegistryAddress } = await DeployRegistry();
@@ -91,7 +69,7 @@ describe('BufficornZK', async function () {
     _bufficornAddress = bufficornAddress;
 
     // Set Base Token URI on the BufficornZK contract
-    await performTx(await bufficorn.setBaseURI('http://www.bufficorn-zk.com/'), '');
+    await performTx(await bufficorn.setBaseURI(tokenBaseUri.bufficorn), '');
 
     // Set Custom Execution Controller as the BufficornZK contract
     await performTx(
@@ -238,6 +216,6 @@ describe('BufficornZK', async function () {
 
     // Confirm Token URI includes Traits
     const tokenUri = await _bufficorn.tokenURI(bufficornTokenId);
-    expect(tokenUri).to.be.equal('http://www.bufficorn-zk.com/1/31');
+    expect(tokenUri).to.be.equal(`${tokenBaseUri.bufficorn}1/31`);
   });
 });

@@ -17,7 +17,8 @@
     "gas": "REPORT_GAS=true yarn test",
     "deploy-cpu-only": "hardhat deploy-zksync --script Setup_ChargedParticles.ts --network",
     "deploy-bufficorn": "hardhat deploy-zksync --script Setup_Bufficorn.ts --network",
-    "deploy-test-script": "hardhat deploy-zksync --script ZkSepoliaTest.ts --network"
+    "test-sepolia": "hardhat deploy-zksync --script ZkSepoliaTest.ts --network",
+    "test-bufficorn": "hardhat deploy-zksync --script ZkBufficornTest.ts --network"
   },
   "devDependencies": {
     "@matterlabs/hardhat-zksync-chai-matchers": "^1.3.0",

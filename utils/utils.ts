@@ -16,7 +16,11 @@ const mnemonic = {
   mainnet: `${process.env.MAINNET_MNEMONIC}`.replace(/_/g, ' '),
 };
 
-const getChainId = async () => {
+export const tokenBaseUri = {
+  bufficorn: 'https://us-central1-nft-wallet-prod.cloudfunctions.net/api/getBufficornMeta/', // MUST have trailing slash
+};
+
+export const getChainId = async () => {
   const provider = getProvider();
   const network = await provider.getNetwork();
   return network.chainId;
