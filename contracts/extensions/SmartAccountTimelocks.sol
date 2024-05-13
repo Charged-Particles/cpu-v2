@@ -32,7 +32,11 @@ error ExceedsMaxLockTime();
  * @title A smart contract account owned by a single ERC721 token
  */
 contract SmartAccountTimelocks is SmartAccount {
+  // ERC-5192
+  event Locked(uint256 tokenId);
+  event Unlocked(uint256 tokenId);
   event LockUpdated(uint256 lockedUntil);
+
 
   /// @dev timestamp at which this account will be unlocked.
   /// Attached to "owner" so that the lock is cleared when transferred.
@@ -51,8 +55,14 @@ contract SmartAccountTimelocks is SmartAccount {
       revert ExceedsMaxLockTime();
     }
 
+    (, , uint256 tokenId) = token();
     lockedUntil[owner()] = _lockedUntil;
 
+    if (isLocked()) {
+      emit Locked(tokenId);
+    } else {
+      emit Unlocked(tokenId);
+    }
     emit LockUpdated(_lockedUntil);
   }
 
