@@ -97,16 +97,6 @@ const config: HardhatUserConfig = {
         },
         chainId: 5
     },
-    sepolia: {
-        url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_SEPOLIA_API_KEY}`,
-        gasPrice: 'auto',
-        accounts: {
-            mnemonic: mnemonic.testnet,
-            initialIndex: 0,
-            count: 10,
-        },
-        chainId: 11155111
-    },
     mainnet: {
         url: `https://eth-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
         gasPrice: 'auto',
@@ -115,6 +105,16 @@ const config: HardhatUserConfig = {
             initialIndex: 0,
             count: 10,
         }
+    },
+    sepolia: {
+      url: `https://eth-sepolia.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
+      gasPrice: 'auto',
+      accounts: {
+          mnemonic: mnemonic.testnet,
+          initialIndex: 0,
+          count: 10,
+      },
+      chainId: 11155111 
     },
     mumbai: {
       url: `https://polygon-mumbai.g.alchemy.io/v2/${process.env.ALCHEMY_MUMBAI_API_KEY}`,
@@ -142,6 +142,7 @@ const config: HardhatUserConfig = {
       goerli: process.env.ETHERSCAN_API_KEY ?? '',
       polygon: process.env.POLYGONSCAN_API_KEY ?? '',
       polygonMumbai: process.env.POLYGONSCAN_API_KEY ?? '',
+      sepolia: 'DRYVU1NAAUFZNK9KEEAXVUWVF9RQGUMEZR',
     }
   },
   gasReporter: {
